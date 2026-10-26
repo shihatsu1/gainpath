@@ -2,7 +2,7 @@
 
 **A free workout tracker that suggests your next weight and keeps every workout on your phone.** No account, no ads, no subscription.
 
-🔗 **[Open the app](https://jedmangubat.github.io/gainpath)** · [Lifting guides](https://jedmangubat.github.io/gainpath/guides/) · [Privacy](https://jedmangubat.github.io/gainpath/privacy.html) · [Changelog](CHANGELOG.md)
+🔗 **[Open the app](https://shihatsu1.github.io/gainpath)** · [Lifting guides](https://shihatsu1.github.io/gainpath/guides/) · [Privacy](https://shihatsu1.github.io/gainpath/privacy.html) · [Changelog](CHANGELOG.md)
 
 If it's been useful to you, consider [☕ supporting development via PayPal](https://www.paypal.com/donate/?business=jed.mangubat@me.com).
 
@@ -57,7 +57,7 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 
 ## Getting started
 
-1. Open [jedmangubat.github.io/gainpath](https://jedmangubat.github.io/gainpath).
+1. Open [shihatsu1.github.io/gainpath](https://shihatsu1.github.io/gainpath).
 2. Answer three quick setup screens.
 3. Pick a day, log your sets, and finish.
 
@@ -65,11 +65,11 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 
 ## Tech
 
-Plain HTML, CSS and JavaScript (`index.html` plus `js/`) with no framework, no build step and no backend. It uses [Chart.js](https://chartjs.org), [jsPDF](https://parall.ax/products/jspdf) and [EmailJS](https://emailjs.com) for feedback (self-hosted in `vendor/` and loaded only when needed), and self-hosted [Tabler Icons](https://tabler.io/icons).
+Plain HTML, CSS and JavaScript (`index.html` plus `js/`) with no framework, no build step and no server for your data. The only network call it makes on its own is anonymous usage counts to a small Cloudflare Worker (`analytics-worker/`); [Privacy](https://shihatsu1.github.io/gainpath/privacy.html) lists exactly what is sent. It uses [Chart.js](https://chartjs.org), [jsPDF](https://parall.ax/products/jspdf) and [EmailJS](https://emailjs.com) for feedback (self-hosted in `vendor/` and loaded only when needed), and self-hosted [Tabler Icons](https://tabler.io/icons).
 
 ## Contributing
 
-Found a bug or have an idea? Use Settings → Send feedback in the app, or open an issue.
+Found a bug or have an idea? Use Settings → Send feedback in the app, or [open an issue](https://github.com/shihatsu1/gainpath/issues).
 
 ## License
 

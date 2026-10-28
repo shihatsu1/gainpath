@@ -26,7 +26,7 @@ function openSettings(){
   gid('about-version').textContent='v'+APP_VERSION;
   renderSplitOpts('set-split-opts',CFG.split,(id)=>{CFG.split=id;});
   const spbtn=gid('set-prog-btn');
-  spbtn.innerHTML=CFG.customProgram?'<i class="ti ti-pencil" aria-hidden="true"></i> Edit "'+esc(CFG.customProgram.name)+'"':'<i class="ti ti-layout-grid-add" aria-hidden="true"></i> Build a custom program';
+  spbtn.innerHTML=CFG.customProgram?'<i class="ti ti-pencil" aria-hidden="true"></i> '+esc(t('st_edit_program').replace('{name}',CFG.customProgram.name)):'<i class="ti ti-layout-grid-add" aria-hidden="true"></i> '+t('st_build_program');
   renderMWSettings();
   renderGymSettings();
   renderRestSettings();
@@ -90,7 +90,7 @@ function setSettingUnit(v){convertUnits(CFG.unit,v);gid('set-bw').value=curBW();
 function setSettingReps(v){setRepsPreset('sreps',v);CFG.prefRepsChangedAt=dkey(new Date());saveCFG();}
 function setSettingRest(v){CFG.prefRest=v;[60,90,120].forEach(x=>gid('srest-'+x).classList.toggle('on',x===v));saveCFG();}
 function setSettingSets(v){CFG.prefSets=v;[2,3,4].forEach(x=>gid('ssets-'+x).classList.toggle('on',x===v));saveCFG();}
-function setSettingSetStyle(v){CFG.setStyle=v;['straight','pyramid'].forEach(x=>gid('sstyle-'+x).classList.toggle('on',x===v));gid('sstyle-desc').textContent=v==='pyramid'?'Reps step down each set as weight goes up (e.g. 12, 10, 8) — change the first set\'s weight and the rest are calculated for you.':'Same weight and reps across every work set — change the first set\'s weight and the rest follow.';saveCFG();}
+function setSettingSetStyle(v){CFG.setStyle=v;['straight','pyramid'].forEach(x=>gid('sstyle-'+x).classList.toggle('on',x===v));gid('sstyle-desc').textContent=t(v==='pyramid'?'st_style_pyramid':'st_style_straight');saveCFG();}
 function setSettingWU(){CFG.warmup=!CFG.warmup;gid('stog-wu').classList.toggle('on',CFG.warmup);gid('wu-steps-wrap').style.display=CFG.warmup?'block':'none';saveCFG();}
 function setSettingWUSteps(v){CFG.wuSteps=v;[1,2,3].forEach(x=>gid('swu-'+x).classList.toggle('on',x===v));saveCFG();}
 function setSettingRestSound(){CFG.restSound=!CFG.restSound;gid('stog-rs').classList.toggle('on',CFG.restSound);saveCFG();}
@@ -192,7 +192,7 @@ function openProgDayEdit(i){
   ST.editList=getEffectiveDayExercises(day.id).slice();
   DE_EXPANDED=null;gid('de-tit').textContent=day.name;
   gid('de-reset-btn').style.display='none';
-  gid('de-commit-btn').innerHTML='Save day <i class="ti ti-check" aria-hidden="true"></i>';
+  gid('de-commit-btn').innerHTML=t('btn_save_day')+' <i class="ti ti-check" aria-hidden="true"></i>';
   applyDeEditModeUI();
   ss('dayedit');renderDayEdit();
 }

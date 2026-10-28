@@ -1317,4 +1317,7 @@ buildExercisePool();
 // the women's programs list lighter defaults for the same lift. Anything that
 // builds a day from pool names (swap picker, custom days) goes through poolEx().
 const EXPOOL_F={};Object.keys(EX).filter(k=>/_f$/.test(k)).forEach(k=>EX[k].forEach(e=>{if(EXPOOL_F[e.name]===undefined)EXPOOL_F[e.name]=e.baseW;}));
-function humanizeMG(mg){return mg.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
+// Localized muscle-group label (mg_<id> keys); unknown ids fall back to a tidied id.
+function humanizeMG(mg){const k='mg_'+mg,v=t(k);return v!==k?v:mg.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
+// Display name of a built-in exercise: the ja/ko name when one exists, else the stored English name.
+function exLabel(name){const m=CFG.lang==='ja'?EX_NAMES_JA:CFG.lang==='ko'?EX_NAMES_KO:null;return(m&&m[name])||name;}

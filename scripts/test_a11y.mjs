@@ -87,6 +87,14 @@ async function sheetTests(engine, tag) {
     const after = await page.evaluate((id) => ({ shown: getComputedStyle(document.getElementById(id)).display !== 'none', focusOnOpener: document.activeElement && document.activeElement.id === 'a11y-trigger', inert: document.querySelectorAll('[inert]').length }), sh.id);
     check(`${tag} ${sh.label}: Escape closes it, returns focus to the opener and releases the page`, !after.shown && after.focusOnOpener && after.inert === 0, after);
   }
+  // F17: Settings isn't a tab, so no tab looks selected there; coming back restores the tab you were on.
+  await page.evaluate(() => { stab('pr'); openSettings(); });
+  const tabsInSettings = await page.evaluate(() => [...document.querySelectorAll('#bnav .on')].map((b) => b.id));
+  await page.evaluate(() => ss('home'));
+  const tabsBack = await page.evaluate(() => ({ on: [...document.querySelectorAll('#bnav .on')].map((b) => b.id), pane: getComputedStyle(document.getElementById('p-pr')).display }));
+  check(`${tag} F17: opening Settings from PRs leaves no tab highlighted`, tabsInSettings.length === 0, tabsInSettings);
+  check(`${tag} F17: back from Settings, the tab you were on is highlighted again`, tabsBack.on.length === 1 && tabsBack.on[0] === 'bn-pr' && tabsBack.pane === 'block', tabsBack);
+  await page.evaluate(() => stab('wk'));
   // The recovery sheet must be answered, not dismissed.
   await page.evaluate(() => { LOAD_BAD.gp_bw = '{bad'; showLoadRecovery(); });
   const lr = await page.evaluate(() => { const el = gid('load-recovery'); return { inside: el.contains(document.activeElement), role: el.getAttribute('role') }; });

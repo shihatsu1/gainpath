@@ -9,6 +9,7 @@
     "test:data": "node scripts/test_data_safety.mjs",
     "measure:startup": "node scripts/measure_startup.mjs",
     "test:a11y": "node scripts/test_a11y.mjs",
+    "test:i18n": "node scripts/test_i18n.mjs",
     "test:sw": "node scripts/test_sw.mjs",
     "test:worker": "npm --prefix analytics-worker test --silent",
     "precheck": "node scripts/precheck.mjs",

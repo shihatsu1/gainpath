@@ -246,7 +246,9 @@ function showPRHistory(name){
   gid('exinfo-overlay').style.display='block';gid('exinfo-sheet').style.display='block';document.body.style.overflow='hidden';
 }
 function openDataSettings(){initExport();renderBackupStatus();ss('setdata');}
-function initExport(){const ms=gid('ex-mo'),ys=gid('ex-yr');if(ms.options.length)return;MN.forEach((m,i)=>{const o=document.createElement('option');o.value=String(i+1).padStart(2,'0');o.textContent=m;ms.appendChild(o);});const now=new Date();ms.value=String(now.getMonth()+1).padStart(2,'0');for(let y=now.getFullYear();y>=now.getFullYear()-3;y--){const o=document.createElement('option');o.value=y;o.textContent=y;ys.appendChild(o);}}
+// Month names for the report picker follow the app language (the PDF body stays English).
+function monthLabel(i){return new Date(2000,i,1).toLocaleDateString(locTag(),{month:'long'});}
+function initExport(){const ms=gid('ex-mo'),ys=gid('ex-yr');if(ms.options.length){[...ms.options].forEach((o,i)=>{o.textContent=monthLabel(i);});return;}MN.forEach((m,i)=>{const o=document.createElement('option');o.value=String(i+1).padStart(2,'0');o.textContent=monthLabel(i);ms.appendChild(o);});const now=new Date();ms.value=String(now.getMonth()+1).padStart(2,'0');for(let y=now.getFullYear();y>=now.getFullYear()-3;y--){const o=document.createElement('option');o.value=y;o.textContent=y;ys.appendChild(o);}}
 function hRGB(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
 async function genPDF(){
   const month=gid('ex-mo').value,year=gid('ex-yr').value,mk=year+'-'+month;

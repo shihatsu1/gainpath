@@ -254,7 +254,7 @@ function restoreInProgress(){
   else if(scr==='exfeel'&&ST.sd[ST.exi]){askExFeel(ST.feelTarget!=null?ST.feelTarget:undefined);}
   else if(scr==='rest'&&ST.restInfo&&ST.sd[ST.exi]){
     const ex=ST.sd[ST.exi].ex;const{si,done,next,isLastSet}=ST.restInfo;
-    gid('r-en').textContent=ex.name;
+    gid('r-en').textContent=exLabel(ex.name);
     gid('r-sl').textContent=restStatusLine(si,done,next,isLastSet,false);
     gid('r-nx-h').textContent=restNextHeading(isLastSet,ST.exi<ST.sd.length-1);
     ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();

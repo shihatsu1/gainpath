@@ -14,7 +14,7 @@ function applyDeEditModeUI(){
     icon.className='ti ti-x';btn.style.color='#E24B4A';btn.setAttribute('aria-label',t('wo_cancel_confirm_btn'));
     hint.textContent=t('de_hint_mid');
   }else{
-    icon.className='ti ti-arrow-left';btn.style.color='';btn.setAttribute('aria-label','Back');
+    icon.className='ti ti-arrow-left';btn.style.color='';btn.setAttribute('aria-label',t('aria_back'));
     hint.textContent=t('de_hint');
   }
 }
@@ -148,10 +148,10 @@ function renderDayEdit(){
       '</div>':'';
     const grpTag=grp?'<span class="bdg" style="background:var(--accent);color:#fff;margin-right:6px">'+String.fromCharCode(64+groupLetter(i))+(grp.pos)+'</span>':'';
     return grpLabel+'<div class="de-row-wrap'+(grp?' de-grp'+(grp.isFirst?' de-grp-first':'')+(grp.isLast?' de-grp-last':''):'')+'">'+
-      '<div class="de-row-actions"><span class="de-act-swap"><i class="ti ti-replace" aria-hidden="true"></i> Swap</span><span class="de-act-del"><i class="ti ti-trash" aria-hidden="true"></i> Delete</span></div>'+
+      '<div class="de-row-actions"><span class="de-act-swap"><i class="ti ti-replace" aria-hidden="true"></i> '+t('de_swap')+'</span><span class="de-act-del"><i class="ti ti-trash" aria-hidden="true"></i> '+t('de_delete')+'</span></div>'+
       '<div class="de-row" onpointerdown="rowSwipeStart(event,'+i+')">'+
         (ST.editMid?'':'<i class="ti ti-grip-vertical de-handle" aria-hidden="true" onpointerdown="rowDragStart(event,'+i+')"></i>')+
-        '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:var(--txt)">'+grpTag+esc(ex.name)+'</div><div id="de-sub-'+i+'" style="font-size:11px;color:var(--txt2)">'+humanizeMG(ex.mg)+' · '+p.sets+' sets'+'</div></div>'+
+        '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:var(--txt)">'+grpTag+esc(ex.name)+'</div><div id="de-sub-'+i+'" style="font-size:11px;color:var(--txt2)">'+t('de_sub').replace('{mg}',humanizeMG(ex.mg)).replace('{n}',p.sets)+'</div></div>'+
         linkBtn+
         '<button class="bg" onclick="openSwap('+i+')" aria-label="'+esc(t('aria_swap_ex'))+'"><i class="ti ti-replace" aria-hidden="true"></i></button>'+
         '<button class="bg" onclick="deleteExFromEdit('+i+')" aria-label="'+esc(t('aria_delete_ex'))+'"'+(ST.editList.length===1?' disabled style="opacity:.3"':'')+'><i class="ti ti-trash" aria-hidden="true"></i></button>'+
@@ -167,7 +167,7 @@ function renderDayEdit(){
 // text and leave the inputs standing.
 function refreshDERow(i){
   const ex=ST.editList[i];const p=plannedFor(ex);
-  const sub=gid('de-sub-'+i);if(sub)sub.textContent=humanizeMG(ex.mg)+' · '+p.sets+' sets';
+  const sub=gid('de-sub-'+i);if(sub)sub.textContent=t('de_sub').replace('{mg}',humanizeMG(ex.mg)).replace('{n}',p.sets);
   const pyr=gid('de-pyr-'+i);if(pyr)pyr.textContent=pyramidReps(p.sets).join(' → ');
 }
 function updPlannedEx(i,field,value){

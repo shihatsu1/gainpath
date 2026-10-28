@@ -13,10 +13,10 @@ function setFreq(v){
   [2,3,4,5,6,7].forEach(x=>gid('freq-'+x).classList.toggle('on',x===v));
   const sugId=OB.exp==='beginner'?'bro':(SPLIT_FREQ[v]||'pplul');
   OB.split=sugId;
-  const sugName=(SPLITS.find(s=>s.id===sugId)||{name:sugId}).name;
+  const sugName=t('split_'+sugId+'_name');
   gid('ob-split-suggest').textContent=OB.exp==='beginner'
-    ?'Since you’re just starting out, we suggest: '+sugName+' — one muscle group per day is the simplest way to learn.'
-    :'Based on '+v+' days/week, we suggest: '+sugName;
+    ?t('ob_sug_beginner').replace('{name}',sugName)
+    :t('ob_sug_freq').replace('{n}',v).replace('{name}',sugName);
   gid('ob-split-wrap').style.display='block';
   renderSplitOpts('split-opts',OB.split,null);
 }
@@ -55,7 +55,7 @@ function renderSplitOpts(containerId,selectedId,onSelect){
     const btn=document.createElement('button');
     btn.className='opt-btn'+(selectedId===sp.id?' on':'');
     btn.style.textAlign='left';btn.style.padding='12px 14px';btn.style.marginBottom='8px';
-    btn.innerHTML='<div style="font-size:15px;font-weight:600">'+sp.name+'</div><div style="font-size:11px;font-weight:400;color:'+(selectedId===sp.id?'var(--accent-ink)':'var(--txt2)')+';margin-top:3px">'+sp.desc+'</div>';
+    btn.innerHTML='<div style="font-size:15px;font-weight:600">'+t('split_'+sp.id+'_name')+'</div><div style="font-size:11px;font-weight:400;color:'+(selectedId===sp.id?'var(--accent-ink)':'var(--txt2)')+';margin-top:3px">'+t('split_'+sp.id+'_desc')+'</div>';
     btn.onclick=()=>{OB.split=sp.id;renderSplitOpts(containerId,sp.id,onSelect);if(onSelect)onSelect(sp.id);};
     el.appendChild(btn);
   });

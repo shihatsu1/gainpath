@@ -909,6 +909,21 @@ async function main() {
       Object.values(EXPOOL).filter(e => /^Barbell /.test(e.name) && e.webp && !NO_TIPS_YET.has(e.name) && !(EX_TIPS[e.name] && EX_TIPS_JA[e.name] && EX_TIPS_KO[e.name] && EX_INSTRUCTIONS[e.name] && EX_INSTRUCTIONS_JA[e.name] && EX_INSTRUCTIONS_KO[e.name] && EX_NAMES_JA[e.name] && EX_NAMES_KO[e.name])).map(e => e.name), []);
     check('new dumbbell exercises: every one with a webp image has tips and instructions in en/ja/ko',
       Object.values(EXPOOL).filter(e => /^Dumbbell /.test(e.name) && e.webp && !NO_TIPS_YET.has(e.name) && !(EX_TIPS[e.name] && EX_TIPS_JA[e.name] && EX_TIPS_KO[e.name] && EX_INSTRUCTIONS[e.name] && EX_INSTRUCTIONS_JA[e.name] && EX_INSTRUCTIONS_KO[e.name] && EX_NAMES_JA[e.name] && EX_NAMES_KO[e.name])).map(e => e.name), []);
+    // F15: the app is dark-only, so Settings must not advertise a dark mode in any language.
+    check('F15: menu_prefs_sub never mentions dark mode', ['en', 'ja', 'ko'].map(l => /dark mode|ダークモード|다크 모드/i.test(STRINGS[l].menu_prefs_sub)), [false, false, false]);
+    // F7: Home's "Last:" is the newest session by dk, shown with fmtDk(), not the last array entry.
+    {
+      const keepH = ST.history, keepSetup = CFG.setup, keepLang = CFG.lang;
+      ST.history = [{ day: 'push', dayName: 'Push', dk: '2026-10-10', date: '10/10/2026', exercises: [{ name: 'Barbell bench press', sets: [] }] }, { day: 'push', dayName: 'Push', dk: '2026-09-01', date: '9/1/2026', exercises: [{ name: 'Barbell bench press', sets: [] }] }];
+      CFG.setup = true; CFG.lang = 'en';
+      check('F7: the newest session by dk wins when history is out of order', [lastSession('push').dk, lastSession().dk, lastSession('pull')], ['2026-10-10', '2026-10-10', null]);
+      refreshHome();
+      const homeText = document.getElementById('s-home').textContent;
+      check('F7: Home "Last:" shows the newest date, formatted with fmtDk()', [homeText.includes('Last: ' + fmtDk('2026-10-10')), homeText.includes(fmtDk('2026-09-01')), homeText.includes('10/10/2026')], [true, false, false]);
+      CFG.lang = 'ja'; refreshHome();
+      check('F7: in Japanese the date is not the stored en-PH string', !document.getElementById('s-home').textContent.includes('10/10/2026') && document.getElementById('s-home').textContent.includes(fmtDk('2026-10-10')), true);
+      ST.history = keepH; CFG.setup = keepSetup; CFG.lang = keepLang;
+    }
     check('kettlebell exercises: every one has an image flag, tips and instructions in en/ja/ko',
       Object.values(EXPOOL).filter(e => /^Kettlebell /.test(e.name) && !(e.webp && EX_TIPS[e.name] && EX_TIPS_JA[e.name] && EX_TIPS_KO[e.name] && EX_INSTRUCTIONS[e.name] && EX_INSTRUCTIONS_JA[e.name] && EX_INSTRUCTIONS_KO[e.name] && EX_NAMES_JA[e.name] && EX_NAMES_KO[e.name])).map(e => e.name), []);
     ST.history = [];

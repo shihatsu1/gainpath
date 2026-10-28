@@ -71,7 +71,7 @@ function moreBtn(total,cap,open,fn){
   if(total<=cap)return'';
   return'<button class="bs" style="width:100%;font-size:13px;margin-top:4px" onclick="'+fn+'">'+(open?t('show_less'):t('show_all').replace('{n}',total))+'</button>';
 }
-function openSession(idx){const rec=ST.history[idx];if(!rec)return;ST.editSession=idx;ST.editSessionData=JSON.parse(JSON.stringify(rec));gid('se-tit').textContent=rec.dayName;gid('se-sub').textContent=showDate(rec.dk,rec.date)+' · '+rec.dur;renderSessionEdit();ss('session');}
+function openSession(idx){const rec=ST.history[idx];if(!rec)return;ST.editSession=idx;ST.editSessionData=JSON.parse(JSON.stringify(rec));gid('se-tit').textContent=(CFG.lang!=='en'&&rec.day&&!isCustomDay(rec.day))?getDayName(rec.day):rec.dayName;gid('se-sub').textContent=showDate(rec.dk,rec.date)+' · '+rec.dur;renderSessionEdit();ss('session');}
 function renderSessionEdit(){
   const rec=ST.editSessionData;
   gid('se-list').innerHTML='<div class="card"><label style="margin-bottom:4px">'+t('hs_session_note')+'</label><textarea class="inp" style="min-height:50px;margin-bottom:0" oninput="ST.editSessionData.note=this.value" placeholder="'+esc(t('hs_optional'))+'">'+esc(rec.note||'')+'</textarea></div>'+
@@ -133,13 +133,14 @@ function renderCal(){
   }
   const monthSessions=Object.values(byDay).flat().map(i=>ST.history[i]);
   const vol=monthSessions.reduce((a,h)=>a+sessionVolume(h),0);
-  const stats=monthSessions.length?'<div class="cal-stats">'+monthSessions.length+' workout'+(monthSessions.length>1?'s':'')+(vol>0?' · '+fmtVol(vol,CFG.unit)+' lifted':'')+' this month</div>':'<div class="cal-stats">No workouts this month'+(cur===curMk?' yet':'')+'</div>';
+  const nM=monthSessions.length,volTxt=vol>0?fmtVol(vol,CFG.unit):'';
+  const stats='<div class="cal-stats">'+(nM?t('cal_stats_'+(nM>1?'n':'1')+(volTxt?'v':'')).replace('{n}',nM).replace('{v}',volTxt):t(cur===curMk?'cal_none_yet':'cal_none'))+'</div>';
   const types=[...new Set(monthSessions.map(h=>h.day))];
   const legend=types.length?'<div class="cal-foot">'+types.map(t=>'<span class="cal-leg"><span class="cal-dot" style="background:'+(DC[t]||'var(--accent)')+'"></span>'+esc(getDayName(t))+'</span>').join('')+'</div>':'';
   el.innerHTML='<div class="cal-wrap"><div class="cal-head">'+
-    '<button class="cal-nav" onclick="calNav(-1)" aria-label="Previous month"'+(cur<=minMk?' disabled':'')+'><i class="ti ti-chevron-left" aria-hidden="true"></i></button>'+
+    '<button class="cal-nav" onclick="calNav(-1)" aria-label="'+t('aria_prev_month')+'"'+(cur<=minMk?' disabled':'')+'><i class="ti ti-chevron-left" aria-hidden="true"></i></button>'+
     '<div class="cal-tit">'+new Date(Y,M-1,1).toLocaleDateString(locTag(),{year:'numeric',month:'long'})+'</div>'+
-    '<button class="cal-nav" onclick="calNav(1)" aria-label="Next month"'+(cur>=curMk?' disabled':'')+'><i class="ti ti-chevron-right" aria-hidden="true"></i></button>'+
+    '<button class="cal-nav" onclick="calNav(1)" aria-label="'+t('aria_next_month')+'"'+(cur>=curMk?' disabled':'')+'><i class="ti ti-chevron-right" aria-hidden="true"></i></button>'+
     '</div><div class="cal-grid">'+grid+'</div>'+dayPanel+stats+legend+'</div>';
 }
 
@@ -156,6 +157,9 @@ function weekDayMap(history){
   const m={};(history||[]).forEach(h=>{if(!h||!h.dk)return;const w=weekStartDk(h.dk);if(!m[w])m[w]=new Set();m[w].add(h.dk);});
   return m;
 }
+// Newest session by dk (ST.history isn't kept in date order: edits, restores and
+// back-dated sessions land anywhere), optionally of one day id.
+function lastSession(day){let best=null;ST.history.forEach(h=>{if(h&&(day===undefined||h.day===day)&&(!best||(h.dk||'')>(best.dk||'')))best=h;});return best;}
 function weekTarget(wk){return Math.max(1,CFG.freq-restDaysInWeek(wk));}
 // How many consecutive qualifying weeks end at `endWk`, walking backwards.
 // Extracted from streak() so badge history can ask the same question about a
@@ -374,7 +378,7 @@ function refreshHome(){
   const sug=suggested();const hr=new Date().getHours();
   const tod=hr<12?'morning':hr<17?'afternoon':'evening';
   if(ST.history.length){
-    const lastDay=ST.history[ST.history.length-1].day,last=getDayName(lastDay);
+    const lastDay=lastSession().day,last=getDayName(lastDay);
     gid('h-gr').textContent=t('greet_returning_'+tod).split('{name}').join(CFG.firstName).split('{day}').join(last);gid('h-sg').innerHTML=t('suggested_next_prefix')+' <strong style="color:var(--tint-amber-text)">'+esc(getDayName(sug))+'</strong>';
     const rbtn=gid('h-repeat-btn');rbtn.style.display='flex';rbtn.innerHTML='<i class="ti ti-rotate-clockwise" aria-hidden="true"></i> '+t('repeat_last_workout_prefix')+esc(last);
   }
@@ -382,10 +386,10 @@ function refreshHome(){
   gid('h-tour').style.display=!ST.history.length&&!CFG.tutorialSeen?'block':'none';
   const con=gid('dbtn-list');con.innerHTML='';
   getSplitDays().forEach(k=>{
-    const isSug=k===sug;const last=ST.history.filter(h=>h.day===k).slice(-1)[0];
+    const isSug=k===sug;const last=lastSession(k);
     const exList=getEffectiveDayExercises(k);
     const btn=document.createElement('button');btn.className='day-btn'+(isSug?' sug':'');
-    btn.innerHTML='<div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti '+(DI[k]||'ti-player-play')+'" style="margin-right:8px;color:'+(DC[k]||'var(--accent)')+';font-size:16px" aria-hidden="true"></i>'+esc(getDayName(k))+(isSug?'<span class="bdg" style="margin-left:8px;background:var(--tint-amber-1);color:var(--tint-amber-text)">'+t('day_suggested_badge')+'</span>':'')+'</div><div style="font-size:13px;color:var(--txt2);margin-top:4px">'+exList.length+t('exercises_count_suffix')+' \u00b7 '+(last?t('last_colon_prefix')+esc(last.date):t('not_done_yet'))+'</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i>';
+    btn.innerHTML='<div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti '+(DI[k]||'ti-player-play')+'" style="margin-right:8px;color:'+(DC[k]||'var(--accent)')+';font-size:16px" aria-hidden="true"></i>'+esc(getDayName(k))+(isSug?'<span class="bdg" style="margin-left:8px;background:var(--tint-amber-1);color:var(--tint-amber-text)">'+t('day_suggested_badge')+'</span>':'')+'</div><div style="font-size:13px;color:var(--txt2);margin-top:4px">'+exList.length+t('exercises_count_suffix')+' \u00b7 '+(last?t('last_colon_prefix')+esc(last.dk?fmtDk(last.dk):last.date):t('not_done_yet'))+'</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i>';
     btn.onclick=()=>openDayEdit(k);con.appendChild(btn);
   });
   renderCal();

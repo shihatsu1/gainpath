@@ -245,6 +245,7 @@ their own phone. Protect existing data first.
 | `npm run lint` | ESLint over all `js/` files as one script, errors mapped to `js/<file>:<line>`; bug rules only, no formatting |
 | `npm run test:units` | the real math/PR functions in the browser; add a case when one changes |
 | `npm run test:a11y` | keyboard-driven checks: every sheet (name, focus, Tab trap, inert background, Escape, focus return), unique set-row control names in en/ja/ko, nameless controls (Chromium + WebKit) |
+| `npm run test:i18n` | crawls the rendered ja and ko UI (onboarding, tabs, every Settings page, day editor, workout, rest, sheets) and fails on any visible text, `aria-label`, placeholder or title that is English; brands, units and exercise data are allowlisted |
 | `npm run test:sw` | service-worker update from an older worker, foreign caches kept, error responses never cached, offline boot, workout survives an update (Chromium + WebKit) |
 | `npm run test:worker` | analytics worker (in-memory KV, synthetic data; never contacts Cloudflare) |
 | `npm run test:data` | backup/restore, save failures, IDB mirror, iPhone warning, photos (Chromium + WebKit) |

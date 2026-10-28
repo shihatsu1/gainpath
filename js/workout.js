@@ -159,7 +159,7 @@ function renderEx(){
   }).join('');
   const addSetHtml='<button type="button" class="addset" onclick="addWorkSet()"><i class="ti ti-plus" aria-hidden="true"></i> '+t('btn_add_set')+'</button>';
   const dropTarget=(!isBW&&!ex.holdSecs)?sets.findIndex(x=>!x.done&&x.t==='x'):-1;
-  const dropBtnBottom=dropTarget>=0?'<button class="bs" style="flex-shrink:0" onclick="addDropSet('+dropTarget+')" aria-label="Add drop set"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i> '+t('btn_drop_set')+'</button>':'' ;
+  const dropBtnBottom=dropTarget>=0?'<button class="bs" style="flex-shrink:0" onclick="addDropSet('+dropTarget+')" aria-label="'+t('aria_add_drop_set')+'"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i> '+t('btn_drop_set')+'</button>':'' ;
   const mwNote=ex.machine&&mwBase>0?'<span class="mw-inp"><i class="ti ti-settings-2" aria-hidden="true"></i> '+t('wk_machine_base').replace('{w}',mwBase+CFG.unit)+'</span>':'';
   if(!item.tipText)item.tipText=tipFor(ex.name);
   const tipHtml='<div style="font-size:13px;color:var(--txt2);margin-bottom:12px;display:flex;gap:6px;align-items:flex-start"><i class="ti ti-bulb" aria-hidden="true" style="flex-shrink:0;margin-top:1px;color:var(--accent)"></i><span>'+item.tipText+'</span></div>';
@@ -174,7 +174,7 @@ function renderEx(){
     if(sug){const disp=ex.machine&&mwBase>0?(+(sug.newW-mwBase).toFixed(1)):sug.newW;const verb=t({easy:'wk_v_easy',good:'wk_v_good',max:'wk_v_max'}[sug.feel]||'wk_v_adjust');
       sugHtml='<div class="sug-chip"><span>'+t('wk_sug_chip').replace('{verb}',verb).replace('{w}',disp+CFG.unit).replace('{d}',(sug.delta>0?'+':'')+sug.delta)+'</span><button class="db ok" onclick="applySuggest('+sug.newW+')">'+t('btn_apply')+'</button><button class="bg" style="padding:4px 8px" onclick="dismissSuggest()">'+t('btn_dismiss')+'</button></div>';}
   }
-  gid('ex-area').innerHTML=ssBanner+'<div class="card">'+exImg+'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">'+esc(exDisplayName(ex.name))+'</div><button type="button" onclick="showExInstructions('+jsArg(ex.name)+')" aria-label="Exercise instructions" style="flex-shrink:0;width:34px;height:34px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);color:var(--accent);font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1">?</button></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+esc(ex.note)+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">'+t('bodyweight_badge')+'</span>':'')+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+t('unit_sets_suffix')+'</span></div>'+tipHtml+noteHtml+sugHtml+sh+addSetHtml+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+dropBtnBottom+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?t('btn_finish_workout')+' <i class="ti ti-trophy" aria-hidden="true"></i>':t('btn_next_exercise')+' <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
+  gid('ex-area').innerHTML=ssBanner+'<div class="card">'+exImg+'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">'+esc(exDisplayName(ex.name))+'</div><button type="button" onclick="showExInstructions('+jsArg(ex.name)+')" aria-label="'+t('aria_ex_instructions')+'" style="flex-shrink:0;width:34px;height:34px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);color:var(--accent);font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1">?</button></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+esc(ex.note)+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">'+t('bodyweight_badge')+'</span>':'')+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+t('unit_sets_suffix')+'</span></div>'+tipHtml+noteHtml+sugHtml+sh+addSetHtml+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+dropBtnBottom+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?t('btn_finish_workout')+' <i class="ti ti-trophy" aria-hidden="true"></i>':t('btn_next_exercise')+' <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
   if(item.firstTime&&CFG.startingWeights==='manual'&&!item.wSet&&ex.plannedW===undefined)showFSW(ex);
   saveInProgress();
 }
@@ -363,7 +363,7 @@ function restRate(feel){const P=ST.exi;if(!ST.sd[P])return;ST.sd[P].exFeel=feel;
 function startRest(ex,si,done,next,ssReturn){
   const isLastSet=!next;const ssRound=ssReturn!=null;
   ST.restRated=false;gid('r-feel').style.display='none';
-  gid('r-en').textContent=ex.name;
+  gid('r-en').textContent=exLabel(ex.name);
   gid('r-sl').textContent=restStatusLine(si,done,next,isLastSet,ssRound);
   ST.rs=done.t==='w'?Math.round(CFG.prefRest*0.67):CFG.prefRest;ST.restTotal=ST.rs;updT();
   ST.restEnd=Date.now()+ST.rs*1000;ST.restInfo={si,done,next,isLastSet,ssReturn:ssReturn!=null?ssReturn:null};
@@ -387,7 +387,7 @@ function startRest(ex,si,done,next,ssReturn){
     const tipEx=nextItem?nextItem.ex:ex;
     gid('r-fb').innerHTML=(nextItem?'<span style="font-size:11px;color:var(--txt2);display:block;margin-bottom:4px">'+t('wk_for_next')+' <strong>'+esc(nextItem.ex.name)+'</strong></span>':'')+tipFor(tipEx.name);
   }else{
-    gid('r-nx-h').textContent='Next set';
+    gid('r-nx-h').textContent=t('next_set_label');
     const dispW=isBW?bwWeightLabel(next.w):mwBase>0?(+(next.w-mwBase).toFixed(1))+CFG.unit+' plates (+'+mwBase+CFG.unit+' machine)':next.w+CFG.unit;
     const repLbl=repsLabel(ex,next.r);
     gid('r-nx').innerHTML='<span style="color:var(--txt2)">'+t('wk_next')+'</span> '+repLbl+' @ <strong>'+dispW+'</strong>'+(ex.note&&!isBW?' ('+esc(ex.note)+')':'');

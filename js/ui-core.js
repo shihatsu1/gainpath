@@ -119,6 +119,10 @@ function ss(id){
   // timer ends), so the nav highlight must track them the same way stab('wk')
   // would — every other tab is its own home panel and goes through stab().
   if(id==='wo'||id==='rest')['wk','cal','ch','pr'].forEach(x=>gid('bn-'+x).classList.toggle('on',x==='wk'));
+  // Settings (and its pages) isn't a tab: none looks selected there, and Home
+  // brings back the tab whose panel is showing.
+  if(id==='settings'||id==='feedback'||/^set[a-z]/.test(id))['wk','cal','ch','pr'].forEach(x=>gid('bn-'+x).classList.remove('on'));
+  else if(id==='home'){const cur=['cal','ch','pr'].find(x=>gid('p-'+x).style.display==='block')||'wk';['wk','cal','ch','pr'].forEach(x=>gid('bn-'+x).classList.toggle('on',x===cur));}
   // Showing home IS rendering it — the invariant lives here rather than in each
   // caller. Boot only calls refreshHome() when restoreInProgress() returns
   // false, so a user who relaunched into a restored workout or day-edit had a

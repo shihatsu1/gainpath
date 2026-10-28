@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.11.4] - 2026-10-28
+
+### Fixed
+- **Japanese and Korean users no longer hit English on key screens (F6).** A new
+  `test:i18n` crawls the rendered ja/ko UI (onboarding, every tab, every
+  Settings page, the day editor, workout, rest, plate calculator and sheets) and
+  fails on any visible text, `aria-label`, placeholder or title that is English
+  (brands, units and exercise data are allowlisted); it is part of `precheck`.
+  Fixed what it found: the onboarding split suggestion and every split name and
+  description; the Sex label and options and the logo alt text; the rest-screen
+  heading (it overwrote the translated "next set") and its exercise name, which
+  now uses the Japanese/Korean name when one exists; calendar month stats and
+  "Previous/Next month"; "Add drop set" and "Exercise instructions"; the
+  pyramid-sets description, "Save day", "Build a custom program" and "Edit
+  program"; the day editor's Swap, Delete and "n sets" lines and muscle-group
+  names; the day name on a past session; the Apple Watch page; the report
+  month picker; and the Reports & backup status, which now re-renders when the
+  language changes.
+- **Home "Last:" showed the wrong session and the wrong date format (F7).** It
+  took the last item in the history array, which isn't in date order after an
+  edit, restore or back-dated session, and printed the stored en-PH string.
+  It now picks the newest session by `dk` and shows it with `fmtDk()`; stored
+  date values are unchanged.
+- **Settings no longer leaves a tab highlighted (F17)**, and Home brings back the
+  tab you were on.
+- **Preferences no longer mention "dark mode" (F15)**: GainPath is dark-only.
+
 ## [2.11.3] - 2026-10-28
 
 ### Fixed

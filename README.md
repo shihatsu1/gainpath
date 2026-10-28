@@ -66,11 +66,11 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 
 ## Tech
 
-Plain HTML, CSS and JavaScript (`index.html` plus `js/`) with no framework, no build step and no backend. It uses [Chart.js](https://chartjs.org), [jsPDF](https://parall.ax/products/jspdf) and [EmailJS](https://emailjs.com) for feedback (self-hosted in `vendor/` and loaded only when needed), and self-hosted [Tabler Icons](https://tabler.io/icons).
+Plain HTML, CSS and JavaScript (`index.html` plus `js/`) with no framework, no build step and no server for your data. The only network call it makes on its own is anonymous usage counts to a small Cloudflare Worker (`analytics-worker/`); [Privacy](https://shihatsu1.github.io/gainpath/privacy.html) lists exactly what is sent. It uses [Chart.js](https://chartjs.org), [jsPDF](https://parall.ax/products/jspdf) and [EmailJS](https://emailjs.com) for feedback (self-hosted in `vendor/` and loaded only when needed), and self-hosted [Tabler Icons](https://tabler.io/icons).
 
 ## Contributing
 
-Found a bug or have an idea? Use Settings → Send feedback in the app, or open an issue.
+Found a bug or have an idea? Use Settings → Send feedback in the app, or [open an issue](https://github.com/shihatsu1/gainpath/issues).
 
 ## License
 

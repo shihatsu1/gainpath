@@ -27,6 +27,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   probe, JSON and log scratch from `docs/audits/2026-10-16/` (all still in git
   history). `docs/index-section-map.md` lost its pre-split line table (F15).
 
+### Fixed
+- **README pointed to a dead address.** The app, guides and privacy links used
+  `jedmangubat.github.io/gainpath`, which now returns 404; they point to
+  `shihatsu1.github.io/gainpath`. The Tech section no longer says "no backend"
+  (anonymous usage counts go to a Cloudflare Worker, as Privacy states), and
+  Contributing links the issue tracker.
+
 ## [2.14.0] - 2026-10-28
 
 ### Changed

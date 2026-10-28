@@ -4,7 +4,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../src/index.js';
 
-const ORIGIN = 'https://jedmangubat.github.io';
+const ORIGIN = 'https://shihatsu1.github.io';
+// Frozen installs on the old origin keep counting until the old username is reclaimed.
+const OLD_ORIGIN = 'https://jedmangubat.github.io';
 
 // Minimal KV. `delay` makes every operation yield, so overlapping requests
 // interleave the way they do on the real platform.
@@ -35,6 +37,31 @@ test('a valid event from the app origin is stored and counted', async () => {
   assert.equal(r.headers.get('Access-Control-Allow-Origin'), ORIGIN);
   const rec = JSON.parse(env.EVENTS.m.get('user:' + ID));
   assert.equal(rec.c.session_start, 1);
+});
+
+test('each allowed origin is accepted and echoed back; a lookalike is refused', async () => {
+  for (const origin of [ORIGIN, OLD_ORIGIN]) {
+    const env = mkEnv();
+    const r = await worker.fetch(post('/e', ev(ID), { origin }), env);
+    assert.equal(r.status, 204, origin);
+    assert.equal(r.headers.get('Access-Control-Allow-Origin'), origin);
+    const l = await worker.fetch(post('/lead', { email: 'a@b.co' }, { origin }), env);
+    assert.equal(l.status, 204, origin);
+  }
+  const env = mkEnv();
+  const bad = await worker.fetch(post('/e', ev(ID), { origin: 'https://shihatsu1.github.io.evil.example' }), env);
+  assert.equal(bad.status, 403);
+  assert.equal(bad.headers.get('Access-Control-Allow-Origin'), null);
+  assert.equal(env.EVENTS.m.size, 0);
+});
+
+test("the worker's allowlist contains the app's canonical origin (js/boot.js APP_ORIGIN)", async () => {
+  const { readFileSync } = await import('node:fs');
+  const boot = readFileSync(new URL('../../js/boot.js', import.meta.url), 'utf8');
+  const m = boot.match(/const APP_ORIGIN\s*=\s*'([^']+)'/);
+  assert.ok(m, 'js/boot.js must define APP_ORIGIN');
+  const r = await worker.fetch(post('/e', ev(ID), { origin: m[1] }), mkEnv());
+  assert.equal(r.status, 204, 'worker refuses the app origin ' + m[1]);
 });
 
 test('invalid ids and unknown events are rejected without writing', async () => {

@@ -7,7 +7,9 @@ const ALLOWED_EVENTS = new Set([
   'program_saved',
 ]);
 
-const ALLOWED_ORIGIN = 'https://jedmangubat.github.io';
+// The app's canonical origin (js/boot.js APP_ORIGIN, checked by the worker test)
+// plus the old one, so installs frozen there keep counting.
+const ALLOWED_ORIGINS = ['https://shihatsu1.github.io', 'https://jedmangubat.github.io'];
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 function corsHeaders(origin) {
@@ -15,7 +17,7 @@ function corsHeaders(origin) {
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
   };
-  if (origin === ALLOWED_ORIGIN) headers['Access-Control-Allow-Origin'] = origin;
+  if (ALLOWED_ORIGINS.includes(origin)) headers['Access-Control-Allow-Origin'] = origin;
   return headers;
 }
 
@@ -69,7 +71,7 @@ async function readJsonBody(request) {
 // cross-origin POST and page scripts can't forge it, but curl can. It keeps
 // other websites, localhost test runs and casual noise out of the counters.
 function guard(request, origin) {
-  if (origin !== ALLOWED_ORIGIN) return new Response('forbidden', { status: 403, headers: corsHeaders(origin) });
+  if (!ALLOWED_ORIGINS.includes(origin)) return new Response('forbidden', { status: 403, headers: corsHeaders(origin) });
   return null;
 }
 

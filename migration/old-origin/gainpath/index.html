@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>GainPath</title>
+<style>
+:root{--bg:#0C1512;--card:#14201B;--txt:#EAF2EC;--txt2:#9DB0A4;--lime:#C6F24E;--ink:#0C1512}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.5 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif;padding:24px 16px}
+main{max-width:480px;margin:0 auto}
+h1{font-size:26px;margin:8px 0 12px}
+p{color:var(--txt2);margin:0 0 14px}
+#count{color:var(--txt);font-weight:600}
+button{display:block;width:100%;min-height:52px;margin:10px 0;border:0;border-radius:14px;font:inherit;font-weight:700;background:var(--lime);color:var(--ink);cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+#state{margin-top:16px;padding:12px 14px;background:var(--card);border-radius:12px;display:none}
+</style>
+</head>
+<body>
+<main>
+<h1 id="title"></h1>
+<p id="body"></p>
+<p id="count"></p>
+<button id="dl" type="button"></button>
+<button id="go" type="button" disabled></button>
+<p id="note"></p>
+<div id="state" role="status"></div>
+</main>
+<script>
+// Served at the OLD origin only. It reads this origin's gp_* keys, never
+// writes or deletes any of them, hands the data to the new app through one
+// origin-checked postMessage handshake, and always offers a file copy first.
+var NEW_ORIGIN = 'https://shihatsu1.github.io';
+var NEW_URL = NEW_ORIGIN + '/gainpath/?migrate=1';
+var TX = {
+  en: {
+    title: 'GainPath has moved',
+    body: 'GainPath now lives at a new web address. Your workouts are stored only in this browser, so they need to be carried over. It takes two taps and nothing is deleted from here.',
+    count: '{n} workouts found on this device.',
+    none: 'No workout data was found on this device.',
+    dl: '1. Download a backup file',
+    go: '2. Open the new GainPath and send my data',
+    note: 'The new app asks before it adds anything. Keep the backup file safe: you can also restore it there under Settings → Reports & backup, or from the first screen (“Already used GainPath before?”).',
+    done: 'Done. Your data is in the new GainPath. You can remove the old Home Screen icon and add the new one.',
+    broken: 'Some saved data on this device could not be read, so it will not be sent automatically. The download holds the raw text.',
+    sent: 'Sent. Confirm in the new window.'
+  },
+  ja: {
+    title: 'GainPath は引っ越しました',
+    body: 'GainPath は新しいアドレスに移りました。トレーニング記録はこのブラウザ内にだけ保存されているため、移行が必要です。2回タップするだけで、ここからは何も削除されません。',
+    count: 'この端末で{n}件のワークアウトが見つかりました。',
+    none: 'この端末にワークアウトのデータは見つかりませんでした。',
+    dl: '1. バックアップファイルをダウンロード',
+    go: '2. 新しい GainPath を開いてデータを送る',
+    note: '新しいアプリは、データを追加する前に確認します。バックアップファイルは大切に保管してください。新しいアプリの「設定 → レポートとバックアップ」や、最初の画面の「以前に GainPath を使っていましたか?」からも復元できます。',
+    done: '完了しました。データは新しい GainPath に移りました。ホーム画面の古いアイコンは削除して、新しいものを追加してください。',
+    broken: 'この端末の保存データの一部が読み取れなかったため、自動では送信しません。ダウンロードされるファイルには生のテキストが入っています。',
+    sent: '送信しました。新しいウィンドウで確認してください。'
+  },
+  ko: {
+    title: 'GainPath가 이사했어요',
+    body: 'GainPath가 새 주소로 옮겨졌어요. 운동 기록은 이 브라우저에만 저장되어 있어서 옮겨야 해요. 두 번만 누르면 되고, 여기서는 아무것도 삭제되지 않아요.',
+    count: '이 기기에서 운동 기록 {n}건을 찾았어요.',
+    none: '이 기기에서 운동 기록을 찾지 못했어요.',
+    dl: '1. 백업 파일 다운로드',
+    go: '2. 새 GainPath를 열고 데이터 보내기',
+    note: '새 앱은 데이터를 추가하기 전에 먼저 물어봐요. 백업 파일은 잘 보관하세요. 새 앱의 설정 → 리포트와 백업, 또는 첫 화면의 “이미 GainPath를 사용한 적이 있나요?”에서도 복원할 수 있어요.',
+    done: '완료! 데이터가 새 GainPath로 옮겨졌어요. 홈 화면의 이전 아이콘은 지우고 새로 추가하세요.',
+    broken: '이 기기에 저장된 데이터 일부를 읽을 수 없어서 자동으로 보내지 않아요. 다운로드되는 파일에 원본 텍스트가 들어 있어요.',
+    sent: '보냈어요. 새 창에서 확인해 주세요.'
+  }
+};
+function $(id){return document.getElementById(id);}
+function ls(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+var cfgRaw = ls('gp_cfg'), lang = 'en';
+try { var c0 = JSON.parse(cfgRaw || 'null'); if (c0 && TX[c0.lang]) lang = c0.lang; } catch (e) {}
+if (lang === 'en' && !cfgRaw) { var nl = (navigator.language || '').slice(0, 2); if (TX[nl]) lang = nl; }
+var T = TX[lang];
+document.documentElement.lang = lang;
+
+// Same shape as backupPayload() in js/data-safety.js (version '2.0').
+var MAP = [['gp_cfg', 'cfg', null], ['gp_h', 'history', []], ['gp_p', 'prs', {}], ['gp_mw', 'mw', {}], ['gp_bw', 'bw', []]];
+var payload = { cfg: null, history: [], prs: {}, mw: {}, bw: [], exported: new Date().toISOString(), version: '2.0' };
+var broken = false, raw = {};
+MAP.forEach(function (m) {
+  var s = ls(m[0]);
+  if (s === null) { if (m[2] !== null) payload[m[1]] = m[2]; return; }
+  raw[m[0]] = s;
+  try { payload[m[1]] = JSON.parse(s); } catch (e) { broken = true; }
+});
+var n = Array.isArray(payload.history) ? payload.history.length : 0;
+var hasData = !!cfgRaw || n > 0;
+
+$('title').textContent = T.title;
+$('body').textContent = T.body;
+$('count').textContent = hasData ? T.count.replace('{n}', n) : T.none;
+$('dl').textContent = T.dl;
+$('go').textContent = T.go;
+$('note').textContent = T.note;
+function say(m) { var s = $('state'); s.textContent = m; s.style.display = 'block'; }
+if (broken) say(T.broken);
+if (!hasData) $('dl').disabled = true;
+
+$('dl').onclick = function () {
+  var blob = new Blob([JSON.stringify(broken ? { raw: raw, exported: payload.exported } : payload)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gainpath-backup-' + payload.exported.slice(0, 10) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 10000);
+  $('go').disabled = broken;
+};
+// With nothing to send, the second step is just a link to the new app.
+if (!hasData) { $('go').disabled = false; $('go').onclick = function () { location.href = NEW_ORIGIN + '/gainpath/'; }; }
+
+var win = null, sent = false;
+if (hasData) $('go').onclick = function () { sent = false; win = window.open(NEW_URL, 'gp-new'); };
+// One handshake: the new app announces itself with a nonce; the data goes back
+// to that exact window, addressed to the new origin only, and only once.
+window.addEventListener('message', function (e) {
+  if (e.origin !== NEW_ORIGIN || !win || e.source !== win) return;
+  var m = e.data;
+  if (!m || typeof m !== 'object') return;
+  if (m.gpMigrate === 'ready' && !sent && typeof m.nonce === 'string' && m.nonce.length >= 16 && !broken) {
+    sent = true;
+    win.postMessage({ gpMigrate: 'data', nonce: m.nonce, payload: payload }, NEW_ORIGIN);
+    say(T.sent);
+  } else if (m.gpMigrate === 'done') {
+    say(T.done);
+  }
+});
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+</script>
+</body>
+</html>

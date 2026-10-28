@@ -77,12 +77,15 @@ email signups. Compare against the bar in `../TRIAL_GOALS.md`.
 | POST | `/lead` | `{ "email": "<email>" }` | Optional launch-notification signup |
 | GET | `/stats` with `Authorization: Bearer <STATS_SECRET>` | — | Aggregate dashboard JSON |
 
-`/e` and `/lead` refuse (403) any request whose `Origin` isn't
-`https://jedmangubat.github.io` (GainPath's GitHub Pages origin), and CORS is
-locked to it. That keeps other websites and local test runs out of the
+`/e` and `/lead` refuse (403) any request whose `Origin` isn't in
+`ALLOWED_ORIGINS`: `https://shihatsu1.github.io` (GainPath's GitHub Pages
+origin, the same value as `APP_ORIGIN` in `js/boot.js`) and the old
+`https://jedmangubat.github.io`, kept so installs frozen there keep counting.
+CORS is locked to those two. The worker test fails if the app origin isn't in
+the list. That keeps other websites and local test runs out of the
 counters, but it is **not authentication**: a script can send any Origin header.
 Bodies over 2,000 bytes are refused (413) without being read whole. If GainPath
-ever moves to a custom domain, update `ALLOWED_ORIGIN` in `src/index.js` and
+ever moves to a custom domain, update `ALLOWED_ORIGINS` in `src/index.js` and
 redeploy.
 
 ### Accuracy and abuse limits

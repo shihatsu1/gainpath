@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.11.1] - 2026-10-28
+
+### Fixed
+- **The app's address is one constant (F1, F2).** The app moved to
+  `https://shihatsu1.github.io/gainpath`, but the canonical link, `og:url`,
+  `og:image`, JSON-LD, `sitemap.xml`, all eight guides, the README, the share
+  card text and the marketing posts still named the old host. They now use
+  `APP_ORIGIN` (`js/boot.js`) / the new address, and `visual-check` fails if
+  any served file mentions the old host again.
+- **Analytics and "Notify me" work again (F2).** The analytics worker only
+  accepted the old origin, so every event and sign-up from the new address got
+  a 403. It now accepts an allowlist: the new origin plus the old one (installs
+  frozen there keep counting). `test:worker` covers each allowed origin, a
+  refused lookalike, and fails if the app's own origin isn't on the list.
+  **The worker must be redeployed for this to take effect** (command in the
+  release notes, not run).
+
+### Added
+- **Receiving side of the old-origin transfer (F1).** Opened as
+  `…/gainpath/?migrate=1` by the migration page, the app announces itself with
+  a random nonce and accepts data once, only from a window on the old origin.
+  The data goes through `validateBackup()` and the normal confirm →
+  `applyBackup()` path (a copy is kept for "Undo last restore"). Nothing is
+  imported unless that page is published; the kit lives in
+  `migration/old-origin/` and is not part of the app. `test:data` runs a full
+  transfer between the two origins in Chromium and WebKit, plus a hostile
+  origin that must be ignored.
+
 ## [2.11.0] - 2026-10-16
 
 ### Changed

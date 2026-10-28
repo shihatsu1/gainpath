@@ -21,6 +21,12 @@ their own phone. Protect existing data first.
   bumps every `?v=` with `APP_VERSION`, so a phone never pairs a new
   `index.html` with a stale script. `visual-check` enforces both and boots the
   app offline from the precache.
+- **One canonical origin:** `APP_ORIGIN` in `js/boot.js` (`https://shihatsu1.github.io`).
+  Canonical links, sitemap, guides and the analytics worker's `ALLOWED_ORIGINS`
+  must agree with it; `visual-check` and `test:worker` fail otherwise. The old
+  `jedmangubat.github.io` appears only in the worker allowlist and the migration
+  receiver (`js/data-safety.js`); `migration/old-origin/` is the kit to publish
+  there, never part of the app.
 - **Nothing external is needed to start, and no library blocks parsing.**
   Chart.js, jsPDF and EmailJS live in `vendor/` (versioned file names, hashes in
   `vendor/README.md`) and load on demand through `loadLib(name)`; call sites

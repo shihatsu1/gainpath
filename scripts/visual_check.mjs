@@ -8,7 +8,7 @@
 
 import { chromium, webkit } from './lib/browsers.mjs';
 import { createServer } from 'http';
-import { readFile, readdir } from 'fs/promises';
+import { readFile, readdir, stat } from 'fs/promises';
 import { appSources } from './app_sources.mjs';
 import { mkdir } from 'fs/promises';
 import path from 'path';
@@ -292,6 +292,29 @@ async function main() {
     await ctx.close();
   }
 
+  // The app moved from jedmangubat.github.io to APP_ORIGIN. Nothing served (or
+  // linked from the README / marketing) may still point at the old host; the one
+  // legitimate mention is the migration receiver, which must recognise it.
+  {
+    const OLD_HOST = 'jedmangubat.github.io';
+    const ALLOW = new Set(['js/data-safety.js']);
+    const TEXT = new Set(['.html', '.js', '.json', '.xml', '.css', '.txt', '.md', '.svg', '.webmanifest']);
+    const walk = async (rel) => {
+      const abs = path.join(ROOT, rel);
+      const st = await stat(abs);
+      if (!st.isDirectory()) return [rel];
+      const out = [];
+      for (const n of await readdir(abs)) out.push(...(await walk(path.posix.join(rel, n))));
+      return out;
+    };
+    const served = [];
+    for (const r of ['index.html', 'js', 'sw.js', 'manifest.json', 'privacy.html', 'guides', 'sitemap.xml', 'images', 'fonts', 'vendor', 'README.md', 'marketing']) served.push(...(await walk(r)));
+    for (const f of served) {
+      if (!TEXT.has(path.extname(f)) || ALLOW.has(f)) continue;
+      if ((await readFile(path.join(ROOT, f), 'utf8')).includes(OLD_HOST)) issues.push(`${f} still points at the old host ${OLD_HOST}`);
+    }
+  }
+
   // Guide pages (guides/*.html) are what search engines and link previews see,
   // so each must load cleanly on an iPhone-width WebKit, fit without sideways
   // scrolling, carry its search/share tags, link back to the app, and have no
@@ -306,7 +329,7 @@ async function main() {
   for (const f of guideFiles) {
     const rel = 'guides/' + f;
     if (f !== 'index.html' && !hub.includes(`href="${f}"`)) issues.push(`guides/index.html does not link ${f}`);
-    const url = 'https://jedmangubat.github.io/gainpath/guides/' + (f === 'index.html' ? '' : f);
+    const url = 'https://shihatsu1.github.io/gainpath/guides/' + (f === 'index.html' ? '' : f);
     if (!sitemap.includes(`<loc>${url}</loc>`)) issues.push(`sitemap.xml is missing ${url}`);
     const p = await gctx.newPage();
     const errs = [];
@@ -327,7 +350,7 @@ async function main() {
     errs.forEach((e) => issues.push(`${rel}: ${e}`));
     if (g.overflow > 0) issues.push(`${rel} scrolls sideways by ${g.overflow}px at 390px`);
     if (!g.title || g.desc.length < 70 || g.desc.length > 200) issues.push(`${rel}: title or description missing/out of range (${g.desc.length} chars)`);
-    if (!g.canon.startsWith('https://jedmangubat.github.io/gainpath/')) issues.push(`${rel}: bad canonical ${g.canon}`);
+    if (!g.canon.startsWith('https://shihatsu1.github.io/gainpath/')) issues.push(`${rel}: bad canonical ${g.canon}`);
     if (g.og.length) issues.push(`${rel}: missing ${g.og.join(', ')}`);
     if (!g.toApp) issues.push(`${rel}: no link to the app`);
     if (g.h1 !== 1) issues.push(`${rel}: expected one h1, got ${g.h1}`);

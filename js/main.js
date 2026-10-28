@@ -11,5 +11,6 @@ if(CFG.setup){
   }
 }else{ss('ob');}
 if(Object.keys(LOAD_BAD).length){saveFailed('lock');showLoadRecovery();}
+startMigrationReceiver();
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}

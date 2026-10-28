@@ -493,7 +493,7 @@ async function shareSessionCard(){
       ctx.fillText(name,48,py);
     });
   }
-  ctx.fillStyle='#5C6F65';ctx.font='500 15px '+SANS;ctx.fillText('gainpath \u2014 jedmangubat.github.io/gainpath',48,H-32);
+  ctx.fillStyle='#5C6F65';ctx.font='500 15px '+SANS;ctx.fillText('gainpath \u2014 shihatsu1.github.io/gainpath',48,H-32);
   canvas.toBlob(async blob=>{
     if(!blob)return;
     const file=new File([blob],'gainpath-session.png',{type:'image/png'});

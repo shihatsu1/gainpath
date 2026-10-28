@@ -574,9 +574,10 @@ async function main() {
       ['reps-6', 'ob-ht', 'ob-bf', 'ob-lname', 'ob-plate-inv', 'ob-summary'].filter(id => gid(id)), []);
     OB.exp = 'intermediate'; setFreq(3);
     const s3 = OB.split;
-    OB.exp = 'beginner'; setFreq(3);
-    check('split suggestion follows days/week, and beginners get the bro split',
+    OB.exp = 'beginner'; setFreq(5);
+    check('split suggestion follows days/week, and beginners on 5 days get the bro split (2-3 days: see F5)',
       [s3, OB.split], [SPLIT_FREQ[3], 'bro']);
+    setFreq(3);
     OB.split = 'fb'; gid('ob-bw').value = '70'; OB.exp = 'advanced';
     ['ob-1', 'ob-3'].forEach(id => gid(id).classList.remove('active')); gid('ob-2').classList.add('active');
     obNext(2);
@@ -909,6 +910,43 @@ async function main() {
       Object.values(EXPOOL).filter(e => /^Barbell /.test(e.name) && e.webp && !NO_TIPS_YET.has(e.name) && !(EX_TIPS[e.name] && EX_TIPS_JA[e.name] && EX_TIPS_KO[e.name] && EX_INSTRUCTIONS[e.name] && EX_INSTRUCTIONS_JA[e.name] && EX_INSTRUCTIONS_KO[e.name] && EX_NAMES_JA[e.name] && EX_NAMES_KO[e.name])).map(e => e.name), []);
     check('new dumbbell exercises: every one with a webp image has tips and instructions in en/ja/ko',
       Object.values(EXPOOL).filter(e => /^Dumbbell /.test(e.name) && e.webp && !NO_TIPS_YET.has(e.name) && !(EX_TIPS[e.name] && EX_TIPS_JA[e.name] && EX_TIPS_KO[e.name] && EX_INSTRUCTIONS[e.name] && EX_INSTRUCTIONS_JA[e.name] && EX_INSTRUCTIONS_KO[e.name] && EX_NAMES_JA[e.name] && EX_NAMES_KO[e.name])).map(e => e.name), []);
+    // F20: the weekly target can be changed without rewriting past weeks, streaks or badges.
+    {
+      const keep = [CFG.freq, CFG.freqLog, ST.history, ST.badges, CFG.restDays];
+      const mkS = (dk, i) => ({ day: 'push', dayName: 'Push', date: dk, dk, mk: dk.slice(0, 7), dur: '40m', sets: 3, feel: 'good', exercises: [{ name: 'Barbell bench press', sets: [{ done: true, t: 'x', w: 60, r: 8 }] }], cid: i });
+      // four past weeks (Mondays 2026-09-07 .. 2026-09-28), three sessions each = a full week at a target of 3
+      const wks = ['2026-09-07', '2026-09-14', '2026-09-21', '2026-09-28'];
+      ST.history = wks.flatMap((w, i) => [0, 2, 4].map((d, j) => mkS(dkey(new Date(new Date(w + 'T00:00:00').getTime() + d * 864e5)), i * 3 + j)));
+      CFG.restDays = []; CFG.freq = 3; CFG.freqLog = undefined;
+      recomputeBadges();
+      const before = { perfect: !!ST.badges.perfect_week, t: wks.map(weekTarget) };
+      setSettingFreq(5);
+      const thisWk = weekStartDk(dkey(new Date()));
+      check('F20: a new target applies from this week; past weeks keep theirs', [wks.map(weekTarget), weekTarget(thisWk), CFG.freq], [[3, 3, 3, 3], 5, 5]);
+      recomputeBadges();
+      check('F20: raising the target does not take away a perfect-week badge already earned', [before.perfect, !!ST.badges.perfect_week], [true, true]);
+      check('F20: the change is logged once for this week, with the old target kept as the earlier entry', [CFG.freqLog.length, CFG.freqLog[0].freq, CFG.freqLog[1].dk === thisWk && CFG.freqLog[1].freq === 5], [2, 3, true]);
+      setSettingFreq(4); setSettingFreq(6);
+      check('F20: changing again the same week replaces that week\'s entry', [CFG.freqLog.length, weekTarget(thisWk), wks.map(weekTarget)], [2, 6, [3, 3, 3, 3]]);
+      check('F20: the saved config carries freq and freqLog', [JSON.parse(localStorage.getItem('gp_cfg')).freq, JSON.parse(localStorage.getItem('gp_cfg')).freqLog.length], [6, 2]);
+      let rej = [];
+      [{ freqLog: 'x' }, { freqLog: [1] }, { freqLog: [{ dk: 5, freq: 3 }] }, { freqLog: [{ dk: '2026-01-05', freq: 'a' }] }].forEach((c) => { try { validateBackup({ cfg: c, history: [] }); rej.push(false); } catch (e) { rej.push(true); } });
+      let okLog = true; try { validateBackup({ cfg: { freqLog: [{ dk: '1970-01-01', freq: 3 }, { dk: '2026-10-05', freq: 5 }] }, history: [] }); } catch (e) { okLog = false; }
+      check('F20: validateBackup accepts a good freqLog and rejects malformed ones', [rej, okLog], [[true, true, true, true], true]);
+      [CFG.freq, CFG.freqLog, ST.history, ST.badges, CFG.restDays] = keep;
+    }
+    // F5: a beginner's suggested split follows the days they pick (2-3 Full Body, 4 Upper/Lower, 5+ unchanged).
+    {
+      const keep = [OB.exp, OB.freq, OB.split];
+      const pick = (exp) => { OB.exp = exp; return [2, 3, 4, 5, 6, 7].map((v) => { setFreq(v); return OB.split; }); };
+      check('F5: a beginner gets Full Body on 2-3 days, Upper/Lower on 4, the Bro split on 5+', pick('beginner'), ['fb', 'fb', 'ul', 'bro', 'bro', 'bro']);
+      check('F5: other experience levels keep the days-per-week suggestion', pick('intermediate').slice(0, 5), ['ul', 'fb', 'ul', 'pplul', 'bro']);
+      OB.exp = 'beginner'; setFreq(3);
+      check('F5: the beginner suggestion text names the split and the twice-a-week reason', /Full Body/.test(gid('ob-split-suggest').textContent) && /twice a week/.test(gid('ob-split-suggest').textContent), true);
+      const ppl = SPLITS.find((x) => x.id === 'ppl');
+      check('F5: a Push / Pull / Legs split exists, with every day resolving to exercises', !!ppl && JSON.stringify(ppl.days) === '["push","pull","legs"]' && ppl.days.every((d) => getEffectiveDayExercises(d).length > 0), true);
+      [OB.exp, OB.freq, OB.split] = keep;
+    }
     // F15: the app is dark-only, so Settings must not advertise a dark mode in any language.
     check('F15: menu_prefs_sub never mentions dark mode', ['en', 'ja', 'ko'].map(l => /dark mode|ダークモード|다크 모드/i.test(STRINGS[l].menu_prefs_sub)), [false, false, false]);
     // F7: Home's "Last:" is the newest session by dk, shown with fmtDk(), not the last array entry.
@@ -1070,6 +1108,10 @@ async function main() {
     const known = (id, name, actual, expected) => {
       out.push({ name: `[${id}] ${name}`, pass: JSON.stringify(actual) === JSON.stringify(expected), actual, expected, known: id });
     };
+    // F16 (open, needs approval): Epley overstates a single and is unreliable at high reps. Proposal only:
+    // r===1 -> w, and mark or ignore r>12 in charts and PRs (see docs/audits/2026-10-27/F16-e1rm-proposal.md).
+    known('B1', 'e1rm of a single is the weight lifted, not weight x 1.033', e1rm(100, 1), 100);
+    known('B2', 'a set above 12 reps is not turned into a 1RM estimate', e1rm(60, 20), 0);
     const M = {
       dbPress: EXPOOL['Dumbbell bench press'], bench: EXPOOL['Barbell bench press'], row: EXPOOL['Barbell bent over row'],
       plank: EXPOOL['Forearm plank'], pushups: EXPOOL['Push-up'], pullups: EXPOOL['Pull-ups'], farmers: EXPOOL['Dumbbell farmer walk'], latpd: EXPOOL['Machine pulldown']

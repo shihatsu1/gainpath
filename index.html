@@ -113,6 +113,12 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .pr-grp-n{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--accent-ink);background:var(--accent);border-radius:999px;padding:2px 9px;flex-shrink:0}
 .pr-grp-body{padding-left:10px;border-left:2px solid var(--bdr);margin:0 0 14px 6px}
 .ex-img{display:block;width:100%;height:auto;border-radius:10px;margin-bottom:12px;background:var(--bg2)}
+.ex-imgbox{position:relative;margin-bottom:12px}
+.ex-imgbox .ex-img{margin-bottom:0}
+.ex-imgbox.collapsed .ex-img{height:56px;object-fit:cover;object-position:50% 38%}
+.ex-img-toggle{position:absolute;right:6px;bottom:6px;min-height:40px;padding:0 12px;border:0;border-radius:20px;background:rgba(12,21,18,.78);color:var(--txt);font:600 12px inherit;cursor:pointer}
+.ex-imgbox.collapsed .ex-img-toggle{inset:0;width:100%;border-radius:10px;background:transparent;display:flex;align-items:flex-end;justify-content:flex-end;padding:0 10px 6px}
+.ex-imgbox.collapsed .ex-img-hint{background:rgba(12,21,18,.78);border-radius:14px;padding:5px 10px}
 .cal-wrap{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--radius);padding:12px 16px;box-shadow:var(--shadow-sm)}
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .cal-tit{font-size:15px;font-weight:700;color:var(--txt)}
@@ -151,7 +157,7 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .sn.on{background:var(--accent);color:var(--accent-ink)}
 .sn.d{background:var(--tint-green-1);color:var(--accent)}
 .sn.w{background:var(--bg3);color:var(--txt3)}
-.sst{width:28px;height:28px;flex-shrink:0;border-radius:9px;background:var(--bg3);border:1px solid var(--bdr);color:var(--accent);font-family:var(--font-display);font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.sst{width:40px;height:40px;flex-shrink:0;border-radius:10px;background:var(--bg3);border:1px solid var(--bdr);color:var(--accent);font-family:var(--font-display);font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 .sst:active{transform:scale(.92)}.sst.plate{font-size:13px}
 .sdel{width:28px;height:28px;flex-shrink:0;border-radius:9px;background:transparent;border:1px solid var(--bdr);color:var(--txt3);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 .sdel:active{transform:scale(.92)}.sdel.hide{visibility:hidden;pointer-events:none}
@@ -162,19 +168,21 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .sr-u{font-size:11px;color:var(--txt2);margin:0 2px 0 1px}
 .sr-x{font-size:13px;color:var(--txt2);margin:0 1px 0 5px}
 .bw-mode{min-width:38px;padding:6px 4px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-weight:700;background:var(--bg3);color:var(--accent);cursor:pointer;text-align:center;flex-shrink:0}
-.log{flex-shrink:0;background:var(--accent);color:var(--accent-ink);border:none;border-radius:11px;padding:8px 12px;font-family:var(--font-display);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;white-space:nowrap}
+.log{flex-shrink:0;min-width:44px;min-height:40px;background:var(--accent);color:var(--accent-ink);border:none;border-radius:11px;padding:0 10px;font-family:var(--font-display);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;white-space:nowrap}
 /* .wi is the row's flexible element, so it absorbs the slack and leaves .log
    flush right. Bodyweight rows in "BW" mode render no weight input at all,
    so there they need the old auto margin to stay right-aligned. */
 .sr:not(:has(.wi)) .log{margin-left:auto}
-.log:active{transform:scale(.95)}.log.done{background:var(--tint-green-1);color:var(--accent);padding:8px 12px}
+.log:active{transform:scale(.95)}.log.done{background:var(--tint-green-1);color:var(--accent);padding:0 10px}
+.sst.more{font-size:18px}.sst.more.hide{visibility:hidden;pointer-events:none}
+.sr-more{gap:8px;margin:-2px 0 8px;padding:0 4px}.sr-more .sr-act{flex:1;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 10px;font-size:13px}
 /* Narrow phones: the plate-loaded set row carries ten controls, which overflow
    below ~400px. Tighten every element so the row stays on one line. */
-@media(max-width:400px){.sr{gap:3px;padding:8px 4px}.sn{width:21px;height:21px;font-size:11px}.sst{width:26px;height:26px;font-size:15px}.sst.plate{font-size:12px}.sdel{width:26px;height:26px}.wi{flex-basis:40px;min-width:40px;font-size:14px}.ri{width:31px;font-size:14px}.sr-u{display:none}.sr-x{margin:0 0 0 2px}.log{padding:8px 7px}.log.done{padding:8px 7px}}
+@media(max-width:400px){.sr{gap:2px;padding:6px 3px}.sn{width:18px;height:18px;font-size:10px}.sst{font-size:17px}.wi{flex-basis:40px;min-width:40px;font-size:14px}.ri{width:31px;font-size:14px}.sr-u{display:none}.sr-x{margin:0 0 0 1px}.log{min-width:40px;padding:0 4px}.log.done{padding:0 4px}.sr-x{margin:0}}
 /* Sub-340px (iPhone SE 1st gen and similar): even compacted the controls
    don't fit, so the plate calculator goes too — a clipped, unreachable
    button is worse than an absent one. */
-@media(max-width:340px){.sst.plate{display:none}.sn{width:20px;height:20px}.sst{width:25px;height:25px}.wi{font-size:13px}.log{padding:8px 6px}.log.done{padding:8px 6px}}
+@media(max-width:340px){.sn{width:18px;height:18px}.wi{font-size:13px;flex-basis:34px;min-width:34px}.log{padding:0 5px;min-width:40px}.log.done{padding:0 5px}}
 .db{padding:8px 12px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);font-size:13px;cursor:pointer;color:var(--txt);white-space:nowrap;transition:transform .12s,box-shadow .15s}
 .db:active{transform:scale(.95)}
 .db.ok{background:var(--tint-green-2);color:var(--brand-green);border-color:transparent;box-shadow:var(--shadow-sm)}
@@ -225,6 +233,11 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .streak-hero-r{display:flex;flex-direction:column;align-items:flex-end;gap:7px;text-align:right;white-space:nowrap}
 .streak-hero-cta{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--accent-ink)}
 .streak-hero-week{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--accent-ink);opacity:.82}
+.streak-hero.compact{background:var(--bg);color:var(--txt);border:1px solid var(--bdr);border-radius:12px;padding:8px 14px;margin-bottom:12px}
+.streak-hero.compact .streak-hero-l{display:none}
+.streak-hero.compact .streak-hero-r{flex-direction:row;align-items:center;gap:12px;width:100%;justify-content:space-between}
+.streak-hero.compact .streak-hero-cta,.streak-hero.compact .streak-hero-week{color:var(--txt2);opacity:1}
+.streak-hero.compact .streak-hero-cta i{color:var(--accent)}
 /* ═══ BADGES ═══ One drawing per badge, two states. Earned fills the hexagon
    with the accent and knocks the glyph out in --accent-ink; .lock empties the
    fill and drops everything to grey. Never a second set of artwork. */
@@ -445,7 +458,8 @@ textarea{resize:vertical;min-height:100px}
   <div id="p-wk">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" id="h-sg"></div>
     <a href="#" id="h-tour" style="display:none;font-size:13px;font-weight:600;color:var(--brand-green);text-decoration:none;margin:-4px 0 14px" onclick="showTutorial(true);return false;" data-i18n="home_tour_link">New here? See how it works →</a>
-    <button class="bp" id="h-repeat-btn" style="width:100%;justify-content:center;margin-bottom:14px;display:none" onclick="repeatLastWorkout()"></button>
+    <button class="bp" id="h-start-btn" style="width:100%;justify-content:center;margin-bottom:10px" onclick="startSuggested()"></button>
+    <button class="bs" id="h-repeat-btn" style="width:100%;justify-content:center;gap:8px;margin-bottom:14px;display:none" onclick="repeatLastWorkout()"></button>
     <div id="dbtn-list"></div>
   </div>
   <div id="p-cal" style="display:none">
@@ -704,6 +718,16 @@ textarea{resize:vertical;min-height:100px}
     <label data-i18n="ob7_style_label">Set style</label>
     <div class="g2" style="margin-bottom:6px"><button class="opt-btn" id="sstyle-straight" onclick="setSettingSetStyle('straight')" data-i18n="setstyle_straight">Straight sets</button><button class="opt-btn" id="sstyle-pyramid" onclick="setSettingSetStyle('pyramid')" data-i18n="setstyle_pyramid">Pyramid sets</button></div>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" id="sstyle-desc"></div>
+    <label data-i18n="st_freq_label">Workouts per week</label>
+    <div class="g3" style="margin-bottom:6px">
+      <button class="opt-btn" id="sfreq-2" onclick="setSettingFreq(2)">2 <span data-i18n="unit_days">days</span></button>
+      <button class="opt-btn" id="sfreq-3" onclick="setSettingFreq(3)">3 <span data-i18n="unit_days">days</span></button>
+      <button class="opt-btn" id="sfreq-4" onclick="setSettingFreq(4)">4 <span data-i18n="unit_days">days</span></button>
+      <button class="opt-btn" id="sfreq-5" onclick="setSettingFreq(5)">5 <span data-i18n="unit_days">days</span></button>
+      <button class="opt-btn" id="sfreq-6" onclick="setSettingFreq(6)">6 <span data-i18n="unit_days">days</span></button>
+      <button class="opt-btn" id="sfreq-7" onclick="setSettingFreq(7)">7 <span data-i18n="unit_days">days</span></button>
+    </div>
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" data-i18n="st_freq_hint">Past weeks keep the target they had; a new target applies from this week.</div>
     <label data-i18n="split_type_label">Split type</label>
     <div id="set-split-opts" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px"></div>
     <button class="bg" id="set-prog-btn" style="width:100%;justify-content:center;margin-bottom:12px" onclick="openProgramBuilder()"></button>
@@ -1337,22 +1361,22 @@ textarea{resize:vertical;min-height:100px}
 </div>
 
 </div>
-<script src="js/boot.js?v=2.11.4"></script>
-<script src="js/exercises.js?v=2.11.4"></script>
-<script src="js/exercise-text.js?v=2.11.4"></script>
-<script src="js/state.js?v=2.11.4"></script>
-<script src="js/i18n.js?v=2.11.4"></script>
-<script src="js/storage.js?v=2.11.4"></script>
-<script src="js/ui-core.js?v=2.11.4"></script>
-<script src="js/onboarding.js?v=2.11.4"></script>
-<script src="js/math.js?v=2.11.4"></script>
-<script src="js/history.js?v=2.11.4"></script>
-<script src="js/settings.js?v=2.11.4"></script>
-<script src="js/day-edit.js?v=2.11.4"></script>
-<script src="js/workout.js?v=2.11.4"></script>
-<script src="js/climb.js?v=2.11.4"></script>
-<script src="js/photos.js?v=2.11.4"></script>
-<script src="js/data-safety.js?v=2.11.4"></script>
-<script src="js/main.js?v=2.11.4"></script>
+<script src="js/boot.js?v=2.12.0"></script>
+<script src="js/exercises.js?v=2.12.0"></script>
+<script src="js/exercise-text.js?v=2.12.0"></script>
+<script src="js/state.js?v=2.12.0"></script>
+<script src="js/i18n.js?v=2.12.0"></script>
+<script src="js/storage.js?v=2.12.0"></script>
+<script src="js/ui-core.js?v=2.12.0"></script>
+<script src="js/onboarding.js?v=2.12.0"></script>
+<script src="js/math.js?v=2.12.0"></script>
+<script src="js/history.js?v=2.12.0"></script>
+<script src="js/settings.js?v=2.12.0"></script>
+<script src="js/day-edit.js?v=2.12.0"></script>
+<script src="js/workout.js?v=2.12.0"></script>
+<script src="js/climb.js?v=2.12.0"></script>
+<script src="js/photos.js?v=2.12.0"></script>
+<script src="js/data-safety.js?v=2.12.0"></script>
+<script src="js/main.js?v=2.12.0"></script>
 </body>
 </html>

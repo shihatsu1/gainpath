@@ -57,7 +57,7 @@ function bigUser(seedW) {
     ] });
   }
   const cfg = { name: 'Big Lbs', firstName: 'Big', lastName: 'Lbs', sex: 'male', setup: true, unit: 'lbs', bw: 187.4, exp: 'advanced', goal: 'strength',
-    split: 'pplul', freq: 5, warmup: true, wuReps: 10, prefReps: 8, prefRest: 120, prefSets: 3, startingWeights: 'ai', keyLifts: { chest: { w: 225, r: 5 } },
+    split: 'pplul', freq: 5, freqLog: [{ dk: '1970-01-01', freq: 3 }, { dk: '2026-10-05', freq: 5 }], warmup: true, wuReps: 10, prefReps: 8, prefRest: 120, prefSets: 3, startingWeights: 'ai', keyLifts: { chest: { w: 225, r: 5 } },
     customExercises: [{ name: 'My cable thing', mg: 'chest', baseW: 40, custom: true, equip: 'cable' }], gymDumbbells: [5, 10, 25, 50, 75, 100], gymPlates: { 45: 1, 25: 1, 10: 1, 5: 1, 2.5: 1 },
     dayPlan: { push: { 'Barbell bench press': { w: 235, r: 5 } } }, unitMemo: { from: 'kg', to: 'lbs', w: { '220.5': 100 }, db: {}, pl: {} }, lang: 'en', lastSeenVersion: '9.9.9', tutorialSeen: true, badgesIntroSeen: true };
   const bw = [{ dk: '2025-01-01', date: 'Jan 1, 2025', w: 190.2, waist: 34, arms: null }, { dk: '2026-06-01', date: 'Jun 1, 2026', w: 187.4, waist: null, arms: 15.5 }];
@@ -497,6 +497,7 @@ async function auditTests(engine, tag, check, errors) {
   const rejects = (mut) => p5.evaluate(({ valid, mut }) => { const d = JSON.parse(JSON.stringify(valid)); new Function('d', mut)(d); try { validateBackup(sanitizeImport(d)); return false; } catch (e) { return true; } }, { valid, mut });
   check(`${tag} A05: customProgram.days=null is rejected`, await rejects('d.cfg.customProgram={days:null}'));
   check(`${tag} A05: history[0].exercises as a string is rejected`, await rejects('d.history=[{exercises:"invalid"}]'));
+  check(`${tag} F20: a malformed freqLog is rejected`, await rejects('d.cfg.freqLog=[{dk:5,freq:3}]'));
   check(`${tag} A05: customExercises that are not objects are rejected`, await rejects('d.cfg.customExercises=[1,2]'));
   check(`${tag} A05: customDays as an array is rejected`, await rejects('d.cfg.customDays=[]'));
   const rolled = await p5.evaluate(() => {

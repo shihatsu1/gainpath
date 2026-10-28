@@ -6,6 +6,52 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.12.0] - 2026-10-28
+
+### Added
+- **Change the weekly target (F20).** Settings → Preferences → "Workouts per
+  week" (2–7). The target is only ever set in onboarding before, while the
+  streak and "perfect week" logic applied the *current* target to every past
+  week, so a naive control would have rewritten history. The old target is now
+  kept as the earliest entry of `CFG.freqLog` and the new one starts with the
+  current week (changing again the same week replaces that entry);
+  `weekTarget()` uses the entry in effect for the week asked about. Past
+  streaks and badges don't change; `validateBackup()` checks `freqLog`.
+  Covered by `test:units` (past weeks keep their target, perfect-week badge
+  survives, same-week replace, backup validation), `test:data` (round trip and
+  rejection), `simulate` (the control joins the settings cycle).
+- **Push / Pull / Legs split (F5).** A three-day `ppl` split, selectable in
+  Settings.
+
+### Changed
+- **Beginner split suggestion (F5).** A beginner on 2–3 days is suggested Full
+  Body and on 4 days Upper/Lower (5+ days keep the Bro split); the text says
+  why. Reasoning added to `2026-09-25-lift-sync.md`. A proposal for the
+  exercises in every day of every split is in
+  `docs/superpowers/plans/2026-10-28-split-day-proposal.md` (not applied).
+- **Home has one primary action (F10).** "Start <suggested day>" is the lime
+  button; "Repeat last workout" is secondary; the streak card is a one-line
+  card until the first full week, when the hero returns. Before/after
+  screenshots: `docs/audits/2026-10-27/assets/`.
+- **Set rows are thumb-sized (F8).** The − and + steppers, Log and the new
+  overflow button are at least 40×40 at 360/375/390/430 px, in English and
+  Japanese (they were 26×26 and 41×30). Plate calculator and Delete moved into a
+  per-set "…" panel (a text ellipsis; no new icon needed). `test:a11y` measures
+  every control, checks nothing clips or scrolls sideways and drives the panel.
+  The sub-340 px rule that hid the plate calculator is gone.
+- **The exercise picture folds after its first view (F18).** First view of an
+  exercise: full picture. Afterwards a 56 px strip (tap to open, `aria-expanded`),
+  so the set rows are above the fold on a 375×667 phone. The seen list is
+  `CFG.exImgSeen`, saved and backed up with the profile.
+- Tutorial screenshots and spotlights and the README Home / rest-timer
+  screenshots were regenerated for the new Home and set row.
+
+### Known issues
+- **B1/B2 (F16): e1RM overstates a single and is unreliable above ~12 reps.**
+  Epley returns 103.5 for a single at 100, and turns a 20-rep set into a 1RM
+  estimate. Recorded as `known('B1')` and `known('B2')`; the formula is unchanged
+  pending approval (`docs/audits/2026-10-27/F16-e1rm-proposal.md`).
+
 ## [2.11.4] - 2026-10-28
 
 ### Fixed

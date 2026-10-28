@@ -75,6 +75,7 @@ function validateBackup(data){
     if(c.customExercises!==undefined&&(!Array.isArray(c.customExercises)||c.customExercises.some(e=>!isO(e)||typeof e.name!=='string')))bad('cfg.customExercises');
     ['customDays','dayLinks','dayPlan','keyLifts','gymPlates','unitMemo'].forEach(k=>{if(c[k]!==undefined&&c[k]!==null&&!isO(c[k]))bad('cfg.'+k);});
     if(c.gymDumbbells!==undefined&&!Array.isArray(c.gymDumbbells))bad('cfg.gymDumbbells');
+    if(c.freqLog!==undefined&&(!Array.isArray(c.freqLog)||c.freqLog.some(e=>!isO(e)||typeof e.dk!=='string'||!Number.isInteger(e.freq))))bad('cfg.freqLog');
   }
   return data;
 }

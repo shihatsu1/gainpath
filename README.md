@@ -10,18 +10,19 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 
 ---
 
-## ✨ What's new in v2.10.0
+## ✨ What's new in v2.12.0
 
-- **Over 1,000 exercises.** 838 new ones for kettlebell, dumbbell, barbell, cable, machine, landmine, weight plate and bodyweight, each with a three-panel illustration, form cues and steps in English, Japanese and Korean.
-- **Clearer exercise names.** 118 built-in exercises now use equipment-first names ("Barbell bench press", "Machine pulldown"). Your history, PRs and custom days move to the new names automatically.
-- **Kettlebells in My gym.** Tick the kettlebells you own and suggested weights snap to them, separately from your dumbbells.
-- **Catch up after time away from a lift.** Come back to a lift after 4 weeks or more and, if your related lifts went up, you're offered a higher weight. It's still a tap to apply or dismiss.
-- **Lighter images.** Exercise pictures are about 50 KB each and download the first time you open them, so open the ones you need before training offline. An app update no longer re-downloads them.
+- **Change your weekly target any time.** Settings → Preferences has a new "Workouts per week" control. Past weeks keep the target they had, so your streaks and badges don't change.
+- **A clearer Home.** One big button starts the suggested day, "Repeat last workout" is secondary, and the streak card stays small until you finish your first full week.
+- **Bigger set controls.** The − and + steppers and Log are at least 40 px. Plate calculator and Delete moved behind the "…" button on each set.
+- **Less scrolling mid-workout.** The exercise picture is shown the first time you see an exercise, then folds to a strip you can tap to open again.
+- **Better starting plan for beginners.** With 2–3 days a week you're suggested Full Body, with 4 days Upper/Lower. There's also a new Push / Pull / Legs split.
 
 ## Features
 
 **Training**
-- Five built-in splits: PPL / Upper-Lower, Bro Split, Alternating Legs/Push/Pull, Upper / Lower, Full Body. You can also build your own program.
+- Six built-in splits: PPL / Upper-Lower, Bro Split, Alternating Legs/Push/Pull, Upper / Lower, Push / Pull / Legs, Full Body. You can also build your own program.
+- A weekly target you can change in Settings; past weeks keep the target they had.
 - Edit any day before or during a workout: reorder, swap, add or delete exercises, and link supersets and circuits.
 - A 1,059-exercise library, each with an illustrated guide, form cues and step-by-step instructions.
 - Custom exercises for anything not in the library.
@@ -29,7 +30,7 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 **Weights**
 - Starting weights are estimated from your related lifts or, before you've logged any, from your body weight, sex and experience.
 - After each exercise you rate how many reps you had left, and the app suggests your next weight. It's always a tap to apply or dismiss, never an automatic change.
-- It suggests easing back after a break and offers a deload when you stall.
+- It suggests easing back after a break, offers a higher weight when related lifts went up while you were away from a lift for 4 weeks or more (a tap to apply), and offers a deload when you stall.
 - Every proposed weight snaps to the plates, dumbbells and kettlebells your gym has (Settings → My gym).
 - Plate calculator, machine base weights, warm-up sets, and straight or pyramid sets.
 - Switch between kg and lbs anytime. Switching back restores your exact numbers.

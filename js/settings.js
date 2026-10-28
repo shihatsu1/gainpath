@@ -8,6 +8,7 @@ function openSettings(){
   REPS_CUSTOM_OPEN.sreps=false;renderRepOpts('sreps');
   [60,90,120].forEach(v=>gid('srest-'+v).classList.toggle('on',CFG.prefRest===v));
   [2,3,4].forEach(v=>gid('ssets-'+v).classList.toggle('on',CFG.prefSets===v));
+  [2,3,4,5,6,7].forEach(v=>gid('sfreq-'+v).classList.toggle('on',CFG.freq===v));
   ['straight','pyramid'].forEach(v=>gid('sstyle-'+v).classList.toggle('on',CFG.setStyle===v));
   gid('sstyle-desc').textContent=t(CFG.setStyle==='pyramid'?'st_style_pyramid':'st_style_straight');
   gid('stog-wu').classList.toggle('on',CFG.warmup);
@@ -90,6 +91,19 @@ function setSettingUnit(v){convertUnits(CFG.unit,v);gid('set-bw').value=curBW();
 function setSettingReps(v){setRepsPreset('sreps',v);CFG.prefRepsChangedAt=dkey(new Date());saveCFG();}
 function setSettingRest(v){CFG.prefRest=v;[60,90,120].forEach(x=>gid('srest-'+x).classList.toggle('on',x===v));saveCFG();}
 function setSettingSets(v){CFG.prefSets=v;[2,3,4].forEach(x=>gid('ssets-'+x).classList.toggle('on',x===v));saveCFG();}
+// Weekly target. Past weeks keep the target they had: the old one is logged as
+// the earliest entry, and the new one starts with the current week (changing
+// again the same week replaces that entry).
+function setSettingFreq(n){
+  if(n===CFG.freq)return;
+  const log=(CFG.freqLog||[]).slice();
+  if(!log.length)log.push({dk:FREQ_EPOCH,freq:CFG.freq});
+  const wk=weekStartDk(dkey(new Date())),i=log.findIndex(e=>e.dk===wk);
+  if(i>=0)log[i]={dk:wk,freq:n};else log.push({dk:wk,freq:n});
+  CFG.freqLog=log;CFG.freq=n;
+  [2,3,4,5,6,7].forEach(v=>gid('sfreq-'+v).classList.toggle('on',v===n));
+  saveCFG();recomputeBadges();refreshHome();
+}
 function setSettingSetStyle(v){CFG.setStyle=v;['straight','pyramid'].forEach(x=>gid('sstyle-'+x).classList.toggle('on',x===v));gid('sstyle-desc').textContent=t(v==='pyramid'?'st_style_pyramid':'st_style_straight');saveCFG();}
 function setSettingWU(){CFG.warmup=!CFG.warmup;gid('stog-wu').classList.toggle('on',CFG.warmup);gid('wu-steps-wrap').style.display=CFG.warmup?'block':'none';saveCFG();}
 function setSettingWUSteps(v){CFG.wuSteps=v;[1,2,3].forEach(x=>gid('swu-'+x).classList.toggle('on',x===v));saveCFG();}

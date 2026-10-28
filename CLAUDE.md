@@ -53,6 +53,9 @@ their own phone. Protect existing data first.
 - **Dark-only "Kinetic" theme.** `#0C1512` base, lime `#C6F24E`, Archivo /
   Space Grotesk / Space Mono. No light theme or toggle. Text on lime is
   `--accent-ink`, never `#fff`.
+- **Home has one primary action** (`#h-start-btn`, the suggested day). Repeat
+  last is secondary; the streak hero stays `.compact` until the first
+  `perfect_week` badge.
 - **Tabs are Train · Days · Climb · PRs.** No fifth tab: PDF report and backup
   live in Settings → Reports & backup (`openDataSettings()`). Streak card and
   install banner show on Train only (`stab()`). Per-exercise history is on Days.
@@ -158,10 +161,13 @@ their own phone. Protect existing data first.
 
 ## UI constraints
 
-- **The workout set row is a width budget** (ten controls, `nowrap`, must fit
-  360px). Keep `.wi` elastic (`flex:1 1 44px`), no `margin-left:auto` on
-  `.log`, keep the ≤400px/≤340px media queries. Run `visual-check` after
-  touching it.
+- **The workout set row is a width budget** (eight controls, `nowrap`, must fit
+  360px) with 40px touch targets: the − / + steppers, Log and the "…" button are
+  at least 40×40 and `test:a11y` measures them at 360/375/390/430 in en and ja.
+  Plate calculator and Delete live in the per-set `.sr-more` panel behind "…",
+  never back in the row. Keep `.wi` elastic (`flex:1 1 40px`), no
+  `margin-left:auto` on `.log`, keep the ≤400px/≤340px media queries. Run
+  `test:a11y` and `visual-check` after touching it.
 - **Icons are a self-hosted subset** (`fonts/tabler-icons*.css/.woff2`). A new
   `ti-*` needs re-subsetting with `pyftsubset` (`--drop-tables+=GSUB,GPOS`),
   its CSS rule, a `CACHE_NAME` bump, and a check that it renders (class names

@@ -7,6 +7,7 @@ const SPLITS=[
   {id:'bro',name:'5-Day Bro Split',days:['legs','chest','back','shoulders','arms'],desc:'5-day split — one muscle group per day'},
   {id:'alt',name:'Alternating Legs/Push/Pull',days:['legs-a','push','legs-b','pull'],desc:'4-day rotation — Legs A, Push, Legs B, Pull'},
   {id:'ul',name:'Upper / Lower',days:['upper','lower-a','lower-b'],desc:'Rotating Upper, Lower A (Legs), Lower B (Lower)'},
+  {id:'ppl',name:'Push / Pull / Legs',days:['push','pull','legs'],desc:'3-day rotation — Push, Pull, Legs'},
   {id:'fb',name:'Full Body',days:['fullbody'],desc:'Single full-body session repeated'}
 ];
 const SPLIT_FREQ={2:'ul',3:'fb',4:'ul',5:'pplul',6:'bro'};

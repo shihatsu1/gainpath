@@ -105,6 +105,86 @@ async function sheetTests(engine, tag) {
   await browser.close();
 }
 
+// F18: the exercise picture is open the first time you see an exercise and collapsed afterwards,
+// so the set rows are above the fold on a small phone; a tap expands it.
+async function exImageTests(engine, tag) {
+  const { browser, page, errors } = await boot(engine, 'en', { width: 375, height: 667 });
+  const setup = `CFG.startingWeights='manual';ST.day='push';ST.exi=0;ST.t0=Date.now();ST.sd=[{ex:{name:'Barbell bench press',mg:'chest',baseW:20,equip:'barbell',webp:true},sets:[{w:20,r:12,t:'w',done:false},{w:60,r:8,t:'x',done:false}],sugDone:true}];renderEx();ss('wo');`;
+  const state = () => page.evaluate(() => { const b = document.querySelector('#ex-area .ex-imgbox'), r = document.querySelector('#ex-area .sr'); return { box: !!b, collapsed: !!b && b.classList.contains('collapsed'), expanded: b && b.querySelector('.ex-img-toggle') ? b.querySelector('.ex-img-toggle').getAttribute('aria-expanded') : null, rowTop: r ? Math.round(r.getBoundingClientRect().top) : null, seen: (CFG.exImgSeen || []).slice() }; });
+  await page.evaluate(setup);
+  await page.waitForFunction(() => { const i = document.querySelector('#ex-area .ex-img'); return i && i.complete && i.naturalWidth > 0; });
+  const first = await state();
+  check(`${tag} F18: the first view of an exercise shows the full picture`, first.box && !first.collapsed && first.seen.includes('flat-barbell-bench-press'), first);
+  await page.evaluate(setup);
+  const second = await state();
+  check(`${tag} F18: the next view collapses it, and the set rows are above the fold at 375x667 (row top ${second.rowTop}px)`, second.collapsed && second.rowTop !== null && second.rowTop < first.rowTop && second.rowTop < 400, { first, second });
+  await page.click('#ex-area .ex-img-toggle');
+  const opened = await state();
+  check(`${tag} F18: tapping it expands the picture (aria-expanded true) and tapping again collapses it`, !opened.collapsed && opened.expanded === 'true', opened);
+  await page.click('#ex-area .ex-img-toggle');
+  check(`${tag} F18: collapsed again after a second tap`, (await state()).collapsed);
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('gp_cfg')).exImgSeen);
+  check(`${tag} F18: which exercises have been seen is saved with the profile`, Array.isArray(saved) && saved.includes('flat-barbell-bench-press'), saved);
+  check(`${tag} F18: no page errors`, errors.length === 0, errors);
+  await browser.close();
+}
+
+// F10: Home has one primary action (start the suggested day); Repeat last is secondary; the streak card is
+// compact until the first full week has been completed.
+async function homeTests(engine, tag) {
+  const { browser, page, errors } = await boot(engine, 'en', { width: 390, height: 844 });
+  const hist = (d) => ({ day: 'push', dayName: 'Push', date: d, dk: d, mk: d.slice(0, 7), dur: '40m', sets: 1, feel: 'good', exercises: [{ name: 'Barbell bench press', sets: [{ done: true, t: 'x', w: 60, r: 8 }] }] });
+  await page.evaluate((h) => { ST.history = [h]; refreshHome(); }, hist('2026-10-26'));
+  const a = await page.evaluate(() => { const vis = (el) => !!el && getComputedStyle(el).display !== 'none'; const p = [...document.querySelectorAll('#p-wk .bp')].filter(vis);
+    return { primary: p.map((b) => b.id), startText: (document.getElementById('h-start-btn') || {}).textContent, sug: getDayName(suggested()), repeatClass: (document.getElementById('h-repeat-btn') || {}).className, compact: document.getElementById('hm-streak').classList.contains('compact') }; });
+  check(`${tag} F10: exactly one primary button on Home, and it starts the suggested day`, a.primary.length === 1 && a.primary[0] === 'h-start-btn' && !!a.startText && a.startText.includes(a.sug), a);
+  check(`${tag} F10: Repeat last workout is a secondary button`, /\bbs\b/.test(a.repeatClass) && !/\bbp\b/.test(a.repeatClass), a.repeatClass);
+  check(`${tag} F10: before a full week the streak card is compact`, a.compact, a);
+  await page.evaluate(() => { ST.badges = { ...(ST.badges || {}), perfect_week: { dk: '2026-10-19' } }; refreshHome(); });
+  check(`${tag} F10: after the first full week the streak hero comes back`, !(await page.evaluate(() => document.getElementById('hm-streak').classList.contains('compact'))));
+  await page.click('#h-start-btn');
+  check(`${tag} F10: the primary button opens the suggested day`, await page.evaluate(() => document.getElementById('s-dayedit').classList.contains('active') && ST.editDay === suggested()));
+  check(`${tag} F10: no page errors`, errors.length === 0, errors);
+  await browser.close();
+}
+
+// F8: steppers and Log are at least 40px at every phone width; plate calculator and delete live in a per-row
+// overflow panel; nothing overflows or clips. Languages too, since ja/ko labels are wider.
+async function tapTargetTests(engine, tag) {
+  for (const w of [360, 375, 390, 430]) {
+    for (const lang of ['en', 'ja']) {
+      const { browser, page, errors } = await boot(engine, lang, { width: w, height: 760 });
+      await page.evaluate(() => { CFG.gymPlates = { 20: 2, 10: 2, 5: 2, 2.5: 2 }; CFG.startingWeights = 'manual'; ST.day = 'push'; ST.exi = 0; ST.t0 = Date.now();
+        ST.sd = [{ ex: { name: 'Barbell bench press', mg: 'chest', baseW: 20, equip: 'barbell', webp: true }, sets: [{ w: 20, r: 12, t: 'w', done: false }, { w: 60, r: 8, t: 'x', done: true }, { w: 60, r: 8, t: 'x', done: false }, { w: 50, r: 8, t: 'd', done: false }], sugDone: true }]; renderEx(); ss('wo'); });
+      const m = await page.evaluate(() => {
+        const small = [], clipped = [];
+        document.querySelectorAll('#ex-area .sr').forEach((row, ri) => {
+          const rr = row.getBoundingClientRect();
+          row.querySelectorAll('.sst:not(.plate), .log:not(.done), .more').forEach((b) => { const r = b.getBoundingClientRect(); if (r.width && (r.width < 40 || r.height < 40)) small.push([ri, b.className, Math.round(r.width), Math.round(r.height)]); });
+          row.querySelectorAll('button,input').forEach((b) => { const r = b.getBoundingClientRect(); if (r.width && (r.right > rr.right + 0.5 || r.left < rr.left - 0.5)) clipped.push([ri, b.className, Math.round(r.right - rr.right)]); });
+        });
+        return { small, clipped, overflow: document.documentElement.scrollWidth - innerWidth, more: document.querySelectorAll('#ex-area .sr .more').length };
+      });
+      check(`${tag} F8 ${w}px ${lang}: steppers, Log and the overflow button are at least 40x40`, m.small.length === 0 && m.more > 0, m);
+      check(`${tag} F8 ${w}px ${lang}: every control fits inside its row and the page does not scroll sideways`, m.clipped.length === 0 && m.overflow <= 0, m);
+      if (w === 360 && lang === 'en') {
+        const rowSets = () => page.evaluate(() => ST.sd[0].sets.length);
+        const n0 = await rowSets();
+        const btn = page.locator('#ex-area .sr .more').nth(2);
+        check(`${tag} F8: the overflow panel starts closed`, (await btn.getAttribute('aria-expanded')) === 'false' && !(await page.locator('#ex-area .sr-more:visible').count()));
+        await btn.click();
+        const panel = await page.evaluate(() => { const p = [...document.querySelectorAll('#ex-area .sr-more')].find((x) => getComputedStyle(x).display !== 'none'); if (!p) return null; return [...p.querySelectorAll('button')].map((b) => ({ cls: b.className, h: Math.round(b.getBoundingClientRect().height) })); });
+        check(`${tag} F8: opening it shows Plate calculator and Delete set as tall as the other buttons`, !!panel && panel.length === 2 && panel.every((b) => b.h >= 40), panel);
+        check(`${tag} F8: aria-expanded is true while open`, (await btn.getAttribute('aria-expanded')) === 'true');
+        await page.locator('#ex-area .sr-more:visible button.sdel').click();
+        check(`${tag} F8: Delete in the panel removes the set`, (await rowSets()) === n0 - 1);
+      }
+      check(`${tag} F8 ${w}px ${lang}: no page errors`, errors.length === 0, errors);
+      await browser.close();
+    }
+  }
+}
+
 const SET_ROW_SETUP = `
   CFG.startingWeights='manual';ST.day='push';ST.exi=0;ST.t0=Date.now();
   ST.sd=[{ex:{name:'Barbell bench press',mg:'chest',baseW:20,equip:'barbell'},sets:[{w:20,r:12,t:'w',done:false},{w:60,r:8,t:'x',done:true},{w:60,r:8,t:'x',done:false},{w:50,r:8,t:'d',done:false}],sugDone:true}];
@@ -208,6 +288,9 @@ async function langTests(engine, tag, lang) {
 for (const [engine, tag] of [[chromium, 'chromium'], [webkit, 'webkit']]) {
   await sheetTests(engine, tag);
   for (const lang of ['en', 'ja', 'ko']) await setRowTests(engine, tag, lang);
+  await exImageTests(engine, tag);
+  await homeTests(engine, tag);
+  await tapTargetTests(engine, tag);
   await miscTests(engine, tag);
   for (const lang of ['ja', 'ko']) await langTests(engine, tag, lang);
 }

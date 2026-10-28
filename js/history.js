@@ -159,8 +159,18 @@ function weekDayMap(history){
 }
 // Newest session by dk (ST.history isn't kept in date order: edits, restores and
 // back-dated sessions land anywhere), optionally of one day id.
+function startSuggested(){openDayEdit(suggested());}
 function lastSession(day){let best=null;ST.history.forEach(h=>{if(h&&(day===undefined||h.day===day)&&(!best||(h.dk||'')>(best.dk||'')))best=h;});return best;}
-function weekTarget(wk){return Math.max(1,CFG.freq-restDaysInWeek(wk));}
+// The weekly target in effect for the week starting wk. CFG.freqLog holds
+// {dk,freq} entries ("from the week starting dk, the target is freq"); a past
+// week keeps the target it had when the user later changes it. No log = CFG.freq.
+const FREQ_EPOCH='1970-01-01';
+function freqFor(wk){
+  let f=null,at='';
+  (CFG.freqLog||[]).forEach(e=>{if(e&&typeof e.dk==='string'&&Number.isInteger(e.freq)&&e.dk<=wk&&e.dk>=at){f=e.freq;at=e.dk;}});
+  return f===null?CFG.freq:f;
+}
+function weekTarget(wk){return Math.max(1,freqFor(wk)-restDaysInWeek(wk));}
 // How many consecutive qualifying weeks end at `endWk`, walking backwards.
 // Extracted from streak() so badge history can ask the same question about a
 // PAST week — one definition of "a qualifying week" for both callers. `open`
@@ -375,7 +385,10 @@ function refreshHome(){
   const sm=streakMsg(streak());
   gid('h-str-ic').className='ti '+sm.ic;gid('h-str-cta').textContent=sm.t;
   gid('h-week').textContent=sessionsThisWeek()+'/'+CFG.freq;
-  const sug=suggested();const hr=new Date().getHours();
+  // The big streak hero waits for the first full week; until then the card is a quiet one-liner.
+  gid('hm-streak').classList.toggle('compact',!(ST.badges&&ST.badges.perfect_week));
+  const sug=suggested();
+  gid('h-start-btn').innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> '+esc(t('start_day_prefix').replace('{day}',getDayName(sug)));const hr=new Date().getHours();
   const tod=hr<12?'morning':hr<17?'afternoon':'evening';
   if(ST.history.length){
     const lastDay=lastSession().day,last=getDayName(lastDay);

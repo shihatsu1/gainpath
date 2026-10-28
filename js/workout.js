@@ -96,6 +96,14 @@ function saveMW(skip){
   processMWQueue();
 }
 function exSlug(name){return name.toLowerCase().replace(/\s+/g,'-');}
+function toggleSetMore(btn){
+  const panel=btn.closest('.sr').nextElementSibling;if(!panel||!panel.classList.contains('sr-more'))return;
+  const open=panel.style.display==='none';panel.style.display=open?'flex':'none';btn.setAttribute('aria-expanded',open?'true':'false');
+}
+function toggleExImg(btn){
+  const box=btn.closest('.ex-imgbox'),open=box.classList.toggle('collapsed')===false,h=btn.querySelector('.ex-img-hint');
+  btn.setAttribute('aria-expanded',open?'true':'false');if(h)h.textContent=h.getAttribute(open?'data-open':'data-closed');
+}
 function exImgFallback(img,yt,custom){
   // Custom exercises have no bundled image by design — link out to a YouTube
   // search. Built-in exercises DO have an image; if it failed to load (e.g.
@@ -146,7 +154,7 @@ function renderEx(){
       ('<button type="button" class="log" style="background:var(--bg3);color:var(--accent);margin-left:6px" onclick="toggleHold('+i+')" '+A(HOLD_IDX===i?'aria_hold_stop':'aria_hold_start')+(HOLD_IDX!==null&&HOLD_IDX!==i?' disabled':'')+'>'+t(HOLD_IDX===i?'hold_stop_btn':'hold_start_btn')+'</button>'+
        '<span id="hold-t-'+i+'" class="sr-x" style="min-width:36px;text-align:center;color:var(--txt);font-family:var(--font-mono);font-weight:700">'+(HOLD_IDX===i?fmt(Math.round((Date.now()-HOLD_START)/1000)):fmt(s.r))+'</span>')
       :('<span class="sr-x">×</span><input class="ri" '+A('aria_reps')+' type="number" value="'+s.r+'" min="1" onfocus="this.select()" onchange="updRep('+i+',this.value)">');
-    const plateBtn=(showPlate&&!isBW)?'<button type="button" class="sst plate" onclick="openPlateCalc('+i+')" '+A('aria_plate')+'><i class="ti ti-stack-2" aria-hidden="true"></i></button>':'';
+    const plateBtn=(showPlate&&!isBW)?'<button type="button" class="bs sr-act plate" onclick="openPlateCalc('+i+')" '+A('aria_plate')+'><i class="ti ti-stack-2" aria-hidden="true"></i> '+esc(t('btn_plate_calc'))+'</button>':'';
     const doneDisabled=ex.holdSecs&&(HOLD_IDX===i||!s.r);
     const snCls=s.done?' d':(active?' on':(isW?' w':''));
     const logBtn='<button class="log'+(s.done?' done':'')+'"'+(doneDisabled?' disabled':'')+' onclick="dset('+i+')" '+A(s.done?'aria_set_logged':'aria_log_set')+'>'+(s.done?'<i class="ti ti-check" aria-hidden="true"></i>':t('btn_mark_done'))+'</button>';
@@ -154,8 +162,13 @@ function renderEx(){
     // last one loses its button. Rows that can't be removed still render the
     // button as a hidden placeholder, or the Log column would go ragged.
     const canDel=!s.done&&(isW||workCount>1)&&HOLD_IDX===null;
-    const delBtn='<button type="button" class="sdel'+(canDel?'':' hide')+'"'+(canDel?'':' tabindex="-1" aria-hidden="true"')+' onclick="delSet('+i+')" '+A('aria_remove_set')+'><i class="ti ti-trash" aria-hidden="true"></i></button>';
-    return '<div class="sr'+(s.done?' done':(active?' active':''))+'"><div class="sn'+snCls+'">'+(isW?wuLabel:(isD?'D':workSeen))+'</div>'+wctrl+rctrl+plateBtn+logBtn+delBtn+'</div>';
+    const delBtn=canDel?'<button type="button" class="bs sr-act sdel" onclick="delSet('+i+')" '+A('aria_remove_set')+'><i class="ti ti-trash" aria-hidden="true"></i> '+esc(t('btn_delete_set'))+'</button>':'';
+    // Plate calculator and delete sit behind one 40px overflow button so the steppers and Log can be thumb-sized.
+    // A row with neither keeps an invisible placeholder so the Log column stays aligned.
+    const hasMore=!!(plateBtn||delBtn);
+    const moreBtn='<button type="button" class="sst more'+(hasMore?'':' hide')+'"'+(hasMore?'':' tabindex="-1" aria-hidden="true"')+' aria-expanded="false" onclick="toggleSetMore(this)" '+A('aria_set_more')+'><span aria-hidden="true">…</span></button>';
+    const morePanel=hasMore?'<div class="sr-more" style="display:none">'+plateBtn+delBtn+'</div>':'';
+    return '<div class="sr'+(s.done?' done':(active?' active':''))+'"><div class="sn'+snCls+'">'+(isW?wuLabel:(isD?'D':workSeen))+'</div>'+wctrl+rctrl+logBtn+moreBtn+'</div>'+morePanel;
   }).join('');
   const addSetHtml='<button type="button" class="addset" onclick="addWorkSet()"><i class="ti ti-plus" aria-hidden="true"></i> '+t('btn_add_set')+'</button>';
   const dropTarget=(!isBW&&!ex.holdSecs)?sets.findIndex(x=>!x.done&&x.t==='x'):-1;
@@ -165,7 +178,10 @@ function renderEx(){
   const tipHtml='<div style="font-size:13px;color:var(--txt2);margin-bottom:12px;display:flex;gap:6px;align-items:flex-start"><i class="ti ti-bulb" aria-hidden="true" style="flex-shrink:0;margin-top:1px;color:var(--accent)"></i><span>'+item.tipText+'</span></div>';
   const noteHtml=exNoteHtml(item,ex);
   const isLast=ST.exi>=ST.sd.length-1;
-  const exImg='<img src="images/exercises/'+esc(exSlug(EX_OLD_NAME[ex.name]||ex.name))+(ex.webp?'.webp':'.png')+'" alt="'+esc(ex.name)+'" class="ex-img" onerror="exImgFallback(this,'+jsArg(ex.yt||'')+','+(ex.custom?1:0)+')">';
+  // First view of an exercise: full picture. After that it is collapsed to a strip (tap to expand) so the set rows sit above the fold.
+  const imgSlug=exSlug(EX_OLD_NAME[ex.name]||ex.name),imgSeen=(CFG.exImgSeen||[]).indexOf(imgSlug)>=0;
+  const exImg='<div class="ex-imgbox'+(imgSeen?' collapsed':'')+'"><img src="images/exercises/'+esc(imgSlug)+(ex.webp?'.webp':'.png')+'" alt="'+esc(ex.name)+'" class="ex-img" onerror="exImgFallback(this,'+jsArg(ex.yt||'')+','+(ex.custom?1:0)+')">'+(imgSeen?'<button type="button" class="ex-img-toggle" aria-expanded="false" onclick="toggleExImg(this)" aria-label="'+esc(t('aria_ex_img_toggle'))+'"><span class="ex-img-hint" data-open="'+esc(t('ex_img_hide'))+'" data-closed="'+esc(t('ex_img_show'))+'">'+esc(t('ex_img_show'))+'</span></button>':'')+'</div>';
+  if(!imgSeen){CFG.exImgSeen=(CFG.exImgSeen||[]).concat(imgSlug);saveCFG();}
   let sugHtml='';
   if(!item.sugDone&&!sets.some(s=>s.done)&&!isBW&&!ex.holdSecs&&ex.plannedW===undefined){
     const fw=sets.find(s=>s.t!=='w');const brk=fw?breakSuggest(ex,fw.w):null;const sync=fw&&!brk?syncSuggest(ex,fw.w,fw.r):null;const sug=fw&&!brk&&!sync?suggestWeight(ex,fw.w):null;

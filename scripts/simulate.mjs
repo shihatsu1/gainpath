@@ -91,7 +91,7 @@ async function runEngine(engineName, engine) {
         await page.waitForFunction(() => typeof window.openDayEdit === 'function');
         const after = await page.evaluate(() => {
           openSettings(); // re-render chips so a later plate toggle has a DOM target
-          return { prefReps: CFG.prefReps, prefSets: CFG.prefSets, prefRest: CFG.prefRest, warmup: CFG.warmup, unit: CFG.unit };
+          return { prefReps: CFG.prefReps, prefSets: CFG.prefSets, prefRest: CFG.prefRest, warmup: CFG.warmup, unit: CFG.unit, freq: CFG.freq };
         });
         for (const k of Object.keys(lastSettingsSnapshot)) {
           if (after[k] !== lastSettingsSnapshot[k]) {
@@ -108,7 +108,7 @@ async function runEngine(engineName, engine) {
 }
 
 async function settingsCycle(page, engineName, iter, prevSnapshot) {
-  const action = pick(['reps', 'sets', 'rest', 'warmup', 'unit', 'plate']);
+  const action = pick(['reps', 'sets', 'rest', 'warmup', 'unit', 'plate', 'freq']);
   const repsVal = pick([6, 8, 10, 12, 15]);
   const setsVal = pick([2, 3, 4]);
   const restVal = pick([60, 90, 120]);
@@ -117,16 +117,18 @@ async function settingsCycle(page, engineName, iter, prevSnapshot) {
   // lbs mode) would look up a chip that was never rendered for that unit.
   const currentDenoms = await page.evaluate(() => (PLATES[CFG.unit] || PLATES.kg).slice());
   const plateVal = pick(currentDenoms);
-  const result = await page.evaluate(({ action, repsVal, setsVal, restVal, plateVal }) => {
+  const freqVal = pick([2, 3, 4, 5, 6, 7]);
+  const result = await page.evaluate(({ action, repsVal, setsVal, restVal, plateVal, freqVal }) => {
     if (action === 'reps') setSettingReps(repsVal);
     else if (action === 'sets') setSettingSets(setsVal);
     else if (action === 'rest') setSettingRest(restVal);
     else if (action === 'warmup') setSettingWU();
     else if (action === 'unit') setSettingUnit(CFG.unit === 'kg' ? 'lbs' : 'kg');
+    else if (action === 'freq') setSettingFreq(freqVal);
     else if (action === 'plate') { if (typeof toggleSettingPlate === 'function') toggleSettingPlate(plateVal); }
     const saved = JSON.parse(localStorage.getItem('gp_cfg') || '{}');
     return { action, cfgNow: { prefReps: CFG.prefReps, prefSets: CFG.prefSets, prefRest: CFG.prefRest, warmup: CFG.warmup, unit: CFG.unit }, saved };
-  }, { action, repsVal, setsVal, restVal, plateVal });
+  }, { action, repsVal, setsVal, restVal, plateVal, freqVal });
   for (const k of Object.keys(result.cfgNow)) {
     if (result.saved[k] !== result.cfgNow[k]) {
       failures.push({ engine: engineName, iter, kind: 'settings-not-autosaved', action, field: k, cfg: result.cfgNow[k], localStorage: result.saved[k] });

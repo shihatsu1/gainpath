@@ -11,11 +11,12 @@ function setExp(v){OB.exp=v;['beginner','intermediate','advanced'].forEach(x=>gi
 function setFreq(v){
   OB.freq=v;
   [2,3,4,5,6,7].forEach(x=>gid('freq-'+x).classList.toggle('on',x===v));
-  const sugId=OB.exp==='beginner'?'bro':(SPLIT_FREQ[v]||'pplul');
+  // A beginner trains each muscle about twice a week where the days allow it (2-3 days Full Body, 4 Upper/Lower); 5+ days keep the one-muscle-a-day Bro split.
+  const sugId=OB.exp==='beginner'?(v<=3?'fb':v===4?'ul':'bro'):(SPLIT_FREQ[v]||'pplul');
   OB.split=sugId;
   const sugName=t('split_'+sugId+'_name');
   gid('ob-split-suggest').textContent=OB.exp==='beginner'
-    ?t('ob_sug_beginner').replace('{name}',sugName)
+    ?t(sugId==='bro'?'ob_sug_beginner':'ob_sug_beginner_2x').replace('{name}',sugName)
     :t('ob_sug_freq').replace('{n}',v).replace('{name}',sugName);
   gid('ob-split-wrap').style.display='block';
   renderSplitOpts('split-opts',OB.split,null);

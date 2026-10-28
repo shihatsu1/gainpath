@@ -118,6 +118,8 @@ async function main() {
   }, { history: HISTORY, prs: STALE_PRS });
   await page.reload();
   await page.waitForSelector('#s-home.active');
+  // ja/ko exercise text loads on demand; the content checks below need all three languages.
+  await page.evaluate(() => Promise.all([loadExText('ja'), loadExText('ko')]));
 
   const results = await page.evaluate(() => {
     const out = [];

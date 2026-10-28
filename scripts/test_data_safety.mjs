@@ -358,6 +358,54 @@ async function bootTests(engine, tag, check, errors) {
   await browser.close();
 }
 
+// ── F12: analytics can be switched off (Settings -> Privacy), and Global Privacy Control is honoured.
+async function privacyTests(engine, tag, check, errors) {
+  const browser = await engine.launch();
+  const mkPage = async (gpc) => {
+    const ctx = await browser.newContext({ serviceWorkers: 'block' });
+    if (gpc) await ctx.addInitScript(() => Object.defineProperty(navigator, 'globalPrivacyControl', { value: true, configurable: true }));
+    const page = await ctx.newPage(); page.on('pageerror', (e) => errors.push(`${tag} privacy: ${e}`));
+    const beacons = []; page.on('request', (r) => { if (/\/e$/.test(r.url()) && r.method() === 'POST') beacons.push(r.postData()); });
+    await seed(page, bigUser(120));
+    return { ctx, page, beacons };
+  };
+  const id = (p) => p.evaluate(() => localStorage.getItem('gp_anon_id'));
+  {
+    const { ctx, page, beacons } = await mkPage(false);
+    await page.evaluate(() => track('pdf_generated')); await page.waitForTimeout(300);
+    const id1 = await id(page);
+    check(`${tag} F12: counts are on by default and send the random ID`, beacons.length >= 1 && !!id1 && JSON.parse(beacons[beacons.length - 1]).id === id1, { n: beacons.length, id1 });
+    await page.evaluate(() => { openSettings(); openPrivacySettings(); });
+    check(`${tag} F12: the Privacy page has a switch, on`, await page.locator('#stog-analytics').getAttribute('aria-checked') === 'true');
+    await page.click('#stog-analytics');
+    const n0 = beacons.length;
+    await page.evaluate(() => { track('pdf_generated'); track('data_exported'); }); await page.waitForTimeout(300);
+    check(`${tag} F12: switched off, nothing is sent`, beacons.length === n0, beacons.length - n0);
+    check(`${tag} F12: switched off, the random ID is removed from this device`, (await id(page)) === null && !(await page.evaluate(() => JSON.stringify(Object.keys(localStorage))).then((k) => /gp_anon_id/.test(k))));
+    check(`${tag} F12: the choice is saved with the profile and the switch shows off`, await page.evaluate(() => JSON.parse(localStorage.getItem('gp_cfg')).analyticsOff === true) && await page.locator('#stog-analytics').getAttribute('aria-checked') === 'false');
+    await page.reload(); await page.waitForSelector('#s-home.active');
+    await page.evaluate(() => track('pdf_generated')); await page.waitForTimeout(300);
+    check(`${tag} F12: still off after a relaunch (no ID is created)`, beacons.length === n0 && (await id(page)) === null);
+    await page.evaluate(() => { openSettings(); openPrivacySettings(); }); await page.click('#stog-analytics');
+    await page.evaluate(() => track('pdf_generated')); await page.waitForTimeout(300);
+    const id2 = await id(page);
+    check(`${tag} F12: switched back on, counting resumes with a fresh ID`, beacons.length === n0 + 1 && !!id2 && id2 !== id1, { id1, id2 });
+    await ctx.close();
+  }
+  {
+    const { ctx, page, beacons } = await mkPage(true);
+    await page.evaluate(() => { localStorage.setItem('gp_anon_id', 'old-id-from-before'); }); await page.reload(); await page.waitForSelector('#s-home.active');
+    await page.evaluate(() => track('pdf_generated')); await page.waitForTimeout(300);
+    check(`${tag} F12: Global Privacy Control turns counts off: nothing sent, ID removed`, beacons.length === 0 && (await id(page)) === null, { n: beacons.length });
+    await page.evaluate(() => { openSettings(); openPrivacySettings(); });
+    check(`${tag} F12: with Global Privacy Control the switch is off and disabled, with an explanation`, await page.locator('#stog-analytics').getAttribute('aria-checked') === 'false' && await page.locator('#stog-analytics').isDisabled() && await page.locator('#priv-gpc').isVisible());
+    await ctx.close();
+  }
+  const html = await readFile(path.join(ROOT, 'privacy.html'), 'utf8');
+  check(`${tag} F12: privacy.html describes the switch and Global Privacy Control, not "no in-app switch"`, !/no in-app switch/.test(html) && /Settings\s*(→|&rarr;)\s*Privacy/.test(html) && /Global Privacy Control/.test(html));
+  await browser.close();
+}
+
 async function auditTests(engine, tag, check, errors) {
   const browser = await engine.launch();
   const mk = async () => {
@@ -580,6 +628,11 @@ async function main() {
   if (process.env.BOOT_ONLY) { // BOOT_ONLY=1: just the F4 damaged-record boot cases
     await bootTests(chromium, 'chromium', check, errors);
     if (process.env.ENGINE !== 'chromium') await bootTests(webkit, 'webkit', check, errors);
+    server.close(); return printAndExit(results, errors);
+  }
+  if (process.env.PRIVACY_ONLY) {
+    await privacyTests(chromium, 'chromium', check, errors);
+    if (process.env.ENGINE !== 'chromium') await privacyTests(webkit, 'webkit', check, errors);
     server.close(); return printAndExit(results, errors);
   }
   if (process.env.AUDIT_ONLY) { // AUDIT_ONLY=1 node scripts/test_data_safety.mjs: just the A01–A07 regressions
@@ -853,6 +906,8 @@ async function main() {
   await migrationTests(webkit, 'webkit', check, errors);
   await bootTests(chromium, 'chromium', check, errors);
   await bootTests(webkit, 'webkit', check, errors);
+  await privacyTests(chromium, 'chromium', check, errors);
+  await privacyTests(webkit, 'webkit', check, errors);
   server.close();
 
   printAndExit(results, errors);

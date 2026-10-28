@@ -149,7 +149,16 @@ function collectSettingsFields(){
   saveCFG();
 }
 // Shows the ID without creating one: nothing has been sent if there's none yet.
-function openPrivacySettings(){let id=null;try{id=localStorage.getItem('gp_anon_id');}catch(e){}gid('privacy-anon-id').textContent=id||'—';ss('setprivacy');}
+function renderPrivacySettings(){
+  let id=null;try{id=localStorage.getItem('gp_anon_id');}catch(e){}
+  gid('privacy-anon-id').textContent=id||'—';
+  const gpc=navigator.globalPrivacyControl===true,on=analyticsOn(),b=gid('stog-analytics');
+  b.classList.toggle('on',on);b.setAttribute('aria-checked',on?'true':'false');b.disabled=gpc;
+  gid('priv-gpc').style.display=gpc?'block':'none';
+}
+function openPrivacySettings(){renderPrivacySettings();ss('setprivacy');}
+// Off = no counts sent and the random ID erased from this device; on again = a fresh ID.
+function setSettingAnalytics(){CFG.analyticsOff=analyticsOn();saveCFG();if(!analyticsOn())dropAnonId();renderPrivacySettings();}
 function closeSettingsSection(){collectSettingsFields();accentColor();refreshHome();ss('settings');}
 // Erase must clear the IndexedDB mirror too, or idbRecover() would bring the data back.
 // Reset erases everything, including the pre-migration IndexedDB snapshot that

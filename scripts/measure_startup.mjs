@@ -11,7 +11,7 @@
 // Variants (Chromium, CDP):
 //   baseline        the app as shipped
 //   cdn-slow        the three CDN scripts delayed 3 s (shows head-blocking)
-//   no-exercise-text  js/exercise-text.js replaced by an empty stub, so the
+//   no-exercise-text  js/exercise-text-en.js replaced by an empty stub, so the
 //                   difference to baseline is what that file costs
 // WebKit has no CDP: it gets navigation timing and time to first screen only.
 //
@@ -55,7 +55,7 @@ async function chromiumRun(variant) {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 390, height: 844 } });
   if (variant === 'cdn-slow') await ctx.route(isCdn, async (r) => { const resp = await r.fetch(); await new Promise((x) => setTimeout(x, 3000)); await r.fulfill({ response: resp }); });
-  if (variant === 'no-exercise-text') await ctx.route(/\/js\/exercise-text\.js/, (r) => r.fulfill({ status: 200, contentType: 'text/javascript', body: STUB }));
+  if (variant === 'no-exercise-text') await ctx.route(/\/js\/exercise-text-en\.js/, (r) => r.fulfill({ status: 200, contentType: 'text/javascript', body: STUB }));
   const page = await ctx.newPage();
   const cdp = await ctx.newCDPSession(page);
   await cdp.send('Network.enable'); await cdp.send('Performance.enable');
@@ -79,7 +79,7 @@ async function chromiumRun(variant) {
   return {
     interactiveMs: nav.dcl, loadMs, loadEventMs: nav.load,
     scriptMs: m.ScriptDuration * 1000, taskMs: m.TaskDuration * 1000, heapMB: m.JSHeapUsedSize / 1048576,
-    transferKB: sum(() => true) / 1024, cdnKB: sum((r) => isCdn(r.url)) / 1024, exerciseTextKB: sum((r) => /exercise-text\.js/.test(r.url)) / 1024,
+    transferKB: sum(() => true) / 1024, cdnKB: sum((r) => isCdn(r.url)) / 1024, exerciseTextKB: sum((r) => /exercise-text-/.test(r.url)) / 1024,
     requests: res.length,
     top: res.sort((a, b) => b.bytes - a.bytes).slice(0, 14).map((r) => `${(r.bytes / 1024).toFixed(0)} KB  ${r.url.replace(/^https?:\/\/[^/]+/, '')}`),
   };

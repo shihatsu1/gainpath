@@ -1,0 +1,98 @@
+{
+  "label": "run",
+  "at": "2026-10-28T12:38:41.736Z",
+  "runs": 5,
+  "profile": "CPU 4x slower, slow 4G (1.6 Mbps down, 150 ms RTT), gzip like GitHub Pages, cold cache, first-run user",
+  "chromium": {
+    "baseline": {
+      "interactiveMs": 2570.3,
+      "loadMs": 2571,
+      "loadEventMs": 2570.8,
+      "scriptMs": 27.2,
+      "taskMs": 295.4,
+      "heapMB": 3.3,
+      "transferKB": 463.9,
+      "cdnKB": 0,
+      "exerciseTextKB": 146,
+      "requests": 24,
+      "topResources": [
+        "146 KB  /js/exercise-text-en.js?v=2.12.0",
+        "59 KB  /images/branding/logo.png",
+        "43 KB  /js/i18n.js?v=2.12.0",
+        "34 KB  /fonts/archivo-latin-var.woff2",
+        "27 KB  /index.html",
+        "22 KB  /fonts/space-grotesk-latin-var.woff2",
+        "21 KB  /js/exercises.js?v=2.12.0",
+        "17 KB  /js/math.js?v=2.12.0",
+        "14 KB  /js/workout.js?v=2.12.0",
+        "13 KB  /fonts/tabler-icons-subset.woff2",
+        "11 KB  /js/history.js?v=2.12.0",
+        "9 KB  /js/climb.js?v=2.12.0",
+        "8 KB  /js/data-safety.js?v=2.12.0",
+        "7 KB  /js/day-edit.js?v=2.12.0"
+      ]
+    },
+    "cdn-slow": {
+      "interactiveMs": 2573,
+      "loadMs": 2574,
+      "loadEventMs": 2573.2,
+      "scriptMs": 31.5,
+      "taskMs": 364.9,
+      "heapMB": 3.3,
+      "transferKB": 463.9,
+      "cdnKB": 0,
+      "exerciseTextKB": 146,
+      "requests": 24,
+      "topResources": [
+        "146 KB  /js/exercise-text-en.js?v=2.12.0",
+        "59 KB  /images/branding/logo.png",
+        "43 KB  /js/i18n.js?v=2.12.0",
+        "34 KB  /fonts/archivo-latin-var.woff2",
+        "27 KB  /index.html",
+        "22 KB  /fonts/space-grotesk-latin-var.woff2",
+        "21 KB  /js/exercises.js?v=2.12.0",
+        "17 KB  /js/math.js?v=2.12.0",
+        "14 KB  /js/workout.js?v=2.12.0",
+        "13 KB  /fonts/tabler-icons-subset.woff2",
+        "11 KB  /js/history.js?v=2.12.0",
+        "9 KB  /js/climb.js?v=2.12.0",
+        "8 KB  /js/data-safety.js?v=2.12.0",
+        "7 KB  /js/day-edit.js?v=2.12.0"
+      ]
+    },
+    "no-exercise-text": {
+      "interactiveMs": 1854,
+      "loadMs": 1855,
+      "loadEventMs": 1854.5,
+      "scriptMs": 31.7,
+      "taskMs": 341.3,
+      "heapMB": 2.5,
+      "transferKB": 318.3,
+      "cdnKB": 0,
+      "exerciseTextKB": 0.4,
+      "requests": 24,
+      "topResources": [
+        "59 KB  /images/branding/logo.png",
+        "43 KB  /js/i18n.js?v=2.12.0",
+        "34 KB  /fonts/archivo-latin-var.woff2",
+        "27 KB  /index.html",
+        "22 KB  /fonts/space-grotesk-latin-var.woff2",
+        "21 KB  /js/exercises.js?v=2.12.0",
+        "17 KB  /js/math.js?v=2.12.0",
+        "14 KB  /js/workout.js?v=2.12.0",
+        "13 KB  /fonts/tabler-icons-subset.woff2",
+        "11 KB  /js/history.js?v=2.12.0",
+        "9 KB  /js/climb.js?v=2.12.0",
+        "8 KB  /js/data-safety.js?v=2.12.0",
+        "7 KB  /js/day-edit.js?v=2.12.0",
+        "7 KB  /js/storage.js?v=2.12.0"
+      ]
+    }
+  },
+  "webkit": {
+    "baseline": {
+      "interactiveMs": 97,
+      "loadEventMs": 121
+    }
+  }
+}

@@ -450,7 +450,9 @@ en:{
 "priv_counts_t": "Anonymous usage counts",
 "priv_counts_b": "When you start or finish a workout, set a PR, save a program, make a PDF report or export a backup, the app sends two things to GainPath's counter: a random ID made on this device, and which of those actions happened. No names, weights, workouts or emails. Your IP address reaches Cloudflare, which runs the counter, but the counter doesn't store it.",
 "priv_id_label": "Your random ID",
-"priv_optout_b": "There's no switch to turn these counts off yet. To have your ID's record deleted, send it with Send feedback.",
+"priv_optout_b": "Turning this off stops the counts and erases your random ID from this device. To have the record already sent deleted, send your ID with Send feedback before you turn it off.",
+"priv_switch_label": "Send anonymous usage counts",
+"priv_gpc_note": "Your browser sends Global Privacy Control, so counts are off.",
 "priv_choice_t": "Only if you send it",
 "priv_choice_b": "Send feedback emails your message (and reply address, if you give one) with your name, sex, split and experience level, through EmailJS. Native app updates stores the email address you enter.",
 "priv_full": "Read the full privacy page",
@@ -514,10 +516,8 @@ en:{
 "tut12_body": "Settings is where you tell GainPath which plates/dumbbells you have, connect Apple Watch and send feedback. No account needed, ever.",
 "whatsnew_heading": "What's new in",
 "btn_got_it": "Got it",
-"whatsnew_item1": "Change your weekly target any time. Settings → Preferences has a new “Workouts per week” control. Past weeks keep the target they had, so your streaks and badges don’t change.",
-"whatsnew_item2": "A clearer Home. One big button starts the suggested day, “Repeat last workout” is secondary, and the streak card stays small until you finish your first full week.",
-"whatsnew_item3": "Bigger set controls. The − and + steppers and Log are now at least 40 px, so they’re easier to hit between sets. Plate calculator and Delete moved behind the … button on each set.",
-"whatsnew_item4": "Less scrolling mid-workout. The exercise picture is shown the first time you see an exercise, then folds to a strip you can tap to open again, so the sets sit higher on the screen.",
+"whatsnew_item1": "A switch for usage counts. Settings → Privacy now lets you turn the anonymous counts off, which also erases your random ID from this device. If your browser sends Global Privacy Control, the counts stay off.",
+"whatsnew_item2": "Faster start. GainPath now loads exercise names, tips and steps only in your language, so it opens sooner, especially on slower phones.",
 "ph_title": "Progress photos",
 "ph_add": "Add photo",
 "ph_notice": "Photos stay only on this phone. They aren't in your backup file, so if you lose this phone or clear this browser's data, they're gone. Save the ones you want to keep to your photo library.",
@@ -537,7 +537,6 @@ en:{
 "ph_save": "Save to Photos",
 "ph_delete": "Delete",
 "ph_del_confirm": "Delete this photo? It isn't backed up anywhere, so it can't be recovered.",
-"whatsnew_item5": "Better starting plan for beginners. With 2–3 days a week you’re now suggested Full Body, with 4 days Upper/Lower, and there’s a new Push / Pull / Legs split.",
 "message_label": "Message",
 "metric_e1rm": "Estimated 1RM",
 "metric_max_weight": "Max weight",
@@ -1135,7 +1134,9 @@ ja:{
 "priv_counts_t": "匿名の利用回数",
 "priv_counts_b": "ワークアウトの開始・完了、自己ベスト更新、プログラム保存、PDFレポート作成、バックアップ書き出しのときに、GainPathのカウンターへ2つの情報だけを送ります:この端末で作られたランダムなIDと、どの操作が行われたか。名前、重量、ワークアウト内容、メールアドレスは送りません。IPアドレスはカウンターを運用するCloudflareに届きますが、カウンターには保存されません。",
 "priv_id_label": "あなたのランダムID",
-"priv_optout_b": "現在、このカウントをオフにする設定はありません。IDの記録を削除したい場合は「フィードバックを送信」からIDを送ってください。",
+"priv_optout_b": "オフにするとカウントの送信が止まり、この端末からランダムIDが削除されます。すでに送信した記録の削除を希望する場合は、オフにする前に「フィードバックを送信」でIDを送ってください。",
+"priv_switch_label": "匿名の利用カウントを送信",
+"priv_gpc_note": "お使いのブラウザが Global Privacy Control を送信しているため、カウントはオフです。",
 "priv_choice_t": "送信を選んだときだけ",
 "priv_choice_b": "「フィードバックを送信」は、メッセージ(入力した場合は返信先アドレスも)と、名前・性別・分割法・経験レベルをEmailJS経由でメール送信します。「ネイティブアプリの最新情報」は入力したメールアドレスを保存します。",
 "priv_full": "プライバシーページを読む",
@@ -1199,10 +1200,8 @@ ja:{
 "tut12_body": "設定では持っているプレートやダンベルの登録、Apple Watch連携、フィードバック送信ができます。アカウントは一切不要です。",
 "whatsnew_heading": "アップデート情報",
 "btn_got_it": "了解",
-"whatsnew_item1": "週のワークアウト回数をいつでも変更できます。設定 → 環境設定の「週のワークアウト回数」から。過去の週は当時の目標のまま残るので、連続記録とバッジは変わりません。",
-"whatsnew_item2": "ホームがすっきりしました。大きなボタン1つでおすすめの日を開始でき、「前回のワークアウトを繰り返す」は控えめに。連続記録カードは、最初の1週間を達成するまで小さく表示されます。",
-"whatsnew_item3": "セットの操作ボタンが大きくなりました。−と+、ログが40px以上になり、セット間でも押しやすくなりました。プレート計算と削除は、各セットの「…」ボタンの中に移動しました。",
-"whatsnew_item4": "ワークアウト中のスクロールが減りました。エクササイズの画像は初めて見るときだけ大きく表示され、その後は細い帯に折りたたまれます。タップするとまた開けます。セットが画面の上のほうに表示されます。",
+"whatsnew_item1": "利用カウントのオン/オフを切り替えられるようになりました。設定 → プライバシーでオフにすると、この端末からランダムIDも削除されます。ブラウザが Global Privacy Control を送信している場合は、カウントは常にオフです。",
+"whatsnew_item2": "起動が速くなりました。エクササイズの名前・コツ・手順は使用中の言語の分だけを読み込むため、特に動作の遅いスマートフォンでも早く開きます。",
 "ph_title": "進捗写真",
 "ph_add": "写真を追加",
 "ph_notice": "写真はこのスマホの中にだけ保存されます。バックアップファイルには含まれないため、スマホをなくしたりブラウザのデータを消したりすると失われます。残したい写真は写真アプリに保存してください。",
@@ -1222,7 +1221,6 @@ ja:{
 "ph_save": "写真に保存",
 "ph_delete": "削除",
 "ph_del_confirm": "この写真を削除しますか？どこにもバックアップされていないため、元に戻せません。",
-"whatsnew_item5": "初心者向けのおすすめが変わりました。週2〜3日なら全身、4日なら上半身/下半身を提案します。新しい「プッシュ / プル / レッグ」分割も追加しました。",
 "message_label": "メッセージ",
 "metric_e1rm": "推定1RM",
 "metric_max_weight": "最大重量",
@@ -1821,7 +1819,9 @@ ko:{
 "priv_counts_t": "익명 사용 횟수",
 "priv_counts_b": "운동을 시작하거나 마칠 때, PR을 세울 때, 프로그램을 저장할 때, PDF 리포트를 만들 때, 백업을 내보낼 때 GainPath 카운터로 두 가지만 보내요: 이 기기에서 만든 무작위 ID와 어떤 동작이 있었는지. 이름, 무게, 운동 내용, 이메일은 보내지 않아요. IP 주소는 카운터를 운영하는 Cloudflare에 전달되지만 카운터에 저장되지 않아요.",
 "priv_id_label": "내 무작위 ID",
-"priv_optout_b": "아직 이 카운트를 끄는 설정은 없어요. ID 기록 삭제를 원하면 '피드백 보내기'로 ID를 보내 주세요.",
+"priv_optout_b": "끄면 카운트 전송이 멈추고 이 기기에서 임의 ID가 삭제됩니다. 이미 보낸 기록을 삭제하려면 끄기 전에 ‘피드백 보내기’로 ID를 보내 주세요.",
+"priv_switch_label": "익명 사용 횟수 보내기",
+"priv_gpc_note": "브라우저가 Global Privacy Control을 보내고 있어 카운트가 꺼져 있습니다.",
 "priv_choice_t": "직접 보낼 때만",
 "priv_choice_b": "'피드백 보내기'는 메시지(입력한 경우 회신 주소 포함)와 이름, 성별, 분할, 경험 수준을 EmailJS를 통해 이메일로 보내요. '네이티브 앱 소식'은 입력한 이메일 주소를 저장해요.",
 "priv_full": "개인정보 페이지 전체 보기",
@@ -1885,10 +1885,8 @@ ko:{
 "tut12_body": "설정에서 보유한 플레이트/덤벨 등록, Apple Watch 연동, 피드백 보내기가 가능합니다. 계정은 절대 필요하지 않습니다.",
 "whatsnew_heading": "업데이트 소식",
 "btn_got_it": "확인",
-"whatsnew_item1": "주당 운동 횟수를 언제든지 바꿀 수 있어요. 설정 → 환경설정의 “주당 운동 횟수”에서 바꿉니다. 지난 주는 당시 목표를 유지하므로 연속 기록과 배지는 그대로예요.",
-"whatsnew_item2": "홈 화면이 더 깔끔해졌어요. 큰 버튼 하나로 추천 요일을 시작하고, “지난 운동 반복”은 보조 버튼이 됩니다. 연속 기록 카드는 첫 한 주를 채울 때까지 작게 표시돼요.",
-"whatsnew_item3": "세트 조작 버튼이 커졌어요. −, +, 기록 버튼이 40px 이상이라 세트 사이에도 누르기 쉬워요. 플레이트 계산기와 삭제는 각 세트의 “…” 버튼 안으로 옮겼어요.",
-"whatsnew_item4": "운동 중 스크롤이 줄었어요. 운동 그림은 처음 볼 때만 크게 보이고, 이후에는 가는 띠로 접혀요. 탭하면 다시 열 수 있어서 세트가 화면 위쪽에 보입니다.",
+"whatsnew_item1": "사용 횟수 카운트를 켜고 끌 수 있어요. 설정 → 개인정보에서 끄면 이 기기의 임의 ID도 삭제됩니다. 브라우저가 Global Privacy Control을 보내는 경우 카운트는 항상 꺼져 있어요.",
+"whatsnew_item2": "시작이 빨라졌어요. 운동 이름, 팁, 순서 설명을 사용 중인 언어 것만 불러와서, 특히 느린 휴대폰에서도 더 빨리 열립니다.",
 "ph_title": "진행 사진",
 "ph_add": "사진 추가",
 "ph_notice": "사진은 이 휴대폰에만 저장돼요. 백업 파일에 포함되지 않아서 휴대폰을 잃어버리거나 브라우저 데이터를 지우면 사라져요. 남기고 싶은 사진은 사진 앱에 저장하세요.",
@@ -1908,7 +1906,6 @@ ko:{
 "ph_save": "사진에 저장",
 "ph_delete": "삭제",
 "ph_del_confirm": "이 사진을 삭제할까요? 어디에도 백업되지 않아서 되돌릴 수 없어요.",
-"whatsnew_item5": "초보자를 위한 추천이 좋아졌어요. 주 2~3일이면 전신, 4일이면 상체/하체를 추천하고, 새로운 “푸시 / 풀 / 하체” 분할도 추가됐어요.",
 "message_label": "메시지",
 "metric_e1rm": "추정 1RM",
 "metric_max_weight": "최대 무게",
@@ -2083,9 +2080,16 @@ function applyLang(){
   document.querySelectorAll('#lang-en,#lang-ja,#lang-ko').forEach(b=>b.classList.toggle('on',b.id==='lang-'+lang));
   document.querySelectorAll('#setlang-en,#setlang-ja,#setlang-ko').forEach(b=>b.classList.toggle('on',b.id==='setlang-'+lang));
 }
+// The new language's exercise text is loaded before anything is re-rendered, so
+// names and tips never flash back to English. Already loaded (en, or a language
+// used earlier this session) runs synchronously.
 function setLang(lang){
-  CFG.lang=lang;
-  applyLang();
-  if(CFG.setup){saveCFG();refreshHome();}
-  renderBackupStatus();if(gid('ex-mo'))initExport();
+  const go=()=>{
+    CFG.lang=lang;
+    applyLang();
+    if(CFG.setup){saveCFG();refreshHome();}
+    renderBackupStatus();if(gid('ex-mo'))initExport();
+  };
+  if(exTextReady(lang)){go();return Promise.resolve();}
+  return loadExText(lang).then(go);
 }

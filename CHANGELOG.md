@@ -4,7 +4,31 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [2.13.0] - 2026-10-28
+
+### Added
+- **A switch for the anonymous usage counts (F12).** Settings → Privacy → "Send
+  anonymous usage counts", on by default. Off: `track()` sends nothing and
+  `gp_anon_id` is removed (from localStorage and the IndexedDB mirror); on again:
+  a fresh ID. `navigator.globalPrivacyControl` is honoured the same way (nothing
+  sent, ID removed at every launch, the switch locked off with a note). The
+  choice is `CFG.analyticsOff`, saved and backed up with the profile.
+  `privacy.html` and the in-app text describe exactly this; `test:data` covers
+  default on, off, relaunch, back on with a new ID, Global Privacy Control and
+  the privacy page.
+
+### Changed
+- **Exercise text is split per language (F11).** `js/exercise-text.js` (3.2 MB,
+  parsed on every launch whatever the language) is now `exercise-text-en.js`
+  (always loaded, 0.9 MB, with empty placeholders for the other languages),
+  `exercise-text-ja.js` and `exercise-text-ko.js` (about 1.1 MB each, same
+  globals, loaded on demand by `loadExText()` in `js/ui-core.js`). Boot waits for
+  the current language's file (at most 3 s, then starts in English), and
+  `setLang()` loads the new file before re-rendering. All three are in
+  `SHELL_URLS`, so every language still boots offline. English users now fetch
+  146 KB of exercise text instead of 485 KB and reach interactive in 2.6 s
+  instead of 4.2 s (`docs/audits/2026-10-27/PERF.md`). `test:sw` asserts the
+  per-language requests, offline boot in en/ja/ko and the language switch.
 
 ## [2.12.0] - 2026-10-28
 

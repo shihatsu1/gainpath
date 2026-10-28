@@ -23,6 +23,10 @@ their own phone. Protect existing data first.
   bumps every `?v=` with `APP_VERSION`, so a phone never pairs a new
   `index.html` with a stale script. `visual-check` enforces both and boots the
   app offline from the precache.
+  The one exception is `exercise-text-ja.js` / `exercise-text-ko.js`: loaded on
+  demand by `loadExText()` (never by a tag), precached, and filling the same
+  globals the always-loaded `exercise-text-en.js` declares as empty placeholders.
+  Tests that read them call `loadExText('ja')` first.
 - **Nothing external is needed to start, and no library blocks parsing.**
   Chart.js, jsPDF and EmailJS live in `vendor/` (versioned file names, hashes in
   `vendor/README.md`) and load on demand through `loadLib(name)`; call sites
@@ -248,7 +252,7 @@ their own phone. Protect existing data first.
 | `npm run test:units` | the real math/PR functions in the browser; add a case when one changes |
 | `npm run test:a11y` | keyboard-driven checks: every sheet (name, focus, Tab trap, inert background, Escape, focus return), unique set-row control names in en/ja/ko, nameless controls (Chromium + WebKit) |
 | `npm run test:i18n` | crawls the rendered ja and ko UI (onboarding, tabs, every Settings page, day editor, workout, rest, sheets) and fails on any visible text, `aria-label`, placeholder or title that is English; brands, units and exercise data are allowlisted |
-| `npm run test:sw` | service-worker update from an older worker, foreign caches kept, error responses never cached, offline boot, workout survives an update (Chromium + WebKit) |
+| `npm run test:sw` | per-language exercise text (only the current language requested, offline boot in en/ja/ko, language switch); service-worker update from an older worker, foreign caches kept, error responses never cached, offline boot, workout survives an update (Chromium + WebKit) |
 | `npm run test:worker` | analytics worker (in-memory KV, synthetic data; never contacts Cloudflare) |
 | `npm run test:data` | backup/restore, save failures, IDB mirror, iPhone warning, photos (Chromium + WebKit) |
 | `npm run visual-check` | UI smoke, set-row budget, tutorial ratio (WebKit), js/?v=/precache, offline boot, guides |

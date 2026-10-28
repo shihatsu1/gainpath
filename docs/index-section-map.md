@@ -7,7 +7,8 @@
 |---|---|
 | `js/boot.js` | Boot constants, analytics, What's New |
 | `js/exercises.js` | Splits and machine keys, exercise database, exercise pool |
-| `js/exercise-text.js` | Exercise tips, names and instructions (en/ja/ko), ~3.2 MB |
+| `js/exercise-text-en.js` | Exercise tips and instructions in English plus the lookup helpers; always loaded (~0.9 MB) |
+| `js/exercise-text-ja.js`, `js/exercise-text-ko.js` | Japanese / Korean names, tips and instructions (~1.1 MB each), loaded on demand by `loadExText()` and precached |
 | `js/state.js` | State (`CFG`, `ST`), `load()` with per-key validation (`LOAD_BAD`) |
 | `js/i18n.js` | `STRINGS`, `t()` |
 | `js/storage.js` | Migrations, per-store saving (`SAVE_FAILS`), pending-completion settling, IndexedDB mirror, in-progress workout |

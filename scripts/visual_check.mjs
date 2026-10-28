@@ -243,7 +243,9 @@ async function main() {
   try { jsFiles = (await readdir(path.join(ROOT, 'js'))).filter((f) => f.endsWith('.js')); } catch { /* no js/ yet */ }
   for (const f of jsFiles) {
     const url = `js/${f}?v=${ver}`;
-    if (!html.includes(`<script src="${url}"></script>`)) issues.push(`index.html does not load ${url}`);
+    // exercise-text-ja/ko are loaded on demand by loadExText() (js/ui-core.js), not by a tag; they must still be precached.
+    if (/^exercise-text-(ja|ko)\.js$/.test(f)) { if (!/loadExText/.test(allSrc)) issues.push(`${f} has no loader`); }
+    else if (!html.includes(`<script src="${url}"></script>`)) issues.push(`index.html does not load ${url}`);
     if (!swSrc.includes(`'./${url}'`)) issues.push(`sw.js SHELL_URLS does not precache ./${url}`);
   }
   for (const m of html.matchAll(/<script src="(js\/[^"]+)"/g)) {

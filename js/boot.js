@@ -11,15 +11,21 @@ const EMAILJS_PUBLIC_KEY='jtnxpkG1PAlGnF4LL';
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.12.0';
+const APP_VERSION='2.13.0';
 const APP_ORIGIN='https://shihatsu1.github.io';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
+// Counts are on by default. They are off when the user turned them off (Settings →
+// Privacy) or the browser sends Global Privacy Control; either way the random ID is
+// removed from the device and nothing is sent.
+function analyticsOn(){return !CFG.analyticsOff&&navigator.globalPrivacyControl!==true;}
+function dropAnonId(){try{localStorage.removeItem('gp_anon_id');}catch(e){}idbMirrorDelete('gp_anon_id');}
 function getAnonId(){
   let id=localStorage.getItem('gp_anon_id');
   if(!id){id=(crypto.randomUUID?crypto.randomUUID():'xxxxxxxxxxxxxxxx'.replace(/x/g,()=>Math.floor(Math.random()*16).toString(16)));localStorage.setItem('gp_anon_id',id);}
   return id;
 }
 function track(event){
+  if(!analyticsOn())return;
   if(!ANALYTICS_ENDPOINT||ANALYTICS_ENDPOINT.includes('YOUR-SUBDOMAIN'))return;
   try{
     const payload=JSON.stringify({id:getAnonId(),event});
@@ -39,8 +45,8 @@ function track(event){
 // on a release that ships user-facing news. A bug-fix-only release leaves it
 // alone, so upgraders correctly see no sheet at all instead of last version's
 // announcement re-headed with the new number. ═══
-const WHATS_NEW_VERSION='2.12.0';
-const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2','whatsnew_item3','whatsnew_item4','whatsnew_item5'];
+const WHATS_NEW_VERSION='2.13.0';
+const WHATS_NEW_ITEMS=['whatsnew_item1','whatsnew_item2'];
 // -1 / 0 / 1 — segment-wise numeric compare, tolerant of the legacy '0' default.
 function cmpVer(a,b){
   const x=String(a||'0').split('.').map(Number),y=String(b||'0').split('.').map(Number);

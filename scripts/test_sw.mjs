@@ -31,8 +31,8 @@ const variant = (name) => swSource.replace(`'${NAME}'`, `'${name}'`);
 
 const state = { sw: variant(OLD), fail: false, down: false, hang: false };
 // Install must stay small (F3: it used to pull 268 MB of PNGs before an update could activate).
-// Today's shell is ~4.0 MB of scripts (3.2 MB of it exercise-text.js, split in a later phase) + 0.5 MB libraries
-// + 1.6 MB tutorial screenshots; the ceiling tightens when that file is split.
+// Today's shell is ~4.0 MB of scripts (3.1 MB of it the three exercise-text files, all precached so every language works offline) + 0.5 MB libraries
+// + 1.6 MB tutorial screenshots; 
 const INSTALL_MAX_MB = 7;
 const held = new Set(); // requests the 'hung' network is sitting on
 const releaseHeld = () => { held.forEach((r) => r.destroy()); held.clear(); };
@@ -146,8 +146,48 @@ async function run(engine, tag) {
   await browser.close();
 }
 
+// F11: only the current language's exercise text is requested at startup, every language boots offline,
+// and switching language loads the new file before anything is re-rendered.
+async function langRun(engine, tag) {
+  state.sw = variant(NAME); state.fail = false; state.down = false; state.hang = false;
+  const browser = await engine.launch();
+  const ctx = await browser.newContext();
+  const page = await ctx.newPage();
+  const errors = []; page.on('pageerror', (e) => { if (!state.down) errors.push(String(e)); });
+  const reqs = []; page.on('request', (r) => reqs.push(new URL(r.url()).pathname));
+  await page.goto(URL0); await page.evaluate(() => navigator.serviceWorker.ready); await page.reload();
+  await until(() => page.evaluate(() => !!navigator.serviceWorker.controller));
+  const cached = await page.evaluate(async (c) => (await (await caches.open(c)).keys()).map((r) => new URL(r.url).pathname), NAME);
+  check(`${tag} lang: all three exercise-text files are precached for offline use`, ['en', 'ja', 'ko'].every((l) => cached.includes(`/js/exercise-text-${l}.js`)), cached.filter((u) => /exercise-text/.test(u)));
+  for (const lang of ['en', 'ja', 'ko']) {
+    reqs.length = 0;
+    await page.evaluate(async (lang) => { const l = lang; localStorage.setItem('gp_cfg', JSON.stringify({ ...JSON.parse(localStorage.getItem('gp_cfg') || '{}'), setup: true, name: 'L', firstName: 'L', lang: l, startingWeights: 'manual', lastSeenVersion: '9.9.9', tutorialSeen: true, badgesIntroSeen: true })); localStorage.setItem('gp_a2hs_dismissed', 'true'); localStorage.setItem('gp_last_export', new Date().toISOString()); }, lang);
+    await page.reload(); await page.waitForSelector('#s-home.active');
+    const asked = reqs.filter((u) => /exercise-text/.test(u)).map((u) => u.split('/').pop());
+    const want = [`exercise-text-en.js`, ...(lang === 'en' ? [] : [`exercise-text-${lang}.js`])].sort();
+    check(`${tag} lang ${lang}: startup requests ${want.join(' + ')} and no other exercise text`, JSON.stringify(asked.sort()) === JSON.stringify(want), asked);
+    state.down = true;
+    await page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {});
+    const up = await until(() => page.evaluate(() => !!document.querySelector('#s-home.active')).catch(() => false));
+    const names = lang === 'en' ? 1 : await page.evaluate((l) => Object.keys(l === 'ja' ? EX_NAMES_JA : EX_NAMES_KO).length, lang);
+    check(`${tag} lang ${lang}: boots offline with its exercise text (${names} localized names)`, up && (lang === 'en' || names > 100), { up, names });
+    state.down = false;
+  }
+  // Switching language loads the file first, then re-renders: the name shown is already the new language's.
+  const sw = await page.evaluate(async () => {
+    await setLang('en'); const before = exDisplayName('Barbell bench press');
+    const p = setLang('ko'); const ready = exTextReady('ko');
+    await p; return { before, ready, after: exDisplayName('Barbell bench press'), ko: EX_NAMES_KO['Barbell bench press'], lang: CFG.lang };
+  });
+  check(`${tag} lang: switching language shows the new language's exercise name (${sw.after})`, sw.lang === 'ko' && sw.after === sw.ko && sw.before === 'Barbell bench press', sw);
+  check(`${tag} lang: no page errors`, errors.length === 0, errors);
+  await browser.close();
+}
+
 await run(chromium, 'chromium');
+await langRun(chromium, 'chromium');
 await run(webkit, 'webkit');
+await langRun(webkit, 'webkit');
 server.close();
 
 for (const r of results) console.log(`${r.pass ? 'PASS' : 'FAIL'}  ${r.name}${r.pass || r.detail === undefined ? '' : '\n      ' + JSON.stringify(r.detail)}`);

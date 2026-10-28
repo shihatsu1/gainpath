@@ -55,6 +55,23 @@ function loadLib(name){
     document.head.appendChild(s);
   });
 }
+// Japanese and Korean exercise names, tips and instructions are ~1 MB each, so only
+// the current language is loaded (English is always present, and is the fallback
+// while a file loads or if it fails). The same plain-script globals, filled in place.
+const EXTEXT_LOADED={en:true};
+function exTextReady(lang){return !!EXTEXT_LOADED[lang||'en'];}
+function loadExText(lang){
+  lang=lang||'en';
+  if(EXTEXT_LOADED[lang]===true)return Promise.resolve();
+  if(EXTEXT_LOADED[lang])return EXTEXT_LOADED[lang];
+  if(lang!=='ja'&&lang!=='ko')return Promise.resolve();
+  return EXTEXT_LOADED[lang]=new Promise(res=>{
+    const s=document.createElement('script');s.src='js/exercise-text-'+lang+'.js?v='+APP_VERSION;
+    s.onload=()=>{EXTEXT_LOADED[lang]=true;res();};
+    s.onerror=()=>{delete EXTEXT_LOADED[lang];s.remove();res();};
+    document.head.appendChild(s);
+  });
+}
 // ═══ MODALS: focus, Escape and the background for sheets ═══
 // A sheet's own open function shows it, then calls modalOpen(id,closeFn,opts):
 // the page behind it becomes inert, focus moves in (data-autofocus wins), Tab

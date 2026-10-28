@@ -1,7 +1,7 @@
 // GainPath service worker — app-shell caching only. Bump CACHE_NAME whenever
 // SHELL_URLS/LIB_URLS or the caching logic below changes; activate() deletes
 // the app's own older caches (see ownsCache) and nothing else.
-const CACHE_NAME = 'gainpath-v52';
+const CACHE_NAME = 'gainpath-v53';
 // Exercise images (all .webp) are fetched the first time they are shown and kept
 // here. This cache is not tied to CACHE_NAME, so a release never makes phones
 // download them again, and install stays small (the shell, libraries and
@@ -72,23 +72,26 @@ const SHELL_URLS = [
   './fonts/tabler-icons.css', './fonts/tabler-icons-subset.woff2',
   // App code: plain scripts under js/, in index.html's load order. The ?v= is
   // APP_VERSION, so each release precaches fresh URLs (visual-check enforces it).
-  './js/boot.js?v=2.12.0',
-  './js/exercises.js?v=2.12.0',
-  './js/exercise-text.js?v=2.12.0',
-  './js/state.js?v=2.12.0',
-  './js/i18n.js?v=2.12.0',
-  './js/storage.js?v=2.12.0',
-  './js/ui-core.js?v=2.12.0',
-  './js/onboarding.js?v=2.12.0',
-  './js/math.js?v=2.12.0',
-  './js/history.js?v=2.12.0',
-  './js/settings.js?v=2.12.0',
-  './js/day-edit.js?v=2.12.0',
-  './js/workout.js?v=2.12.0',
-  './js/climb.js?v=2.12.0',
-  './js/photos.js?v=2.12.0',
-  './js/data-safety.js?v=2.12.0',
-  './js/main.js?v=2.12.0'
+  './js/boot.js?v=2.13.0',
+  './js/exercises.js?v=2.13.0',
+  './js/exercise-text-en.js?v=2.13.0',
+  // Japanese and Korean are loaded on demand (loadExText) but precached so switching language works offline.
+  './js/exercise-text-ja.js?v=2.13.0',
+  './js/exercise-text-ko.js?v=2.13.0',
+  './js/state.js?v=2.13.0',
+  './js/i18n.js?v=2.13.0',
+  './js/storage.js?v=2.13.0',
+  './js/ui-core.js?v=2.13.0',
+  './js/onboarding.js?v=2.13.0',
+  './js/math.js?v=2.13.0',
+  './js/history.js?v=2.13.0',
+  './js/settings.js?v=2.13.0',
+  './js/day-edit.js?v=2.13.0',
+  './js/workout.js?v=2.13.0',
+  './js/climb.js?v=2.13.0',
+  './js/photos.js?v=2.13.0',
+  './js/data-safety.js?v=2.13.0',
+  './js/main.js?v=2.13.0'
 ];
 // Network first, but never wait for it forever: on a weak or hung connection
 // (a basement gym) the cached copy is served after NET_WAIT_MS. The slow request
@@ -154,7 +157,7 @@ self.addEventListener('fetch', (event) => {
   if (sameOrigin) {
     // Sub-resources are cache-first: scripts carry ?v=<APP_VERSION> and the rest
     // of the shell is replaced as a whole by the worker update, so a cached copy
-    // is never stale, and a weak signal can't stall the 3 MB exercise-text.js.
+    // is never stale, and a weak signal can't stall the exercise-text files.
     // Only what was never cached goes to the network.
     event.respondWith(cachedResponse(req).then((c) => c || networkOrCache(event, req, () => cachedResponse(req))));
   }

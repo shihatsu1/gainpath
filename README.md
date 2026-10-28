@@ -10,13 +10,10 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 
 ---
 
-## ✨ What's new in v2.12.0
+## ✨ What's new in v2.13.0
 
-- **Change your weekly target any time.** Settings → Preferences has a new "Workouts per week" control. Past weeks keep the target they had, so your streaks and badges don't change.
-- **A clearer Home.** One big button starts the suggested day, "Repeat last workout" is secondary, and the streak card stays small until you finish your first full week.
-- **Bigger set controls.** The − and + steppers and Log are at least 40 px. Plate calculator and Delete moved behind the "…" button on each set.
-- **Less scrolling mid-workout.** The exercise picture is shown the first time you see an exercise, then folds to a strip you can tap to open again.
-- **Better starting plan for beginners.** With 2–3 days a week you're suggested Full Body, with 4 days Upper/Lower. There's also a new Push / Pull / Legs split.
+- **A switch for usage counts.** Settings → Privacy lets you turn the anonymous counts off, which also erases your random ID from this device. If your browser sends Global Privacy Control, the counts stay off.
+- **Faster start.** Exercise names, tips and steps load only in your language, so GainPath opens sooner, especially on slower phones.
 
 ## Features
 
@@ -26,6 +23,7 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 - Edit any day before or during a workout: reorder, swap, add or delete exercises, and link supersets and circuits.
 - A 1,059-exercise library, each with an illustrated guide, form cues and step-by-step instructions.
 - Custom exercises for anything not in the library.
+- Home has one "Start" button for the suggested day, and a compact streak card until your first full week.
 
 **Weights**
 - Starting weights are estimated from your related lifts or, before you've logged any, from your body weight, sex and experience.
@@ -36,7 +34,8 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 - Switch between kg and lbs anytime. Switching back restores your exact numbers.
 
 **During a workout**
-- One-tap set logging, with steppers to adjust the weight.
+- One-tap set logging, with thumb-sized steppers to adjust the weight; plate calculator and delete sit behind each set's "…" button.
+- The exercise picture shows in full the first time and folds to a strip afterwards, so the sets stay on screen.
 - Rest timer with sound, vibration, form tips and a preview of the next set.
 - Hold timers for planks and carries, drop sets, notes that remind you next time, and a keep-screen-awake option.
 

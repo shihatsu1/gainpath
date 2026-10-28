@@ -79,7 +79,9 @@ function settlePendingDone(){
     let done=null,wip=null;
     try{done=JSON.parse(localStorage.getItem('gp_done')||'null');}catch(e){}
     try{wip=JSON.parse(localStorage.getItem('gp_wip')||'null');}catch(e){}
-    if(done&&typeof done==='object'&&!hasCid(done.cid)){
+    // A parked record that isn't a whole session is left where it is, untouched.
+    if(done&&!validSession(done))return false;
+    if(done&&!hasCid(done.cid)){
       ST.history.push(done);
       if(!saveData()){ST.history=ST.history.filter(h=>h!==done);return false;}
     }
@@ -208,8 +210,16 @@ function saveInProgress(){
 function clearInProgress(){try{localStorage.removeItem('gp_wip');}catch(e){}idbMirrorDelete('gp_wip');}
 function restoreInProgress(){
   let wip;
-  try{wip=JSON.parse(localStorage.getItem('gp_wip')||'null');}catch(e){wip=null;}
+  let raw=null;
+  try{raw=localStorage.getItem('gp_wip');wip=JSON.parse(raw||'null');}catch(e){wip=null;}
   if(!wip||(!wip.day&&!wip.editDay))return false;
+  // A workout that can't be resumed is kept as raw text and the app starts
+  // without one; gp_wip itself is left alone until the next workout replaces it.
+  if(!validWip(wip)){
+    try{localStorage.setItem('gp_corrupt_gp_wip',raw);}catch(e){}
+    alert(t('wip_unreadable'));
+    return false;
+  }
   // An in-progress workout saved before the v2.10 renames still carries old names.
   {const rn=exRenamer();renameExList(wip.sd,rn);renameExList(wip.editList,rn);if(wip.pendingRec)renameExList(wip.pendingRec.exercises,rn);if(Array.isArray(wip.mwQueue))wip.mwQueue=wip.mwQueue.map(rn);if(wip.mwCurrent)wip.mwCurrent=rn(wip.mwCurrent);}
   if(wip.day){

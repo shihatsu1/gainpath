@@ -290,6 +290,74 @@ async function migrationTests(engine, tag, check, errors) {
   await browser.close();
 }
 
+// ── F4: a set-up profile must never be stranded on onboarding by one bad record.
+// Each case starts from a normally booted, normalised profile, damages exactly
+// one key, and relaunches. Expect Home or the recovery sheet, no uncaught error,
+// and no write to any key (the only allowed one is the kept raw copy of a
+// rejected in-progress workout, gp_corrupt_gp_wip).
+async function bootTests(engine, tag, check, errors) {
+  const browser = await engine.launch();
+  const good = bigUser(135); good.history = good.history.slice(0, 5);
+  const sess = { day: 'push', exercises: [{ name: 'Barbell bench press', sets: [{ done: true, t: 'x', w: 100, r: 5 }] }] };
+  const okEx = { ex: { name: 'Barbell bench press', mg: 'chest', baseW: 20, equip: 'barbell' }, sets: [{ w: 100, r: 5, t: 'x', done: false }] };
+  const cases = [
+    { key: 'gp_wip', name: 'gp_wip whose sd is not an array', val: { day: 'push', exi: 0, sd: 'oops', t0: Date.now() - 60000, screen: 'wo' }, copy: true },
+    { key: 'gp_wip', name: 'gp_wip with exi past the end of sd', val: { day: 'push', exi: 5, sd: [okEx], t0: Date.now() - 60000, screen: 'wo' }, copy: true },
+    { key: 'gp_wip', name: 'gp_wip that is a bare string', val: 'oops', copy: false },
+    { key: 'gp_h', name: 'gp_h containing null', val: [null, { ...sess, dk: '2026-10-01', date: '2026-10-01' }], copy: false },
+    { key: 'gp_h', name: 'gp_h record whose exercises is not an array', val: [{ day: 'push', dk: '2026-10-01', date: '2026-10-01', exercises: 'bad' }], copy: false },
+    { key: 'gp_done', name: 'gp_done with no exercises', val: { cid: 123, day: 'push', dk: '2026-10-02', date: '2026-10-02' }, copy: false }
+  ];
+  for (const c of cases) {
+    const ctx = await browser.newContext({ acceptDownloads: true, serviceWorkers: 'block' });
+    const page = await ctx.newPage();
+    const errs = []; page.on('pageerror', (e) => errs.push(String(e))); page.on('dialog', (d) => d.accept());
+    await seed(page, good);
+    const raw = JSON.stringify(c.val);
+    await page.evaluate(([k, v]) => localStorage.setItem(k, v), [c.key, raw]);
+    const snap = () => page.evaluate(() => Object.fromEntries(Object.keys(localStorage).sort().map(k => [k, localStorage.getItem(k)])));
+    const before = await snap();
+    await page.reload();
+    await page.waitForTimeout(700);
+    const st = await page.evaluate(() => ({ ob: document.getElementById('s-ob').classList.contains('active'), home: document.getElementById('s-home').classList.contains('active'), rec: getComputedStyle(document.getElementById('load-recovery')).display !== 'none' }));
+    const after = await snap();
+    const added = Object.keys(after).filter(k => !(k in before) || after[k] !== before[k]);
+    const allowed = c.copy ? ['gp_corrupt_gp_wip'] : [];
+    check(`${tag} F4 ${c.name}: reaches Home or the recovery sheet, never onboarding`, !st.ob && (st.home || st.rec), st);
+    check(`${tag} F4 ${c.name}: no uncaught error`, errs.length === 0, errs);
+    check(`${tag} F4 ${c.name}: nothing is written${c.copy ? ' except the kept raw copy' : ''}`, added.every(k => allowed.includes(k)) && Object.keys(before).every(k => k in after) && after[c.key] === raw, added);
+    if (c.copy) check(`${tag} F4 ${c.name}: the raw text is kept in gp_corrupt_gp_wip`, after.gp_corrupt_gp_wip === raw);
+    if (c.key === 'gp_h') check(`${tag} F4 ${c.name}: the recovery sheet names the history`, st.rec);
+    await ctx.close();
+  }
+  // Anything else that throws after load() on a set-up profile (here a shape-valid
+  // workout whose machine-weight screen state is garbage) lands on the recovery
+  // sheet with a Download that holds the raw data, never on onboarding.
+  {
+    const ctx = await browser.newContext({ acceptDownloads: true, serviceWorkers: 'block' });
+    const page = await ctx.newPage(); page.on('dialog', (d) => d.accept());
+    await seed(page, good);
+    const wip = JSON.stringify({ day: 'push', exi: 0, sd: [okEx], t0: Date.now() - 1000, screen: 'rest', restInfo: { si: 0 }, restEnd: Date.now() + 5000 });
+    await page.evaluate((w) => localStorage.setItem('gp_wip', w), wip);
+    const before = await page.evaluate(() => Object.fromEntries(Object.keys(localStorage).sort().map(k => [k, localStorage.getItem(k)])));
+    await page.reload(); await page.waitForTimeout(700);
+    const st = await page.evaluate(() => ({ ob: document.getElementById('s-ob').classList.contains('active'), rec: getComputedStyle(document.getElementById('load-recovery')).display !== 'none' }));
+    check(`${tag} F4 crash barrier: an unexpected boot error shows the recovery sheet, not onboarding`, !st.ob && st.rec, st);
+    let dumped = {};
+    if (st.rec) {
+      const [dl] = await Promise.all([page.waitForEvent('download'), page.click('#lr-download')]);
+      const f = path.join(OUT, 'boot-crash.json'); await dl.saveAs(f);
+      dumped = JSON.parse(await readFile(f, 'utf8'));
+    }
+    let snapKeys = {}; try { snapKeys = JSON.parse((dumped.gainpathUnreadableData || {}).boot_crash || '{}').keys || {}; } catch {}
+    check(`${tag} F4 crash barrier: Download holds the raw stored data`, snapKeys.gp_wip === wip && !!snapKeys.gp_h && !!snapKeys.gp_cfg, Object.keys(snapKeys));
+    const after = await page.evaluate(() => Object.fromEntries(Object.keys(localStorage).sort().map(k => [k, localStorage.getItem(k)])));
+    check(`${tag} F4 crash barrier: nothing is written`, JSON.stringify(before) === JSON.stringify(after), Object.keys(after).filter(k => after[k] !== before[k]));
+    await ctx.close();
+  }
+  await browser.close();
+}
+
 async function auditTests(engine, tag, check, errors) {
   const browser = await engine.launch();
   const mk = async () => {
@@ -506,6 +574,11 @@ async function main() {
   if (process.env.MIGRATE_ONLY) { // MIGRATE_ONLY=1: just the old→new origin transfer
     await migrationTests(chromium, 'chromium', check, errors);
     if (process.env.ENGINE !== 'chromium') await migrationTests(webkit, 'webkit', check, errors);
+    server.close(); return printAndExit(results, errors);
+  }
+  if (process.env.BOOT_ONLY) { // BOOT_ONLY=1: just the F4 damaged-record boot cases
+    await bootTests(chromium, 'chromium', check, errors);
+    if (process.env.ENGINE !== 'chromium') await bootTests(webkit, 'webkit', check, errors);
     server.close(); return printAndExit(results, errors);
   }
   if (process.env.AUDIT_ONLY) { // AUDIT_ONLY=1 node scripts/test_data_safety.mjs: just the A01–A07 regressions
@@ -777,6 +850,8 @@ async function main() {
   await auditTests(webkit, 'webkit', check, errors);
   await migrationTests(chromium, 'chromium', check, errors);
   await migrationTests(webkit, 'webkit', check, errors);
+  await bootTests(chromium, 'chromium', check, errors);
+  await bootTests(webkit, 'webkit', check, errors);
   server.close();
 
   printAndExit(results, errors);

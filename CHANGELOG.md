@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.11.2] - 2026-10-28
+
+### Fixed
+- **One damaged record can no longer strand a set-up user on the welcome
+  screen (F4).** A saved workout in progress whose exercise list isn't a list, or
+  whose position points past it, a history entry that is empty or has no
+  exercise list, and a parked finished workout with no exercises each threw
+  during startup, after the welcome screen had already been shown. Now:
+  - `load()` checks every history record. If any can't be used, the whole
+    stored history goes to the existing recovery sheet untouched (nothing is
+    dropped or written).
+  - A workout in progress that can't be resumed is kept as raw text in
+    `gp_corrupt_gp_wip`, the app opens without a workout, and a translated
+    notice says so. A parked finished workout that isn't a whole session is left
+    where it is instead of being added to history.
+  - A crash barrier around the rest of startup: if anything else throws on a
+    set-up profile, the recovery sheet opens (Download holds every stored
+    value) and onboarding is never shown.
+  `test:data` reproduces each case in Chromium and WebKit and asserts that no
+  key is written.
+
 ## [2.11.1] - 2026-10-28
 
 ### Fixed

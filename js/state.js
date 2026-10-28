@@ -52,7 +52,13 @@ const OB_STEPS=3;
 // Boot shows the recovery sheet (showLoadRecovery) for any key listed here.
 const LOAD_BAD={};
 const isPlainObj=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
-const LOAD_SHAPE={gp_cfg:isPlainObj,gp_h:Array.isArray,gp_p:isPlainObj,gp_mw:isPlainObj,gp_bw:Array.isArray};
+// A finished session the rest of the app can iterate without throwing. One bad
+// record sends the whole gp_h to the recovery sheet; nothing is dropped silently.
+const validSession=h=>isPlainObj(h)&&Array.isArray(h.exercises)&&h.exercises.every(e=>isPlainObj(e)&&typeof e.name==='string'&&(e.sets===undefined||(Array.isArray(e.sets)&&e.sets.every(isPlainObj))));
+// An in-progress workout restoreInProgress() can resume: sd has the exercise
+// exi points at, and the pending record (if any) is a whole session.
+const validWip=w=>isPlainObj(w)&&(!w.day||(Array.isArray(w.sd)&&Number.isInteger(w.exi)&&w.exi>=0&&w.exi<w.sd.length&&w.sd.every(x=>isPlainObj(x)&&isPlainObj(x.ex)&&typeof x.ex.name==='string'&&Array.isArray(x.sets))))&&(!w.editDay||w.editList===undefined||Array.isArray(w.editList))&&(w.pendingRec==null||validSession(w.pendingRec));
+const LOAD_SHAPE={gp_cfg:isPlainObj,gp_h:a=>Array.isArray(a)&&a.every(validSession),gp_p:isPlainObj,gp_mw:isPlainObj,gp_bw:Array.isArray};
 function loadKey(k,def,ok){
   let raw=null;try{raw=localStorage.getItem(k);}catch(e){return def;}
   if(raw===null||raw==='')return def;

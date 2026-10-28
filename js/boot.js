@@ -11,7 +11,7 @@ const EMAILJS_PUBLIC_KEY='jtnxpkG1PAlGnF4LL';
 // Privacy-first, aggregate-only usage analytics — see analytics-worker/README.md.
 // gp_anon_id is a random client-generated ID, never tied to a real identity.
 // Replace with the deployed Worker URL; track() is a no-op until it's set.
-const APP_VERSION='2.14.0';
+const APP_VERSION='2.14.1';
 const APP_ORIGIN='https://shihatsu1.github.io';
 const ANALYTICS_ENDPOINT='https://gainpath-analytics.jedmangubat.workers.dev';
 // Counts are on by default. They are off when the user turned them off (Settings →

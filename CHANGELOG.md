@@ -34,6 +34,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   (anonymous usage counts go to a Cloudflare Worker, as Privacy states), and
   Contributing links the issue tracker.
 
+## [2.14.1] - 2026-10-28
+
+### Fixed
+- **Set row had no width to spare.** CI's Linux WebKit draws the weight and reps
+  inputs 1 px wider than macOS, which clipped their values at 360–390 px. The
+  row's padding and Log button padding are a few pixels tighter on phones, giving
+  slack on both. `visual-check` now passes on the CI runner's rendering as well.
+- `test:data` no longer assumes `navigator.storage` exists (Linux WebKit has none).
+
 ## [2.14.0] - 2026-10-28
 
 ### Changed

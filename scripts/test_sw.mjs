@@ -29,10 +29,17 @@ const APPV = /APP_VERSION='([^']+)'/.exec(await readFile(path.join(ROOT, 'js', '
 const OLD = `gainpath-v${n - 1}`, NEW = `gainpath-v${n + 1}`;
 const variant = (name) => swSource.replace(`'${NAME}'`, `'${name}'`);
 
-const state = { sw: variant(OLD), fail: false, down: false };
+const state = { sw: variant(OLD), fail: false, down: false, hang: false };
+// Install must stay small (F3: it used to pull 268 MB of PNGs before an update could activate).
+// Today's shell is ~4.0 MB of scripts (3.2 MB of it exercise-text.js, split in a later phase) + 0.5 MB libraries
+// + 1.6 MB tutorial screenshots; the ceiling tightens when that file is split.
+const INSTALL_MAX_MB = 7;
+const held = new Set(); // requests the 'hung' network is sitting on
+const releaseHeld = () => { held.forEach((r) => r.destroy()); held.clear(); };
 const server = await new Promise((resolve) => {
   const s = createServer(async (req, res) => {
     const u = decodeURIComponent(req.url.split('?')[0]);
+    if (state.hang && u !== '/sw.js') { held.add(req); return; } // a network that accepts the connection and never answers (weak gym signal)
     if (state.down) return req.destroy(); // a dead network: connections drop, as they do offline
     if (u === '/sw.js') { res.writeHead(200, { 'Content-Type': 'text/javascript', 'Cache-Control': 'no-cache' }); return res.end(state.sw); }
     if (state.fail && (u === '/index.html' || u.startsWith('/js/') || u === '/probe-500.txt')) { res.writeHead(500); return res.end('server error'); }
@@ -51,7 +58,7 @@ const check = (name, pass, detail) => results.push({ name, pass: !!pass, detail 
 const until = async (fn, ms = 20000) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { if (await fn()) return true; await new Promise((r) => setTimeout(r, 200)); } return false; };
 
 async function run(engine, tag) {
-  state.sw = variant(OLD); state.fail = false; state.down = false;
+  state.sw = variant(OLD); state.fail = false; state.down = false; state.hang = false;
   const browser = await engine.launch();
   const ctx = await browser.newContext();
   const page = await ctx.newPage();
@@ -94,6 +101,9 @@ async function run(engine, tag) {
   check(`${tag} sw update: the on-demand image cache and its entries survive`, after.includes('gainpath-img-v1') && await page.evaluate(async () => !!(await (await caches.open('gainpath-img-v1')).match('/images/exercises/zz-test.webp'))));
   check(`${tag} sw update: the on-demand libraries are in the new cache`, await page.evaluate(async (c) => { const cache = await caches.open(c); const keys = (await cache.keys()).map((r) => new URL(r.url).pathname); return ['/vendor/chart-4.4.1.min.js', '/vendor/jspdf-2.5.1.min.js', '/vendor/emailjs-browser-4.4.1.min.js'].every((p) => keys.includes(p)); }, NEW));
   check(`${tag} sw update: the lazy-loaded tutorial screenshots are precached for offline`, await page.evaluate(async (c) => { const keys = (await (await caches.open(c)).keys()).map((r) => new URL(r.url).pathname); return ['/images/tutorial/home.png', '/images/tutorial/workout.png', '/images/tutorial/calendar.png'].every((p) => keys.includes(p)); }, NEW));
+  const inst = await page.evaluate(async (c) => { const cache = await caches.open(c); let bytes = 0; const urls = []; for (const r of await cache.keys()) { urls.push(new URL(r.url).pathname); bytes += (await (await cache.match(r)).blob()).size; } return { bytes, urls }; }, NEW);
+  check(`${tag} sw install: the release cache is under ${INSTALL_MAX_MB} MB (${(inst.bytes / 1048576).toFixed(1)} MB)`, inst.bytes < INSTALL_MAX_MB * 1048576, inst.bytes);
+  check(`${tag} sw install: no exercise image is downloaded by an update`, !inst.urls.some((u) => u.startsWith('/images/exercises/')), inst.urls.filter((u) => u.startsWith('/images/exercises/')).length);
   check(`${tag} sw update: the workout in progress is untouched`, await page.evaluate(() => ST.day === 'push' && ST.sd.length === 1 && ST.sd[0].sets[0].w === 60));
   const wipSaved = await page.evaluate(() => !!localStorage.getItem('gp_wip'));
   await page.evaluate(() => { finishWo(); submitFeel('good'); });
@@ -110,6 +120,15 @@ async function run(engine, tag) {
   const bootedOffline = await until(() => page.evaluate(() => typeof load === 'function' && !!document.querySelector('#s-home.active')).catch(() => false));
   check(`${tag} sw update: the updated app boots offline with the saved session`, bootedOffline && await page.evaluate(() => ST.history.length === 1), { bootedOffline, url: page.url() });
   state.down = false;
+
+  // A network that never answers (F9): the cached app opens within a few seconds, on its own scripts.
+  state.hang = true;
+  const t0 = Date.now();
+  await page.reload({ waitUntil: 'commit', timeout: 8000 }).catch(() => {});
+  const bootedHung = await until(() => page.evaluate(() => typeof load === 'function' && !!document.querySelector('#s-home.active')).catch(() => false), 9000);
+  const hungMs = Date.now() - t0;
+  check(`${tag} sw hung network: the cached app reaches Home in under 4 s (${hungMs} ms)`, bootedHung && hungMs < 4000 && await page.evaluate(() => ST.history.length === 1), { bootedHung, hungMs });
+  state.hang = false; releaseHeld();
 
   // Server errors.
   state.fail = true;

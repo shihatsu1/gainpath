@@ -1,10 +1,11 @@
 // GainPath service worker — app-shell caching only. Bump CACHE_NAME whenever
 // SHELL_URLS/LIB_URLS or the caching logic below changes; activate() deletes
 // the app's own older caches (see ownsCache) and nothing else.
-const CACHE_NAME = 'gainpath-v49';
-// Exercise images that are not precached (the .webp ones added after v2.9)
-// are fetched the first time they are shown and kept here. This cache is not
-// tied to CACHE_NAME, so a release doesn't make phones download them again.
+const CACHE_NAME = 'gainpath-v50';
+// Exercise images (all .webp) are fetched the first time they are shown and kept
+// here. This cache is not tied to CACHE_NAME, so a release never makes phones
+// download them again, and install stays small (the shell, libraries and
+// tutorial screenshots only).
 const IMG_CACHE = 'gainpath-img-v1';
 // CacheStorage is shared by every app on this origin (a GitHub Pages user site
 // hosts several projects), so cleanup and lookups only ever touch the names
@@ -71,252 +72,34 @@ const SHELL_URLS = [
   './fonts/tabler-icons.css', './fonts/tabler-icons-subset.woff2',
   // App code: plain scripts under js/, in index.html's load order. The ?v= is
   // APP_VERSION, so each release precaches fresh URLs (visual-check enforces it).
-  './js/boot.js?v=2.11.2',
-  './js/exercises.js?v=2.11.2',
-  './js/exercise-text.js?v=2.11.2',
-  './js/state.js?v=2.11.2',
-  './js/i18n.js?v=2.11.2',
-  './js/storage.js?v=2.11.2',
-  './js/ui-core.js?v=2.11.2',
-  './js/onboarding.js?v=2.11.2',
-  './js/math.js?v=2.11.2',
-  './js/history.js?v=2.11.2',
-  './js/settings.js?v=2.11.2',
-  './js/day-edit.js?v=2.11.2',
-  './js/workout.js?v=2.11.2',
-  './js/climb.js?v=2.11.2',
-  './js/photos.js?v=2.11.2',
-  './js/data-safety.js?v=2.11.2',
-  './js/main.js?v=2.11.2'
+  './js/boot.js?v=2.11.3',
+  './js/exercises.js?v=2.11.3',
+  './js/exercise-text.js?v=2.11.3',
+  './js/state.js?v=2.11.3',
+  './js/i18n.js?v=2.11.3',
+  './js/storage.js?v=2.11.3',
+  './js/ui-core.js?v=2.11.3',
+  './js/onboarding.js?v=2.11.3',
+  './js/math.js?v=2.11.3',
+  './js/history.js?v=2.11.3',
+  './js/settings.js?v=2.11.3',
+  './js/day-edit.js?v=2.11.3',
+  './js/workout.js?v=2.11.3',
+  './js/climb.js?v=2.11.3',
+  './js/photos.js?v=2.11.3',
+  './js/data-safety.js?v=2.11.3',
+  './js/main.js?v=2.11.3'
 ];
-// All bundled exercise images — precached best-effort on install (see below) so
-// every built-in exercise shows its illustration offline, not just the ones the
-// user happened to view online first. Precached separately from SHELL_URLS
-// (which uses an atomic addAll) so one missing/failed image can't abort install.
-// Keep this list in sync when exercises are added/removed to images/exercises/.
-const EX_IMAGE_URLS = [
-  './images/exercises/21s-barbell-curl.png',
-  './images/exercises/45-degree-hip-extension-machine.png',
-  './images/exercises/ab-wheel-rollout.png',
-  './images/exercises/arnold-press.png',
-  './images/exercises/b-stance-barbell-hip-thrust.png',
-  './images/exercises/back-extension.png',
-  './images/exercises/barbell-back-squat.png',
-  './images/exercises/barbell-curl.png',
-  './images/exercises/barbell-deadlift.png',
-  './images/exercises/barbell-floor-press.png',
-  './images/exercises/barbell-front-squat.png',
-  './images/exercises/barbell-glute-bridge.png',
-  './images/exercises/barbell-good-morning.png',
-  './images/exercises/barbell-high-pull.png',
-  './images/exercises/barbell-hip-thrust.png',
-  './images/exercises/barbell-overhead-press.png',
-  './images/exercises/barbell-pullover.png',
-  './images/exercises/barbell-push-press.png',
-  './images/exercises/barbell-reverse-curl.png',
-  './images/exercises/barbell-row.png',
-  './images/exercises/barbell-seated-shoulder-press.png',
-  './images/exercises/barbell-shrug.png',
-  './images/exercises/barbell-skull-crusher.png',
-  './images/exercises/barbell-standing-calf-raise.png',
-  './images/exercises/barbell-step-up.png',
-  './images/exercises/barbell-upright-row.png',
-  './images/exercises/barbell-walking-lunge.png',
-  './images/exercises/belt-squat.png',
-  './images/exercises/bench-dips.png',
-  './images/exercises/bench-dumbbell-chest-press.png',
-  './images/exercises/bench-supported-seated-reverse-fly.png',
-  './images/exercises/bent-over-dumbbell-reverse-fly.png',
-  './images/exercises/bicycle-crunch.png',
-  './images/exercises/bodyweight-squat.png',
-  './images/exercises/box-squat.png',
-  './images/exercises/bulgarian-split-squat.png',
-  './images/exercises/cable-bicep-curl.png',
-  './images/exercises/cable-chest-fly.png',
-  './images/exercises/cable-crossover.png',
-  './images/exercises/cable-crunch.png',
-  './images/exercises/cable-face-pull.png',
-  './images/exercises/cable-front-raise.png',
-  './images/exercises/cable-glute-kickback.png',
-  './images/exercises/cable-hip-abduction.png',
-  './images/exercises/cable-hip-adduction.png',
-  './images/exercises/cable-lateral-raise.png',
-  './images/exercises/cable-low-to-high-fly.png',
-  './images/exercises/cable-pull-through.png',
-  './images/exercises/cable-pullover.png',
-  './images/exercises/cable-reverse-fly.png',
-  './images/exercises/cable-reverse-wrist-curl.png',
-  './images/exercises/cable-rope-hammer-curl.png',
-  './images/exercises/cable-rope-tricep-extension.png',
-  './images/exercises/cable-shrug.png',
-  './images/exercises/cable-spider-curl.png',
-  './images/exercises/cable-tricep-kickback.png',
-  './images/exercises/cable-woodchopper.png',
-  './images/exercises/cable-wrist-curl.png',
-  './images/exercises/cable-y-raise.png',
-  './images/exercises/captains-chair-leg-raise.png',
-  './images/exercises/chest-dips.png',
-  './images/exercises/chest-supported-dumbbell-row.png',
-  './images/exercises/chest-supported-machine-row.png',
-  './images/exercises/chin-ups.png',
-  './images/exercises/clamshells.png',
-  './images/exercises/close-grip-bench-press.png',
-  './images/exercises/close-grip-push-ups.png',
-  './images/exercises/concentration-curl.png',
-  './images/exercises/cross-body-hammer-curl.png',
-  './images/exercises/cross-cable-reverse-fly.png',
-  './images/exercises/curtsy-lunge.png',
-  './images/exercises/dead-hang.png',
-  './images/exercises/decline-barbell-bench-press.png',
-  './images/exercises/decline-dumbbell-fly.png',
-  './images/exercises/decline-dumbbell-press.png',
-  './images/exercises/decline-push-ups.png',
-  './images/exercises/decline-sit-ups.png',
-  './images/exercises/diamond-push-ups.png',
-  './images/exercises/donkey-calf-raise-machine.png',
-  './images/exercises/donkey-kicks.png',
-  './images/exercises/drag-curl.png',
-  './images/exercises/dumbbell-bicep-curl.png',
-  './images/exercises/dumbbell-close-grip-floor-press.png',
-  './images/exercises/dumbbell-finger-curl.png',
-  './images/exercises/dumbbell-floor-press.png',
-  './images/exercises/dumbbell-fly.png',
-  './images/exercises/dumbbell-front-raise.png',
-  './images/exercises/dumbbell-front-squat.png',
-  './images/exercises/dumbbell-high-pull.png',
-  './images/exercises/dumbbell-hip-thrust.png',
-  './images/exercises/dumbbell-lateral-raise.png',
-  './images/exercises/dumbbell-lunge.png',
-  './images/exercises/dumbbell-pullover.png',
-  './images/exercises/dumbbell-reverse-lunge.png',
-  './images/exercises/dumbbell-reverse-wrist-curl.png',
-  './images/exercises/dumbbell-romanian-deadlift.png',
-  './images/exercises/dumbbell-scaption-raise.png',
-  './images/exercises/dumbbell-seated-calf-raise.png',
-  './images/exercises/dumbbell-shrug.png',
-  './images/exercises/dumbbell-side-bend.png',
-  './images/exercises/dumbbell-single-leg-hip-thrust.png',
-  './images/exercises/dumbbell-skull-crusher.png',
-  './images/exercises/dumbbell-standing-calf-raise.png',
-  './images/exercises/dumbbell-step-up.png',
-  './images/exercises/dumbbell-sumo-deadlift.png',
-  './images/exercises/dumbbell-sumo-squat.png',
-  './images/exercises/dumbbell-wrist-curl.png',
-  './images/exercises/ez-bar-curl.png',
-  './images/exercises/ez-bar-front-raise.png',
-  './images/exercises/farmers-carry.png',
-  './images/exercises/flat-barbell-bench-press.png',
-  './images/exercises/frog-pump.png',
-  './images/exercises/glute-bridge.png',
-  './images/exercises/goblet-squat.png',
-  './images/exercises/hack-squat-calf-raise.png',
-  './images/exercises/hack-squat.png',
-  './images/exercises/hammer-curls.png',
-  './images/exercises/hanging-leg-raise.png',
-  './images/exercises/heel-elevated-dumbbell-squat.png',
-  './images/exercises/hollow-body-hold.png',
-  './images/exercises/incline-barbell-chest-press.png',
-  './images/exercises/incline-bench-dumbbell-press.png',
-  './images/exercises/incline-bench-dumbbell-rear-delt-fly.png',
-  './images/exercises/incline-dumbbell-curl.png',
-  './images/exercises/incline-dumbbell-fly.png',
-  './images/exercises/incline-dumbbell-row.png',
-  './images/exercises/inverted-row.png',
-  './images/exercises/jump-squat.png',
-  './images/exercises/kroc-row.png',
-  './images/exercises/landmine-press.png',
-  './images/exercises/lat-pulldown.png',
-  './images/exercises/leg-extension.png',
-  './images/exercises/leg-press-calf-raise.png',
-  './images/exercises/leg-press.png',
-  './images/exercises/leg-raise.png',
-  './images/exercises/lying-hamstring-curl.png',
-  './images/exercises/machine-abduction.png',
-  './images/exercises/machine-adduction.png',
-  './images/exercises/machine-assisted-dip.png',
-  './images/exercises/machine-assisted-pull-up.png',
-  './images/exercises/machine-chest-fly.png',
-  './images/exercises/machine-chest-press.png',
-  './images/exercises/machine-high-row.png',
-  './images/exercises/machine-hip-thrust.png',
-  './images/exercises/machine-lateral-raise.png',
-  './images/exercises/machine-preacher-curl.png',
-  './images/exercises/machine-pullover.png',
-  './images/exercises/machine-rear-delt-fly.png',
-  './images/exercises/machine-seated-crunch.png',
-  './images/exercises/machine-shoulder-press.png',
-  './images/exercises/mountain-climbers.png',
-  './images/exercises/neutral-grip-dumbbell-press.png',
-  './images/exercises/overhead-cable-tricep-extension.png',
-  './images/exercises/overhead-ez-bar-tricep-extension.png',
-  './images/exercises/pendlay-row.png',
-  './images/exercises/pendulum-squat.png',
-  './images/exercises/pike-push-ups.png',
-  './images/exercises/plank.png',
-  './images/exercises/plate-loaded-machine-bicep-curl.png',
-  './images/exercises/plate-loaded-shoulder-press.png',
-  './images/exercises/plate-loaded-shrug.png',
-  './images/exercises/plate-loaded-standing-calf-raise.png',
-  './images/exercises/preacher-curl.png',
-  './images/exercises/prone-dumbbell-y-raise.png',
-  './images/exercises/pull-ups.png',
-  './images/exercises/push-ups.png',
-  './images/exercises/rack-pull.png',
-  './images/exercises/reverse-ez-bar-curl.png',
-  './images/exercises/reverse-grip-pulldown.png',
-  './images/exercises/romanian-deadlift.png',
-  './images/exercises/russian-twist.png',
-  './images/exercises/scapular-pull-ups.png',
-  './images/exercises/seated-cable-row.png',
-  './images/exercises/seated-calf-raise.png',
-  './images/exercises/seated-dumbbell-shoulder-press.png',
-  './images/exercises/seated-hamstring-curl.png',
-  './images/exercises/seated-machine-tricep-extension.png',
-  './images/exercises/side-lying-dumbbell-hip-adduction.png',
-  './images/exercises/side-lying-leg-raise.png',
-  './images/exercises/side-plank.png',
-  './images/exercises/single-arm-cable-fly.png',
-  './images/exercises/single-arm-dumbbell-overhead-tricep-extension.png',
-  './images/exercises/single-arm-dumbbell-row.png',
-  './images/exercises/single-arm-lat-pulldown.png',
-  './images/exercises/single-arm-tricep-kickback.png',
-  './images/exercises/single-leg-bodyweight-calf-raise.png',
-  './images/exercises/single-leg-dumbbell-calf-raise.png',
-  './images/exercises/single-leg-dumbbell-rdl.png',
-  './images/exercises/single-leg-glute-bridge.png',
-  './images/exercises/smith-machine-bench-press.png',
-  './images/exercises/smith-machine-hip-thrust.png',
-  './images/exercises/smith-machine-incline-press.png',
-  './images/exercises/smith-machine-inverted-row.png',
-  './images/exercises/smith-machine-romanian-deadlift.png',
-  './images/exercises/smith-machine-shoulder-press.png',
-  './images/exercises/smith-machine-shrug.png',
-  './images/exercises/smith-machine-squat.png',
-  './images/exercises/smith-machine-standing-calf-raise.png',
-  './images/exercises/spider-curl.png',
-  './images/exercises/standing-bodyweight-calf-raise.png',
-  './images/exercises/standing-hip-abduction.png',
-  './images/exercises/standing-machine-hamstring-curl.png',
-  './images/exercises/standing-plate-loaded-glute-kickback.png',
-  './images/exercises/stiff-leg-deadlift.png',
-  './images/exercises/straight-arm-cable-pulldown.png',
-  './images/exercises/sumo-deadlift.png',
-  './images/exercises/sumo-squat-hold.png',
-  './images/exercises/superman.png',
-  './images/exercises/t-bar-row.png',
-  './images/exercises/tricep-dips.png',
-  './images/exercises/triceps-pushdown.png',
-  './images/exercises/v-ups.png',
-  './images/exercises/vertical-leg-press.png',
-  './images/exercises/walking-lunge.png',
-  './images/exercises/wall-sit.png',
-  './images/exercises/weighted-sit-up.png',
-  './images/exercises/wide-grip-barbell-curl.png',
-  './images/exercises/wide-grip-cable-row.png',
-  './images/exercises/wide-grip-push-ups.png',
-  './images/exercises/yates-row.png',
-  './images/exercises/zottman-curl.png'
-];
+// Network first, but never wait for it forever: on a weak or hung connection
+// (a basement gym) the cached copy is served after NET_WAIT_MS. The slow request
+// keeps running (waitUntil) and is stored when it finally arrives.
+const NET_WAIT_MS = 2500;
+function networkOrCache(event, req, fromCache) {
+  const net = fetch(req).then((res) => keepIfOk(req, res));
+  event.waitUntil(net.catch(() => {}));
+  const slow = new Promise((_, reject) => setTimeout(() => reject(new Error('slow network')), NET_WAIT_MS));
+  return Promise.race([net, slow]).catch(() => fromCache().then((c) => c || net)).catch(() => Response.error());
+}
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -328,11 +111,6 @@ self.addEventListener('install', (event) => {
             fetch(url).then((res) => { if (res.ok) return cache.put(url, res); }).catch(() => {})
           ),
           ...LIB_URLS.map((url) =>
-            fetch(url).then((res) => { if (res.ok) return cache.put(url, res); }).catch(() => {})
-          ),
-          // Same-origin exercise images — best-effort so a single failure can't
-          // abort install; any that miss here still cache on-demand via fetch().
-          ...EX_IMAGE_URLS.map((url) =>
             fetch(url).then((res) => { if (res.ok) return cache.put(url, res); }).catch(() => {})
           )
         ])
@@ -356,11 +134,7 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET') return;
 
   if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req)
-        .then((res) => keepIfOk(req, res))
-        .catch(() => cachedResponse(req).then((c) => c || cachedResponse('./index.html')))
-    );
+    event.respondWith(networkOrCache(event, req, () => cachedResponse(req).then((c) => c || cachedResponse('./index.html'))));
     return;
   }
 
@@ -378,11 +152,11 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (sameOrigin) {
-    event.respondWith(
-      fetch(req)
-        .then((res) => keepIfOk(req, res))
-        .catch(() => cachedResponse(req).then((c) => c || Response.error()))
-    );
+    // Sub-resources are cache-first: scripts carry ?v=<APP_VERSION> and the rest
+    // of the shell is replaced as a whole by the worker update, so a cached copy
+    // is never stale, and a weak signal can't stall the 3 MB exercise-text.js.
+    // Only what was never cached goes to the network.
+    event.respondWith(cachedResponse(req).then((c) => c || networkOrCache(event, req, () => cachedResponse(req))));
   }
 });
 

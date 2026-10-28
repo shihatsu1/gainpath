@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.11.3] - 2026-10-28
+
+### Fixed
+- **An update no longer downloads 268 MB before it can install (F3).** The
+  service worker precached all 221 original PNG exercise illustrations (268 MB)
+  inside `install`, so every release re-downloaded them and the new worker
+  could not activate until they finished; iOS stopping it part-way left phones
+  on the old version, including its data-safety bugs. The 221 images are now
+  WebP like the other 838 (`cwebp -q 80`, same pixel size, 11.7 MB in total,
+  `webp:true` on their entries), cached the first time they are shown in
+  `IMG_CACHE`, which keeps its name across releases. Install is now the app
+  shell, libraries and tutorial screenshots (6.2 MB; 3.2 MB of it is
+  `exercise-text.js`). The PNG files stay in the repo for pages cached before
+  this release. `test:sw` fails if install pulls an exercise image or grows past
+  7 MB.
+- **A weak or hung signal no longer stalls the app (F9).** Opening the app
+  waited on the network with no timeout, including for the 3 MB
+  `exercise-text.js`. Now the page waits at most 2.5 s for the network before
+  using the cached copy, and every other file (all versioned or replaced as a
+  whole by a worker update) is served from the cache first. `test:sw` boots the
+  app against a network that accepts connections and never answers (about 2.7 s
+  to Home in Chromium and WebKit).
+
+### Changed
+- Exercise images you have not opened yet are no longer available offline
+  until first viewed online (they used to be from the 268 MB precache).
+  README, CLAUDE.md and RELEASING.md say so.
+
 ## [2.11.2] - 2026-10-28
 
 ### Fixed

@@ -16,7 +16,7 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 - **Clearer exercise names.** 118 built-in exercises now use equipment-first names ("Barbell bench press", "Machine pulldown"). Your history, PRs and custom days move to the new names automatically.
 - **Kettlebells in My gym.** Tick the kettlebells you own and suggested weights snap to them, separately from your dumbbells.
 - **Catch up after time away from a lift.** Come back to a lift after 4 weeks or more and, if your related lifts went up, you're offered a higher weight. It's still a tap to apply or dismiss.
-- **Lighter images.** New exercise pictures are about 50 KB each and download the first time you open them, so open the ones you need before training offline.
+- **Lighter images.** Exercise pictures are about 50 KB each and download the first time you open them, so open the ones you need before training offline. An app update no longer re-downloads them.
 
 ## Features
 

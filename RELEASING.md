@@ -33,8 +33,8 @@ startup or storage can't be rolled back for them.
 
 - [ ] `CACHE_NAME` bumped. Without the bump, installed users keep the old
       shell.
-- [ ] Added or removed an exercise image? Update `EX_IMAGE_URLS` to match
-      `images/exercises/`.
+- [ ] Added or removed an exercise image? Nothing to do here: exercise images
+      are cached on first view (`IMG_CACHE`), not precached.
 - [ ] Added an icon? Re-subset `fonts/tabler-icons-subset.woff2` and add the
       rule to `fonts/tabler-icons.css`. A missing glyph shows up as an empty
       box.

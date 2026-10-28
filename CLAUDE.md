@@ -179,9 +179,11 @@ their own phone. Protect existing data first.
 
 - **Exercise images:** new ones are `images/exercises/<slug>.webp`
   (1774×887, `cwebp -q 80`) with `webp:true` on the `EX` entry; the service
-  worker caches them on first view in `IMG_CACHE`, so they are **not** added
-  to `EX_IMAGE_URLS` and need no `CACHE_NAME` bump. The original PNGs stay
-  precached in `EX_IMAGE_URLS`; a renamed exercise keeps its old file through
+  worker caches them on first view in `IMG_CACHE` (never renamed between
+  releases, so an update does not re-download them), so they are not
+  precached and need no `CACHE_NAME` bump. All built-in exercises are WebP;
+  the old PNGs stay in the repo for one release for pages cached before v2.11.3
+  and may then be deleted. A renamed exercise keeps its old file through
   `EX_OLD_NAME`, never a file rename. Never add an
   exercise to `EX` before its image exists; stage batches in an image-prompts
   `.txt` at the repo root (delete it when shipped). New exercises also get

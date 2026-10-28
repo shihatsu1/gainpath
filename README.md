@@ -10,10 +10,10 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 
 ---
 
-## ✨ What's new in v2.13.0
+## ✨ What's new in v2.14.0
 
-- **A switch for usage counts.** Settings → Privacy lets you turn the anonymous counts off, which also erases your random ID from this device. If your browser sends Global Privacy Control, the counts stay off.
-- **Faster start.** Exercise names, tips and steps load only in your language, so GainPath opens sooner, especially on slower phones.
+- **Better default workouts.** Every split day now starts with the big lifts (squat, bench, row, Romanian deadlift) and covers each muscle more fully. Days you customised are unchanged.
+- **Fairer 1RM estimates.** A single counts as the weight you lifted, and sets above 12 reps no longer count toward the estimate, so some chart points and PR cards may change.
 
 ## Features
 
@@ -23,6 +23,7 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 - Edit any day before or during a workout: reorder, swap, add or delete exercises, and link supersets and circuits.
 - A 1,059-exercise library, each with an illustrated guide, form cues and step-by-step instructions.
 - Custom exercises for anything not in the library.
+- Privacy: a switch in Settings → Privacy turns the anonymous usage counts off (Global Privacy Control is honoured), and exercise text loads only in your language.
 - Home has one "Start" button for the suggested day, and a compact streak card until your first full week.
 
 **Weights**

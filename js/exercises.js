@@ -1215,28 +1215,28 @@ const EX={
   ]
 };
 
-function getDayExercises(dayId,sex){
-  const s=sex||'male';
-  const isFemale=s==='female';
-  const map={
-    push: isFemale?EX.push_f:EX.push_m,
-    pull: isFemale?EX.pull_f:EX.pull_m,
-    legs: isFemale?EX.legs_f:EX.legs_m,
-    'legs-a': isFemale?EX.legs_f:EX.legs_m,
-    upper: isFemale?EX.upper_f:EX.upper_m,
-    lower: isFemale?EX.lower_f:EX.lower_m,
-    'lower-a': isFemale?EX.legs_f:EX.legs_m,
-    'lower-b': isFemale?EX.lower_f:EX.lower_m,
-    'legs-b': isFemale?EX.lower_f:EX.lower_m,
-    chest: EX.bro_chest,
-    back: EX.bro_back,
-    shoulders: EX.bro_shoulders,
-    arms: EX.bro_arms,
-    'bro-legs': EX.bro_legs,
-    fullbody: EX.fullbody
-  };
-  if(dayId==='legs'&&CFG.split==='bro')return EX.bro_legs;
-  return map[dayId]||EX.fullbody;
+// Default exercises per day: one list for everyone (starting weights still follow
+// sex through poolEx), compound lifts first and every movement pattern covered each
+// week. Rationale: docs/superpowers/plans/2026-10-28-split-day-proposal.md. The EX.* arrays
+// above still seed the exercise pool; they are no longer the day lists.
+const DAY_EX={
+  push:['Barbell bench press','Dumbbell seated overhead press','Dumbbell incline bench press','Dumbbell lateral raise','Cable bar pushdown','Cable rope overhead tricep extension'],
+  pull:['Machine pulldown','Machine seated cable row','Dumbbell single-arm row','Cable face pull','Dumbbell curl','Dumbbell hammer curl'],
+  legs:['Barbell squat','Barbell Romanian deadlift','Machine leg press','Machine hamstring curl','Machine leg extension','Machine seated calf raises'],
+  upper:['Dumbbell bench press','Machine pulldown','Dumbbell seated overhead press','Machine seated cable row','Dumbbell lateral raise','Cable bar pushdown','Dumbbell curl'],
+  'lower-a':['Barbell squat','Barbell Romanian deadlift','Machine leg extension','Machine seated calf raises','Hanging leg raise'],
+  'lower-b':['Machine leg press','Barbell hip thrust','Machine hamstring curl','Dumbbell forward lunge','Machine seated calf raises','Cable rope kneeling crunch'],
+  chest:['Barbell bench press','Dumbbell incline bench press','Dumbbell chest fly','Cable pec fly','Parallel bar dips'],
+  back:['Pull-ups','Barbell bent over row','Machine seated cable row','Machine pulldown','Straight arm cable pulldown'],
+  shoulders:['Dumbbell seated overhead press','Dumbbell lateral raise','Cable face pull','Machine reverse fly','Barbell shrug'],
+  arms:['Barbell curl','Cable bar pushdown','Dumbbell hammer curl','Cable rope overhead tricep extension','EZ bar preacher curl','Barbell close-grip bench press'],
+  'bro-legs':['Barbell squat','Barbell Romanian deadlift','Machine leg press','Machine hamstring curl','Machine seated calf raises','Machine crunch'],
+  fullbody:['Machine leg press','Dumbbell bench press','Machine pulldown','Dumbbell Romanian deadlift','Dumbbell seated overhead press','Machine seated cable row','Dumbbell curl','Cable bar pushdown','Forearm plank']
+};
+const DAY_EX_ALIAS={'legs-a':'legs',lower:'lower-a','legs-b':'lower-b'};
+function getDayExercises(dayId){
+  const key=(dayId==='legs'&&CFG.split==='bro')?'bro-legs':(DAY_EX_ALIAS[dayId]||dayId);
+  return (DAY_EX[key]||DAY_EX.fullbody).map(poolEx);
 }
 function isCustomDay(dayId){return typeof dayId==='string'&&dayId.indexOf('cd_')===0;}
 function getEffectiveDayExercises(dayId){

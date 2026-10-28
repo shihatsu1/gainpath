@@ -27,6 +27,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   probe, JSON and log scratch from `docs/audits/2026-10-16/` (all still in git
   history). `docs/index-section-map.md` lost its pre-split line table (F15).
 
+## [2.14.0] - 2026-10-28
+
+### Changed
+- **Default exercises for every split day (approved proposal).** One list for
+  everyone (men and women no longer get different lists; starting weights still
+  follow sex), compound lifts first, a hip hinge and a squat pattern in the lower
+  days, fuller Bro chest/back, long-head triceps work on push. Defined in
+  `DAY_EX` (`js/exercises.js`) from the exercise pool; the `EX.*` arrays still
+  seed the pool. Saved custom days and plans are untouched. Rationale and the
+  before/after table: `docs/superpowers/plans/2026-10-28-split-day-proposal.md`.
+  `test:units` checks every day resolves, exists in the library, starts with the
+  right lift and is the same for both sexes.
+- **e1RM (F16, approved).** `e1rm()` returns the weight itself for a single
+  (it used to add 3.3%) and 0 (no estimate) above 12 reps, where Epley is
+  unreliable. The Climb strength chart skips days with no estimate and the PR
+  card hides the "~N 1RM" part. PRs and badges are derived from sets, so they
+  update on their own. Visible effect: some chart points and PR cards change.
+  `known('B1')`/`known('B2')` became real checks; `guides/one-rep-max.html`
+  says what GainPath does. Reasoning:
+  `docs/audits/2026-10-27/F16-e1rm-proposal.md`.
+- The 221 original PNG exercise images moved to `archive/exercise-png/`, outside
+  the published and cached folders (the app uses the WebP files).
+
 ## [2.13.0] - 2026-10-28
 
 ### Added
@@ -93,7 +116,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Tutorial screenshots and spotlights and the README Home / rest-timer
   screenshots were regenerated for the new Home and set row.
 
-### Known issues
+### Known issues (fixed in 2.14.0)
 - **B1/B2 (F16): e1RM overstates a single and is unreliable above ~12 reps.**
   Epley returns 103.5 for a single at 100, and turns a 20-rep set into a 1RM
   estimate. Recorded as `known('B1')` and `known('B2')`; the formula is unchanged

@@ -188,8 +188,7 @@ their own phone. Protect existing data first.
   worker caches them on first view in `IMG_CACHE` (never renamed between
   releases, so an update does not re-download them), so they are not
   precached and need no `CACHE_NAME` bump. All built-in exercises are WebP;
-  the old PNGs stay in the repo for one release for pages cached before v2.11.3
-  and may then be deleted. A renamed exercise keeps its old file through
+  the original PNGs live in `archive/exercise-png/` (not published, not cached). A renamed exercise keeps its old file through
   `EX_OLD_NAME`, never a file rename. Never add an
   exercise to `EX` before its image exists; stage batches in an image-prompts
   `.txt` at the repo root (delete it when shipped). New exercises also get

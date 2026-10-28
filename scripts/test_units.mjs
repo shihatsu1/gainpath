@@ -496,6 +496,7 @@ async function main() {
     // saveMW() rebuilds a machine exercise's sets once its base weight is
     // known — it must not discard a weight planned before the workout started.
     ST.history = []; ST.mw = {};
+    CFG.customDays = { legs: ['Machine hack squat', 'Barbell squat'] }; // the default legs day no longer has a machine lift
     openDayEdit('legs');
     const hackIdx = ST.editList.findIndex(e => e.name === 'Machine hack squat');
     updPlannedEx(hackIdx, 'w', '120');
@@ -504,6 +505,7 @@ async function main() {
     check('the machine base-weight prompt keeps the weight planned before Start',
       ST.sd.find(it => it.ex.name === 'Machine hack squat').sets.filter(s => s.t !== 'w').map(s => s.w),
       [120, 120, 120]);
+    CFG.customDays = {};
 
     // ── A Settings rep-target change must immediately apply to exercises
     // that already have history, not just brand-new ones. Before the fix,
@@ -912,6 +914,20 @@ async function main() {
       Object.values(EXPOOL).filter(e => /^Barbell /.test(e.name) && e.webp && !NO_TIPS_YET.has(e.name) && !(EX_TIPS[e.name] && EX_TIPS_JA[e.name] && EX_TIPS_KO[e.name] && EX_INSTRUCTIONS[e.name] && EX_INSTRUCTIONS_JA[e.name] && EX_INSTRUCTIONS_KO[e.name] && EX_NAMES_JA[e.name] && EX_NAMES_KO[e.name])).map(e => e.name), []);
     check('new dumbbell exercises: every one with a webp image has tips and instructions in en/ja/ko',
       Object.values(EXPOOL).filter(e => /^Dumbbell /.test(e.name) && e.webp && !NO_TIPS_YET.has(e.name) && !(EX_TIPS[e.name] && EX_TIPS_JA[e.name] && EX_TIPS_KO[e.name] && EX_INSTRUCTIONS[e.name] && EX_INSTRUCTIONS_JA[e.name] && EX_INSTRUCTIONS_KO[e.name] && EX_NAMES_JA[e.name] && EX_NAMES_KO[e.name])).map(e => e.name), []);
+    // Approved split-day lists: every day resolves, names exist, compound first, one list for every sex.
+    {
+      const days = ['push', 'pull', 'legs', 'legs-a', 'legs-b', 'upper', 'lower', 'lower-a', 'lower-b', 'chest', 'back', 'shoulders', 'arms', 'fullbody'];
+      const keepS = [CFG.sex, CFG.split, CFG.customDays];
+      CFG.customDays = {}; CFG.sex = 'male'; CFG.split = 'pplul';
+      const m = days.map((d) => getDayExercises(d).map((e) => e.name));
+      CFG.sex = 'female';
+      const f = days.map((d) => getDayExercises(d).map((e) => e.name));
+      check('split days: every day has 5-9 exercises, all in the library, and men and women get the same list', [m.every((l) => l.length >= 5 && l.length <= 9 && l.every((n) => EXPOOL[n])), JSON.stringify(m) === JSON.stringify(f)], [true, true]);
+      check('split days: the lower-body days start with a barbell squat or leg press, push/legs with a barbell lift', [getDayExercises('legs')[0].name, getDayExercises('lower-a')[0].name, getDayExercises('lower-b')[0].name, getDayExercises('push')[0].name], ['Barbell squat', 'Barbell squat', 'Machine leg press', 'Barbell bench press']);
+      CFG.split = 'bro';
+      check('split days: the Bro legs day keeps its own list', getDayExercises('legs').map((e) => e.name).slice(0, 2), ['Barbell squat', 'Barbell Romanian deadlift']);
+      [CFG.sex, CFG.split, CFG.customDays] = keepS;
+    }
     // F20: the weekly target can be changed without rewriting past weeks, streaks or badges.
     {
       const keep = [CFG.freq, CFG.freqLog, ST.history, ST.badges, CFG.restDays];
@@ -1112,8 +1128,8 @@ async function main() {
     };
     // F16 (open, needs approval): Epley overstates a single and is unreliable at high reps. Proposal only:
     // r===1 -> w, and mark or ignore r>12 in charts and PRs (see docs/audits/2026-10-27/F16-e1rm-proposal.md).
-    known('B1', 'e1rm of a single is the weight lifted, not weight x 1.033', e1rm(100, 1), 100);
-    known('B2', 'a set above 12 reps is not turned into a 1RM estimate', e1rm(60, 20), 0);
+    check('F16: e1rm of a single is the weight lifted', [e1rm(100, 1), e1rm(102.5, 1)], [100, 102.5]);
+    check('F16: sets of 12 reps or fewer keep the Epley estimate; above 12 there is none', [e1rm(80, 8), e1rm(100, 12), e1rm(100, 13), e1rm(60, 20)], [101.5, 140, 0, 0]);
     const M = {
       dbPress: EXPOOL['Dumbbell bench press'], bench: EXPOOL['Barbell bench press'], row: EXPOOL['Barbell bent over row'],
       plank: EXPOOL['Forearm plank'], pushups: EXPOOL['Push-up'], pullups: EXPOOL['Pull-ups'], farmers: EXPOOL['Dumbbell farmer walk'], latpd: EXPOOL['Machine pulldown']

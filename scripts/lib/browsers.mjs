@@ -19,7 +19,11 @@ for (const type of [chromium, webkit]) {
   if (type.__isolated) continue;
   type.__isolated = true;
   const launch = type.launch.bind(type);
+  // Environments with preinstalled browsers (CI images, containers whose Playwright build
+  // differs from the repo's pinned one) can point at them: PW_CHROMIUM_PATH / PW_WEBKIT_PATH.
+  const exe = process.env[type === chromium ? 'PW_CHROMIUM_PATH' : 'PW_WEBKIT_PATH'];
   type.launch = async (...args) => {
+    if (exe) args[0] = { executablePath: exe, ...(args[0] || {}) };
     const browser = await launch(...args);
     const newContext = browser.newContext.bind(browser);
     browser.newContext = async (...o) => isolate(await newContext(...o));

@@ -25,6 +25,10 @@ their own phone. Protect existing data first.
   demand by `loadExText()` (never by a tag), precached, and filling the same
   globals the always-loaded `exercise-text-en.js` declares as empty placeholders.
   Tests that read them call `loadExText('ja')` first.
+- **Only the app is published** (`scripts/publish_list.mjs`, deployed by
+  `.github/workflows/pages.yml`); a new top-level file or folder the app loads must be
+  added there, and `visual-check` fails if the service worker precaches something that
+  isn't. Docs, scripts, marketing and the worker never go on the site.
 - **One canonical origin:** `APP_ORIGIN` in `js/boot.js` (`https://shihatsu1.github.io`).
   Canonical links, sitemap, guides and the analytics worker's `ALLOWED_ORIGINS`
   must agree with it; `visual-check` and `test:worker` fail otherwise. The old
@@ -270,6 +274,7 @@ The Appium deps' `npm audit` advisories are left as they are: the only fixes
 are major downgrades, and it's dev-only tooling that never sees untrusted input.
 
 Failing `simulate`/`chaos` runs print a seed: `SEED=<n> npm run …` replays it.
-Test scripts import Playwright from `scripts/lib/browsers.mjs`, which answers
+Set `PW_CHROMIUM_PATH` / `PW_WEBKIT_PATH` to use preinstalled browsers instead of the pinned Playwright
+builds (CI images, containers). Test scripts import Playwright from `scripts/lib/browsers.mjs`, which answers
 requests to the analytics worker and EmailJS locally; never import `playwright`
 directly in a new script.

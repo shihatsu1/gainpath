@@ -266,6 +266,7 @@ The Appium deps' `npm audit` advisories are left as they are: the only fixes
 are major downgrades, and it's dev-only tooling that never sees untrusted input.
 
 Failing `simulate`/`chaos` runs print a seed: `SEED=<n> npm run …` replays it.
-Test scripts import Playwright from `scripts/lib/browsers.mjs`, which answers
+Set `PW_CHROMIUM_PATH` / `PW_WEBKIT_PATH` to use preinstalled browsers instead of the pinned Playwright
+builds (CI images, containers). Test scripts import Playwright from `scripts/lib/browsers.mjs`, which answers
 requests to the analytics worker and EmailJS locally; never import `playwright`
 directly in a new script.

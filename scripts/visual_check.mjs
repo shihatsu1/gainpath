@@ -10,6 +10,7 @@ import { chromium, webkit } from './lib/browsers.mjs';
 import { createServer } from 'http';
 import { readFile, readdir, stat } from 'fs/promises';
 import { appSources } from './app_sources.mjs';
+import { PUBLISHED } from './publish_list.mjs';
 import { mkdir } from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -310,7 +311,13 @@ async function main() {
       return out;
     };
     const served = [];
-    for (const r of ['index.html', 'js', 'sw.js', 'manifest.json', 'privacy.html', 'guides', 'sitemap.xml', 'images', 'fonts', 'vendor', 'README.md', 'marketing']) served.push(...(await walk(r)));
+    for (const r of [...PUBLISHED, 'README.md', 'marketing']) served.push(...(await walk(r)));
+    // Whatever the service worker precaches must be in the published site, or an install would 404.
+    const swText = await readFile(path.join(ROOT, 'sw.js'), 'utf8');
+    for (const m of swText.matchAll(/'\.\/([^'?]+)[^']*'/g)) {
+      const top = m[1].split('/')[0];
+      if (!PUBLISHED.includes(top) && m[1] !== '') issues.push(`sw.js precaches ./${m[1]} but it is not in scripts/publish_list.mjs`);
+    }
     for (const f of served) {
       if (!TEXT.has(path.extname(f)) || ALLOW.has(f)) continue;
       if ((await readFile(path.join(ROOT, f), 'utf8')).includes(OLD_HOST)) issues.push(`${f} still points at the old host ${OLD_HOST}`);

@@ -4,6 +4,29 @@ All notable changes to GainPath will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added (tooling, no app change, no version bump)
+- **CI (F14).** `.github/workflows/precheck.yml` runs `npm ci`, installs Chromium
+  and WebKit and runs `npm run precheck` on every push to `main` (Node 22).
+  `scripts/lib/browsers.mjs` honours `PW_CHROMIUM_PATH` / `PW_WEBKIT_PATH` for
+  machines whose preinstalled browsers don't match the pinned Playwright build.
+- **Publish only the app (F13).** `scripts/publish_list.mjs` is the one list of
+  published files (`index.html`, `js/`, `sw.js`, `manifest.json`, `privacy.html`,
+  `guides/`, `sitemap.xml`, `images/`, `fonts/`, `vendor/`).
+  `.github/workflows/pages.yml` stages exactly that (`scripts/stage_site.mjs`) and
+  deploys it with the Pages actions, so `docs/`, `scripts/`, `marketing/`,
+  `analytics-worker/`, notes and the KV namespace IDs stop being public. **One
+  manual step: Settings → Pages → Source → "GitHub Actions".** `visual-check`
+  fails if a file `sw.js` precaches isn't in the list.
+
+### Removed
+- `brag-output/` (launch video material), `feature-backlog-review.txt`,
+  `docs/launch-posts.md`, the Android TWA plan, the achievement-badges design
+  spec, the MuscleWiki plan CSVs and `exercise-inventory.csv`, and the repro,
+  probe, JSON and log scratch from `docs/audits/2026-10-16/` (all still in git
+  history). `docs/index-section-map.md` lost its pre-split line table (F15).
+
 ## [2.13.0] - 2026-10-28
 
 ### Added

@@ -18,8 +18,8 @@ Validation performed:
 
 - `npm run precheck`: **passed** — lint; **296/296** unit checks; **81/81** data checks (including the suite's Chromium/WebKit photo coverage); visual smoke checks including offline boot.
 - Initial sandbox run could not open the local test server (`EPERM`). The authorized rerun passed. That initial failure was environmental, not an app defect.
-- `node docs/audits/2026-10-16/reproduce.cjs`: four targeted findings reproduced against real source functions using isolated memory/stubs.
-- `node docs/audits/2026-10-16/browser-probes.cjs`: real Chromium rendering and failed-completion probes with synthetic storage, service workers blocked, and every external request blocked.
+- `docs/audits/2026-10-16/reproduce.cjs` (removed 2026-10-28, still in git history): four targeted findings reproduced against real source functions using isolated memory/stubs.
+- `docs/audits/2026-10-16/browser-probes.cjs` (removed 2026-10-28, still in git history): real Chromium rendering and failed-completion probes with synthetic storage, service workers blocked, and every external request blocked.
 - Existing precheck was run as provided. It does not consistently suppress production analytics, so its normal synthetic actions may have sent events; the additional browser probes explicitly blocked them.
 - `simulate`, `chaos`, and iOS Simulator suites were not run. The runtime was not changed.
 

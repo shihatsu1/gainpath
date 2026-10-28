@@ -1,6 +1,6 @@
 # MuscleWiki exercises held back
 
-Exercises from `docs/musclewiki-new-exercises.csv` that were **not** added,
+Exercises from the MuscleWiki new-exercises list (the plan CSVs were removed on 2026-10-28; they are in git history) that were **not** added,
 with the reason. Nothing here has an image, a prompt or an `EX` entry.
 
 ## Kettlebell (12), held 2026-10-05
@@ -26,7 +26,7 @@ like rehab or mobility drills, a group already skipped on purpose.
 
 ## Dumbbell (18 held, 11 dropped), 2026-10-05
 
-Full triage of all 259 names is in `docs/musclewiki-dumbbell-plan.csv`.
+Full triage of all 259 names was in the dumbbell plan CSV (git history).
 
 Held: could be added later.
 
@@ -69,7 +69,7 @@ Dropped: not needed.
 
 ## Barbell (10 held, 11 dropped), 2026-10-07
 
-Full triage of all 104 names is in `docs/musclewiki-barbell-plan.csv`.
+Full triage of all 104 names was in the barbell plan CSV (git history).
 
 Held: could be added later.
 

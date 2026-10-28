@@ -171,7 +171,7 @@ async function photoTests(engine, tag, check, errors) {
   const bad = await p.evaluate(async () => { await phAdd({ files: [new File(['not an image'], 'x.jpg', { type: 'image/jpeg' })], value: '' }); return gid('ph-msg').textContent; });
   check(`${tag} photos: an unreadable file is shown as an error`, /couldn't read that photo/.test(bad) && await count() === 2, bad);
   // Low storage: a standing warning, and adding asks first (No = nothing added).
-  await p.evaluate(() => { navigator.storage.estimate = async () => ({ quota: 1e9, usage: 1e9 - 40 * 1048576 }); window.confirm = () => false; });
+  await p.evaluate(() => { if (!navigator.storage) Object.defineProperty(navigator, 'storage', { value: {}, configurable: true }); /* Linux WebKit (CI) has no StorageManager */ navigator.storage.estimate = async () => ({ quota: 1e9, usage: 1e9 - 40 * 1048576 }); window.confirm = () => false; });
   await p.evaluate(() => renderPhotos());
   check(`${tag} photos: low storage shows a warning`, await p.isVisible('#ph-low') && /almost full: 40 MB left/.test(await p.textContent('#ph-low')));
   await add(1, 800, 600);

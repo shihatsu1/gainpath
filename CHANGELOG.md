@@ -6,41 +6,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-### Added (tooling, no app change, no version bump)
-- **CI (F14).** `.github/workflows/precheck.yml` runs `npm ci`, installs Chromium
-  and WebKit and runs `npm run precheck` on every push to `main` (Node 22).
-  `scripts/lib/browsers.mjs` honours `PW_CHROMIUM_PATH` / `PW_WEBKIT_PATH` for
-  machines whose preinstalled browsers don't match the pinned Playwright build.
-- **Publish only the app (F13).** `scripts/publish_list.mjs` is the one list of
-  published files (`index.html`, `js/`, `sw.js`, `manifest.json`, `privacy.html`,
-  `guides/`, `sitemap.xml`, `images/`, `fonts/`, `vendor/`).
-  `.github/workflows/pages.yml` stages exactly that (`scripts/stage_site.mjs`) and
-  deploys it with the Pages actions, so `docs/`, `scripts/`, `marketing/`,
-  `analytics-worker/`, notes and the KV namespace IDs stop being public. **One
-  manual step: Settings → Pages → Source → "GitHub Actions".** `visual-check`
-  fails if a file `sw.js` precaches isn't in the list.
-
-### Removed
-- `brag-output/` (launch video material), `feature-backlog-review.txt`,
-  `docs/launch-posts.md`, the Android TWA plan, the achievement-badges design
-  spec, the MuscleWiki plan CSVs and `exercise-inventory.csv`, and the repro,
-  probe, JSON and log scratch from `docs/audits/2026-10-16/` (all still in git
-  history). `docs/index-section-map.md` lost its pre-split line table (F15).
+## [2.14.2] - 2026-10-30
 
 ### Fixed
+- **The narrowest phones got none of 2.14.1's slack.** The sub-340 px rule set
+  the Log button's padding back to 5 px a side, cancelling the 2 px the 400 px
+  rule gave it. Gone; Log is 2 px a side at every width up to 400 px.
+- **The weight and reps boxes no longer depend on the browser engine.** Desktop
+  engines (and CI's Linux WebKit) reserve room inside a number input for its
+  spin buttons; iPhones never do, which is why the values clipped only there.
+  The set row's inputs now hide the spin buttons. The reps box and the weight
+  box's minimum are sized in `ch` (they follow the font instead of a fixed pixel
+  count, so a wider rendering no longer clips), and the reps box is snapped to
+  whole pixels so `scrollWidth` and `clientWidth` agree. 2.14.1's row padding is
+  back from 2 px to the original 3 px a side: at 2 px the 40 px end buttons
+  touched the row's rounded corner.
+- Removed a dead `.sr-x` margin rule from the 400 px media query.
+- **Tutorial spotlights pointed at the wrong place.** They had drifted since the
+  taller set rows (2.12.0) and the 2.14.0 default days: step 1 (Home) was 3% too
+  high, step 2 (day editor) 2% too tall, step 4 (LOG) still the old 30 px
+  button, and step 5 could not be measured at all because the bin moved behind
+  the "…" button. `capture:tutorial` now finds that row's "…" button, no longer
+  fails on step 5, and the screenshots and the spotlights in `index.html` were
+  re-measured together. The README's Home and rest-timer images were retaken
+  from the same capture.
+- Release notes for 2.14.0 and 2.14.1 now list what each actually shipped:
+  the CI, publish-list and clean-up items that sat under "Unreleased" are in
+  2.14.0, the README link fix is in 2.14.1, and 2.14.1's padding change is
+  stated in exact pixels.
+
+### Known issues
+- Tutorial step 5's text still says "Tap the bin"; the bin now sits behind the
+  "…" button (en, ja and ko copy to rewrite).
+- At 320 px wide (iPhone SE 1st gen and similar) a plate-loaded row with a
+  137.5 kg weight still overflows by about 12 px (15 px before this release), so
+  the "…" button is clipped. The set-row checks cover 360 px and up.
+
+## [2.14.1] - 2026-10-28
+
+### Fixed
+- **Set row had no width to spare.** CI's Linux WebKit draws the weight and reps
+  inputs 1 px wider than macOS, which clipped their values at 360–390 px. At
+  400 px and under, the row's padding went from 3 to 2 px a side and the Log
+  button's from 4 to 2 px a side, giving slack on both. `visual-check` now
+  passes on the CI runner's rendering as well.
 - **README pointed to a dead address.** The app, guides and privacy links used
   `jedmangubat.github.io/gainpath`, which now returns 404; they point to
   `shihatsu1.github.io/gainpath`. The Tech section no longer says "no backend"
   (anonymous usage counts go to a Cloudflare Worker, as Privacy states), and
   Contributing links the issue tracker.
 
-## [2.14.1] - 2026-10-28
-
-### Fixed
-- **Set row had no width to spare.** CI's Linux WebKit draws the weight and reps
-  inputs 1 px wider than macOS, which clipped their values at 360–390 px. The
-  row's padding and Log button padding are a few pixels tighter on phones, giving
-  slack on both. `visual-check` now passes on the CI runner's rendering as well.
+### Tooling (no app change)
 - `test:data` no longer assumes `navigator.storage` exists (Linux WebKit has none).
 
 ## [2.14.0] - 2026-10-28
@@ -65,6 +81,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `docs/audits/2026-10-27/F16-e1rm-proposal.md`.
 - The 221 original PNG exercise images moved to `archive/exercise-png/`, outside
   the published and cached folders (the app uses the WebP files).
+
+### Added (tooling, no app change)
+- **CI (F14).** `.github/workflows/precheck.yml` runs `npm ci`, installs Chromium
+  and WebKit and runs `npm run precheck` on every push to `main` (Node 22).
+  `scripts/lib/browsers.mjs` honours `PW_CHROMIUM_PATH` / `PW_WEBKIT_PATH` for
+  machines whose preinstalled browsers don't match the pinned Playwright build.
+- **Publish only the app (F13).** `scripts/publish_list.mjs` is the one list of
+  published files (`index.html`, `js/`, `sw.js`, `manifest.json`, `privacy.html`,
+  `guides/`, `sitemap.xml`, `images/`, `fonts/`, `vendor/`).
+  `.github/workflows/pages.yml` stages exactly that (`scripts/stage_site.mjs`) and
+  deploys it with the Pages actions, so `docs/`, `scripts/`, `marketing/`,
+  `analytics-worker/`, notes and the KV namespace IDs stop being public. **One
+  manual step: Settings → Pages → Source → "GitHub Actions".** `visual-check`
+  fails if a file `sw.js` precaches isn't in the list.
+
+### Removed
+- `brag-output/` (launch video material), `feature-backlog-review.txt`,
+  `docs/launch-posts.md`, the Android TWA plan, the achievement-badges design
+  spec, the MuscleWiki plan CSVs and `exercise-inventory.csv`, and the repro,
+  probe, JSON and log scratch from `docs/audits/2026-10-16/` (all still in git
+  history). `docs/index-section-map.md` lost its pre-split line table (F15).
 
 ## [2.13.0] - 2026-10-28
 

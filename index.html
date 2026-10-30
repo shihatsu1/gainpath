@@ -163,8 +163,9 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .sdel:active{transform:scale(.92)}.sdel.hide{visibility:hidden;pointer-events:none}
 .addset{width:100%;margin:2px 0 12px;padding:9px 12px;border:1px dashed var(--bdr);border-radius:12px;background:transparent;color:var(--txt2);font-family:var(--font-display);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
 .addset:active{transform:scale(.99)}.addset:hover{border-color:var(--accent);color:var(--accent)}
-.wi{flex:1 1 44px;min-width:44px;border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:right;padding:0}
-.ri{width:34px;border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:center;padding:0}
+.wi{flex:1 1 5ch;min-width:5ch;border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:right;padding:0}
+.ri{width:28px;width:round(up,3.3ch,1px);border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:center;padding:0}
+.wi,.ri{-moz-appearance:textfield;appearance:textfield}.wi::-webkit-inner-spin-button,.wi::-webkit-outer-spin-button,.ri::-webkit-inner-spin-button,.ri::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .sr-u{font-size:11px;color:var(--txt2);margin:0 2px 0 1px}
 .sr-x{font-size:13px;color:var(--txt2);margin:0 1px 0 5px}
 .bw-mode{min-width:38px;padding:6px 4px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-weight:700;background:var(--bg3);color:var(--accent);cursor:pointer;text-align:center;flex-shrink:0}
@@ -178,11 +179,11 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .sr-more{gap:8px;margin:-2px 0 8px;padding:0 4px}.sr-more .sr-act{flex:1;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 10px;font-size:13px}
 /* Narrow phones: the plate-loaded set row carries ten controls, which overflow
    below ~400px. Tighten every element so the row stays on one line. */
-@media(max-width:400px){.sr{gap:2px;padding:6px 2px}.sn{width:18px;height:18px;font-size:10px}.sst{font-size:17px}.wi{flex-basis:40px;min-width:40px;font-size:14px}.ri{width:31px;font-size:14px}.sr-u{display:none}.sr-x{margin:0 0 0 1px}.log{min-width:40px;padding:0 2px}.log.done{padding:0 2px}.sr-x{margin:0}}
+@media(max-width:400px){.sr{gap:2px;padding:6px 3px}.sn{width:18px;height:18px;font-size:10px}.sst{font-size:17px}.wi{font-size:14px}.ri{font-size:14px}.sr-u{display:none}.log{min-width:40px;padding:0 2px}.log.done{padding:0 2px}.sr-x{margin:0}}
 /* Sub-340px (iPhone SE 1st gen and similar): even compacted the controls
    don't fit, so the plate calculator goes too — a clipped, unreachable
    button is worse than an absent one. */
-@media(max-width:340px){.sn{width:18px;height:18px}.wi{font-size:13px;flex-basis:34px;min-width:34px}.log{padding:0 5px;min-width:40px}.log.done{padding:0 5px}}
+@media(max-width:340px){.sn{width:18px;height:18px}.wi{font-size:13px;flex-basis:4.6ch;min-width:4.6ch}}
 .db{padding:8px 12px;border-radius:8px;border:1px solid var(--bdr);background:var(--bg2);font-size:13px;cursor:pointer;color:var(--txt);white-space:nowrap;transition:transform .12s,box-shadow .15s}
 .db:active{transform:scale(.95)}
 .db.ok{background:var(--tint-green-2);color:var(--brand-green);border-color:transparent;box-shadow:var(--shadow-sm)}
@@ -957,11 +958,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img loading="lazy" decoding="async" src="images/tutorial/home.png" alt="GainPath home screen" data-i18n-alt="alt_tut_home">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="39.7" width="94.9" height="9" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask1"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="42.8" width="94.9" height="9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask1)"/>
-        <rect x="2.6" y="39.7" width="94.9" height="9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="2.6" y="42.8" width="94.9" height="9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:50.7%"><div class="tut-step-badge">1</div><div class="tut-tooltip-title" data-i18n="tut1_title">Pick a day</div><div class="tut-tooltip-body" data-i18n="tut1_body">Tap any day to start — GainPath pre-fills weights from last time you did it.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:53.8%"><div class="tut-step-badge">1</div><div class="tut-tooltip-title" data-i18n="tut1_title">Pick a day</div><div class="tut-tooltip-body" data-i18n="tut1_body">Tap any day to start — GainPath pre-fills weights from last time you did it.</div></div>
     </div>
   </div>
 
@@ -969,11 +970,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img loading="lazy" decoding="async" src="images/tutorial/day-editor.png" alt="GainPath day editor">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask2"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="14.2" width="94.9" height="20.9" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask2"><rect width="100" height="100" fill="#fff"/><rect x="2.6" y="14.2" width="94.9" height="18.9" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask2)"/>
-        <rect x="2.6" y="14.2" width="94.9" height="20.9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="2.6" y="14.2" width="94.9" height="18.9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:37.1%"><div class="tut-step-badge">2</div><div class="tut-tooltip-title" data-i18n="tut2_title">Customize any day</div><div class="tut-tooltip-body" data-i18n="tut2_body">Reorder, swap, add, or delete exercises — link two together for a superset, or swipe left to delete.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:35.1%"><div class="tut-step-badge">2</div><div class="tut-tooltip-title" data-i18n="tut2_title">Customize any day</div><div class="tut-tooltip-body" data-i18n="tut2_body">Reorder, swap, add, or delete exercises — link two together for a superset, or swipe left to delete.</div></div>
     </div>
   </div>
 
@@ -993,11 +994,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img loading="lazy" decoding="async" src="images/tutorial/workout.png" alt="GainPath workout logging screen">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask4"><rect width="100" height="100" fill="#fff"/><rect x="70.7" y="30.9" width="13.7" height="5" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask4"><rect width="100" height="100" fill="#fff"/><rect x="67.9" y="36.8" width="13.3" height="6.2" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask4)"/>
-        <rect x="70.7" y="30.9" width="13.7" height="5" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="67.9" y="36.8" width="13.3" height="6.2" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:37.9%"><div class="tut-step-badge">4</div><div class="tut-tooltip-title" data-i18n="tut4_title">Log each set</div><div class="tut-tooltip-body" data-i18n="tut4_body">Enter the weight and reps, tap LOG, then rest with the built-in timer. GainPath catches new personal records automatically.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:45%"><div class="tut-step-badge">4</div><div class="tut-tooltip-title" data-i18n="tut4_title">Log each set</div><div class="tut-tooltip-body" data-i18n="tut4_body">Enter the weight and reps, tap LOG, then rest with the built-in timer. GainPath catches new personal records automatically.</div></div>
     </div>
   </div>
 
@@ -1005,11 +1006,11 @@ textarea{resize:vertical;min-height:100px}
     <div class="tut-ss-wrap">
       <img loading="lazy" decoding="async" src="images/tutorial/workout.png" alt="GainPath set list showing the add and remove set controls">
       <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0">
-        <defs><mask id="tutmask5"><rect width="100" height="100" fill="#fff"/><rect x="6.9" y="69.5" width="86.2" height="10.9" rx="3" fill="#000"/></mask></defs>
+        <defs><mask id="tutmask5"><rect width="100" height="100" fill="#fff"/><rect x="6.9" y="58.2" width="86.2" height="12" rx="3" fill="#000"/></mask></defs>
         <rect width="100" height="100" fill="rgba(16,27,23,.6)" mask="url(#tutmask5)"/>
-        <rect x="6.9" y="69.5" width="86.2" height="10.9" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
+        <rect x="6.9" y="58.2" width="86.2" height="12" rx="3" fill="none" stroke="#C6F24E" stroke-width=".6"/>
       </svg>
-      <div class="tut-tooltip" style="left:5%;top:38.1%"><div class="tut-step-badge">5</div><div class="tut-tooltip-title" data-i18n="tut5_title">Add or drop a set</div><div class="tut-tooltip-body" data-i18n="tut5_body">Tap the bin on any set you haven't logged yet to drop it, or Add set to tack one on.</div></div>
+      <div class="tut-tooltip" style="left:5%;top:29.2%"><div class="tut-step-badge">5</div><div class="tut-tooltip-title" data-i18n="tut5_title">Add or drop a set</div><div class="tut-tooltip-body" data-i18n="tut5_body">Tap the bin on any set you haven't logged yet to drop it, or Add set to tack one on.</div></div>
     </div>
   </div>
 
@@ -1366,22 +1367,22 @@ textarea{resize:vertical;min-height:100px}
 </div>
 
 </div>
-<script src="js/boot.js?v=2.14.1"></script>
-<script src="js/exercises.js?v=2.14.1"></script>
-<script src="js/exercise-text-en.js?v=2.14.1"></script>
-<script src="js/state.js?v=2.14.1"></script>
-<script src="js/i18n.js?v=2.14.1"></script>
-<script src="js/storage.js?v=2.14.1"></script>
-<script src="js/ui-core.js?v=2.14.1"></script>
-<script src="js/onboarding.js?v=2.14.1"></script>
-<script src="js/math.js?v=2.14.1"></script>
-<script src="js/history.js?v=2.14.1"></script>
-<script src="js/settings.js?v=2.14.1"></script>
-<script src="js/day-edit.js?v=2.14.1"></script>
-<script src="js/workout.js?v=2.14.1"></script>
-<script src="js/climb.js?v=2.14.1"></script>
-<script src="js/photos.js?v=2.14.1"></script>
-<script src="js/data-safety.js?v=2.14.1"></script>
-<script src="js/main.js?v=2.14.1"></script>
+<script src="js/boot.js?v=2.14.2"></script>
+<script src="js/exercises.js?v=2.14.2"></script>
+<script src="js/exercise-text-en.js?v=2.14.2"></script>
+<script src="js/state.js?v=2.14.2"></script>
+<script src="js/i18n.js?v=2.14.2"></script>
+<script src="js/storage.js?v=2.14.2"></script>
+<script src="js/ui-core.js?v=2.14.2"></script>
+<script src="js/onboarding.js?v=2.14.2"></script>
+<script src="js/math.js?v=2.14.2"></script>
+<script src="js/history.js?v=2.14.2"></script>
+<script src="js/settings.js?v=2.14.2"></script>
+<script src="js/day-edit.js?v=2.14.2"></script>
+<script src="js/workout.js?v=2.14.2"></script>
+<script src="js/climb.js?v=2.14.2"></script>
+<script src="js/photos.js?v=2.14.2"></script>
+<script src="js/data-safety.js?v=2.14.2"></script>
+<script src="js/main.js?v=2.14.2"></script>
 </body>
 </html>

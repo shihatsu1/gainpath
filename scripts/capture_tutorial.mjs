@@ -86,7 +86,7 @@ const STEPS = [
   { file: 'workout', route: () => { startDay(Object.keys(DC)[0]); ST.exi = Math.max(0, ST.sd.findIndex((it) => equipRank(it.ex) === 0)); ss('wo'); renderEx(); }, sel: ['#ex-area .sr:not(.done) .log'] },
   // Same screen as the previous step with a different spotlight, so it reuses
   // that capture rather than storing a byte-identical second copy.
-  { file: 'workout', reuse: true, route: () => { startDay(Object.keys(DC)[0]); ST.exi = Math.max(0, ST.sd.findIndex((it) => equipRank(it.ex) === 0)); ss('wo'); renderEx(); }, sel: ['#ex-area .sr:last-of-type .sdel:not(.hide)', '#ex-area .addset'] },
+  { file: 'workout', reuse: true, route: () => { startDay(Object.keys(DC)[0]); ST.exi = Math.max(0, ST.sd.findIndex((it) => equipRank(it.ex) === 0)); ss('wo'); renderEx(); }, sel: ['#ex-area .sr:nth-last-child(3) .more', '#ex-area .addset'] },
   { file: 'plate-calc', route: () => { startDay(Object.keys(DC)[0]); ST.exi = Math.max(0, ST.sd.findIndex((it) => equipRank(it.ex) === 0)); ss('wo'); renderEx(); openPlateCalc(ST.sd[ST.exi].sets.findIndex((s) => s.t !== 'w')); }, sel: ['#plate-result'] },
   { file: 'rest-timer', route: () => { startDay(Object.keys(DC)[0]); ST.exi = Math.max(0, ST.sd.findIndex((it) => equipRank(it.ex) === 0)); ss('wo'); renderEx(); dset(ST.sd[ST.exi].sets.findIndex((s) => s.t !== 'w')); }, sel: ['#t-cir'], shape: 'ellipse' },
   { file: 'climb', route: () => { refreshHome(); bnav('ch'); }, sel: ['#bn-ch'] },

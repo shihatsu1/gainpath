@@ -201,92 +201,83 @@ async function photoTests(engine, tag, check, errors) {
 // ── Audit 2026-10-16 regressions (A01–A07). Each starts from the failure the
 // audit reproduced. Synthetic data only; scripts/lib/browsers.mjs keeps every
 // request to the analytics worker local.
-// ── F1: old origin → new origin transfer. The two real origins are served from
-// disk by routing (nothing leaves the machine), so the app's own APP_ORIGIN and
-// the kit's origin checks are exercised unchanged: no test-only overrides.
-const NEW_O = 'https://shihatsu1.github.io', OLD_O = 'https://jedmangubat.github.io';
-async function routeOrigins(context) {
-  const serve = (base, strip) => async (route) => {
-    const u = new URL(route.request().url());
-    let rel = decodeURIComponent(u.pathname).replace(/^\/gainpath\//, '');
-    if (!rel || rel.endsWith('/')) rel += 'index.html';
-    try { route.fulfill({ status: 200, contentType: MIME[path.extname(rel)] || 'application/octet-stream', body: await readFile(path.join(base, rel)) }); }
-    catch { route.fulfill({ status: 404, body: '' }); }
-  };
-  await context.route(NEW_O + '/**', serve(ROOT));
-  await context.route(OLD_O + '/**', serve(path.join(ROOT, 'migration', 'old-origin', 'gainpath')));
-  await context.route('https://evil.example/**', (r) => r.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><title>x</title>' }));
-  await context.route('https://gainpath-analytics.jedmangubat.workers.dev/**', (r) => r.fulfill({ status: 204 }));
+// ── Hostile data (audit 2026-11-10, G2–G4). A backup is a file from anywhere:
+// its text must only ever be shown as text. One string carries every way out
+// (an element, a double- and a single-quoted attribute, two exits from a quoted
+// argument in an inline handler). It goes in by the real Import control and,
+// to check each sink on its own, straight into storage; then the screens are
+// walked. "wild" also poisons enums and ids, as a hand-edited file could.
+const HOSTILE = `XSSMARK<img src=x onerror=__xss(1) data-xe=1>" data-xa="1" x='y' data-xb='1' z="');__xss(2);//\\');__xss(3);//`;
+function hostileUser(wild) {
+  const P = HOSTILE, cex = 'My cable thing' + P, dayName = 'Day' + P, history = [];
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(Date.UTC(2026, 8, 1) + i * 2 * 864e5).toISOString().slice(0, 10);
+    history.push({ day: 'cd_1', dayName, date: i % 3 ? d : 'Sep 1' + P, dk: d, mk: d.slice(0, 7), dur: i % 4 ? '48m' : '48m' + P, sets: 6, feel: i % 5 ? 'good' : 'good' + P, cid: 1000 + i, exercises: [
+      { name: 'Barbell bench press', exFeel: i % 2 ? 'good' : 'hard' + P, sets: [{ done: true, t: 'w', w: 40, r: 12 }, { done: true, t: 'x', w: 60 + i, r: 8 }] },
+      { name: cex, exFeel: 'hard', note: 'note' + P, sets: [{ done: true, t: 'x', w: 20 + i, r: 12, note: 'n' + P }] },
+      { name: 'Unknown lift' + P, exFeel: 'easy', sets: [{ done: true, t: 'x', w: 80 + i, r: 10 }] },
+    ] });
+  }
+  const cfg = { name: 'Big' + P, firstName: 'Big' + P, lastName: 'L' + P, sex: 'male', setup: true, unit: 'kg', bw: 85, exp: 'advanced', goal: 'strength',
+    split: 'custom', freq: 4, warmup: true, wuReps: 10, prefReps: 8, prefRest: 120, prefSets: 3, startingWeights: 'ai', keyLifts: { chest: { w: 100, r: 5 } },
+    customExercises: [{ name: cex, mg: 'chest', baseW: 20, custom: true, equip: 'cable', yt: 'x' + P, note: 'each hand' + P }],
+    customProgram: { name: 'Prog' + P, days: [{ id: 'cd_1', name: dayName }, { id: 'cd_2', name: 'Two' + P, color: 'red' + P, icon: 'ti-x' + P }] },
+    customDays: { cd_1: ['Barbell bench press', cex, 'Unknown lift' + P], cd_2: [cex] },
+    dayPlan: { cd_1: { [cex]: { w: 25, r: 8 } } }, healthSync: true, healthSyncStartShortcut: 'S' + P, healthSyncEndShortcut: 'E' + P, leadEmail: 'a@b.c' + P,
+    lang: 'en', lastSeenVersion: '9.9.9', tutorialSeen: true, badgesIntroSeen: true };
+  const bw = [{ dk: '2026-09-01', date: 'Sep 1, 2026' + P, w: 86, waist: 34, arms: null }, { dk: '2026-10-01', date: 'Oct 1, 2026', w: 85, waist: null, arms: 15.5 }];
+  if (wild) {
+    Object.assign(cfg, { unit: 'kg' + P, sex: 'male' + P, exp: 'advanced' + P, goal: 'g' + P, setStyle: 's' + P, startingWeights: 'ai' + P });
+    cfg.customExercises[0].mg = 'chest' + P; cfg.customExercises[0].equip = 'cable' + P;
+    cfg.customProgram.days.push({ id: 'cd_3' + P, name: 'Three' }); cfg.customDays['cd_3' + P] = [cex];
+    history.forEach((h, i) => { if (i % 6 === 0) { h.day = 'cd_3' + P; h.mk += P; } if (i % 7 === 0) h.exercises[0].sets[1].t = 'x' + P; });
+  }
+  return { cfg, history, bw, mw: { ['Hack squat' + P]: 75 }, prs: {} };
 }
-async function migrationTests(engine, tag, check, errors) {
+const HOSTILE_STEPS = ['', "stab('cal')", "stab('ch')", "chSeg('strength')", "chSeg('body')", "chSeg('balance')", "stab('pr')", "showBadge(BADGES[0].id)", "openSettings()", "openDataSettings()",
+  "openPrivacySettings()", "openProgramBuilder()", "ss('home');stab('wk');openLogBW()", "clearEditState();ST.day=null;ST.sd=[];openDayEdit('cd_1')", "openAddEx()",
+  "clearEditState();ST.day=null;ST.sd=[];openDayEdit('cd_1');commitDayEdit()", "ST.exi=1;renderEx()", "openMidWorkoutEdit()", "openCancelWorkoutSheet()"];
+// In the page: did the payload become an element, an attribute, or code outside a string?
+const hostileInspect = () => {
+  const out = { made: document.querySelectorAll('[data-xe],[data-xa],[data-xb]').length, ran: (window.__xssHits || []).length, text: 0, where: [] };
+  const strip = (s) => s.replace(/'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|`(?:\\.|[^`\\])*`/g, "''");
+  document.querySelectorAll('[data-xe],[data-xa],[data-xb]').forEach((el) => out.where.push((el.closest('[id]') || {}).id + ':' + el.tagName));
+  document.querySelectorAll('*').forEach((el) => { for (const a of el.attributes) if (/^on/i.test(a.name) && a.value.includes('__xss') && strip(a.value).includes('__xss')) { out.made++; out.where.push((el.closest('[id]') || {}).id + ':' + a.name); } });
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) if (n.nodeValue.includes('XSSMARK')) out.text++;
+  return out;
+};
+async function hostileTests(engine, tag, check, errors) {
   const browser = await engine.launch();
-  const ctx = await browser.newContext({ acceptDownloads: true, serviceWorkers: 'block' });
-  await routeOrigins(ctx);
-  const dialogs = [];
-  ctx.on('page', (pg) => { pg.on('pageerror', (e) => errors.push(`${tag} migrate: ${e}`)); pg.on('dialog', (d) => { dialogs.push(d.message()); d.accept(); }); });
-  const kitSw = await readFile(path.join(ROOT, 'migration', 'old-origin', 'gainpath', 'sw.js'), 'utf8');
-  check(`${tag} F1: the kit's worker never touches localStorage or IndexedDB and deletes only gainpath-* caches`,
-    !/localStorage|indexedDB|sessionStorage/.test(kitSw) && /startsWith\('gainpath-'\)/.test(kitSw) && (kitSw.match(/caches\.delete/g) || []).length === 1);
-  const u = bigUser(155);
-  const old = await ctx.newPage();
-  await old.goto(OLD_O + '/gainpath/');
-  await old.evaluate((u) => {
-    localStorage.clear();
-    localStorage.setItem('gp_cfg', JSON.stringify(u.cfg)); localStorage.setItem('gp_h', JSON.stringify(u.history));
-    localStorage.setItem('gp_bw', JSON.stringify(u.bw)); localStorage.setItem('gp_mw', JSON.stringify(u.mw)); localStorage.setItem('gp_p', '{}');
-  }, u);
-  await old.reload();
-  const oldBefore = await old.evaluate(() => Object.keys(localStorage).sort().map(k => [k, localStorage.getItem(k)]));
-  check(`${tag} F1: the old-origin page finds the workouts`, /400/.test(await old.textContent('#count')), await old.textContent('#count'));
-  check(`${tag} F1: step 2 waits until the backup file is downloaded`, await old.isDisabled('#go'));
-  const [dl] = await Promise.all([old.waitForEvent('download'), old.click('#dl')]);
-  const f = path.join(OUT, 'migrate-backup.json'); await dl.saveAs(f);
-  const filed = JSON.parse(await readFile(f, 'utf8'));
-  check(`${tag} F1: the downloaded file has the backupPayload() shape and every record`,
-    filed.version === '2.0' && filed.history.length === 400 && filed.cfg.name === 'Big Lbs' && filed.bw.length === 2 && !!filed.mw && 'prs' in filed && !!filed.exported && /^gainpath-backup-\d{4}-\d{2}-\d{2}\.json$/.test(dl.suggestedFilename()));
-  const [nw] = await Promise.all([ctx.waitForEvent('page'), old.click('#go')]);
-  await nw.waitForSelector('#s-home.active', { timeout: 20000 }).catch(() => {});
-  const got = await nw.evaluate(() => ({ h: JSON.parse(localStorage.getItem('gp_h') || '[]'), cfg: JSON.parse(localStorage.getItem('gp_cfg') || 'null'), bw: JSON.parse(localStorage.getItem('gp_bw') || '[]'), mw: JSON.parse(localStorage.getItem('gp_mw') || '{}'), url: location.href }));
-  check(`${tag} F1: the new app asked once, then imported all 400 sessions with config, weigh-ins and machine bases`,
-    got.h.length === 400 && got.cfg && got.cfg.name === 'Big Lbs' && got.cfg.setup === true && got.bw.length === 2 && Object.keys(got.mw).length === 2 && dialogs.length === 1, { n: got.h.length, dialogs });
-  check(`${tag} F1: the sessions are identical to the old origin's`, !firstDiff(got.h, u.history), firstDiff(got.h, u.history));
-  check(`${tag} F1: the one-time ?migrate=1 is gone from the address afterwards`, !/migrate=/.test(got.url), got.url);
-  check(`${tag} F1: the old origin kept every key untouched`, JSON.stringify(await old.evaluate(() => Object.keys(localStorage).sort().map(k => [k, localStorage.getItem(k)]))) === JSON.stringify(oldBefore));
-  await old.waitForFunction(() => /\S/.test(document.getElementById('state').textContent) && document.getElementById('state').style.display === 'block', null, { timeout: 8000 }).catch(() => {});
-  check(`${tag} F1: the old page is told it is done`, /Done/.test(await old.textContent('#state')), await old.textContent('#state'));
-  await nw.close();
-
-  // Existing data on the new origin: the normal replace confirm, and Undo restores it.
-  const other = bigUser(95); other.cfg.name = 'Other Person'; other.history = other.history.slice(0, 7);
-  const nw2 = await ctx.newPage();
-  await nw2.goto(NEW_O + '/gainpath/index.html');
-  await nw2.evaluate((u) => { localStorage.clear(); localStorage.setItem('gp_cfg', JSON.stringify(u.cfg)); localStorage.setItem('gp_h', JSON.stringify(u.history)); localStorage.setItem('gp_bw', '[]'); localStorage.setItem('gp_mw', '{}'); localStorage.setItem('gp_p', '{}'); localStorage.setItem('gp_a2hs_dismissed', 'true'); localStorage.setItem('gp_last_export', new Date().toISOString()); }, other);
-  await nw2.close();
-  dialogs.length = 0;
-  const [nw3] = await Promise.all([ctx.waitForEvent('page'), old.click('#go')]);
-  await nw3.waitForFunction(() => JSON.parse(localStorage.getItem('gp_h') || '[]').length === 400, null, { timeout: 20000 }).catch(() => {});
-  const g3 = await nw3.evaluate(() => ({ n: JSON.parse(localStorage.getItem('gp_h') || '[]').length, pre: JSON.parse(localStorage.getItem('gp_pre_restore') || 'null') }));
-  check(`${tag} F1: over existing data it asks to replace and keeps a copy for Undo`, g3.n === 400 && dialogs.length === 1 && /7/.test(dialogs[0]) && g3.pre && g3.pre.history.length === 7 && g3.pre.cfg.name === 'Other Person', { g3: g3.n, dialogs });
-  await nw3.evaluate(() => undoRestore());
-  const g4 = await nw3.evaluate(() => JSON.parse(localStorage.getItem('gp_h') || '[]').length);
-  check(`${tag} F1: Undo brings the previous data back`, g4 === 7, g4);
-  await nw3.close();
-
-  // A page on any other origin cannot inject data, and cannot receive the handshake.
-  const ectx = await browser.newContext({ acceptDownloads: true, serviceWorkers: 'block' }); // empty storage, incl. the IndexedDB mirror
-  await routeOrigins(ectx);
-  const evil = await ectx.newPage();
-  await evil.goto('https://evil.example/x');
-  const popP = ectx.waitForEvent('page');
-  await evil.evaluate((url) => { window.__w = window.open(url, 'gp-evil'); window.__got = []; window.addEventListener('message', (e) => window.__got.push(e.origin)); }, NEW_O + '/gainpath/?migrate=1');
-  const victim = await popP;
-  await victim.waitForLoadState('load');
-  await victim.waitForTimeout(800);
-  await evil.evaluate((u) => { const p = { cfg: u.cfg, history: u.history, prs: {}, mw: {}, bw: [], version: '2.0' }; for (const n of ['', 'x'.repeat(32), '0'.repeat(32)]) window.__w.postMessage({ gpMigrate: 'data', nonce: n, payload: p }, '*'); }, u);
-  await victim.waitForTimeout(800);
-  const injected = await victim.evaluate(() => ({ h: localStorage.getItem('gp_h'), cfg: localStorage.getItem('gp_cfg'), ob: document.getElementById('s-ob').classList.contains('active') }));
-  check(`${tag} F1: another origin cannot hand the app data`, !injected.h && !injected.cfg && injected.ob, injected);
-  check(`${tag} F1: another origin never receives the handshake`, (await evil.evaluate(() => window.__got)).length === 0);
+  for (const route of ['import', 'storage']) for (const wild of [false, true]) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' }); const page = await ctx.newPage();
+    page.on('dialog', (d) => d.accept().catch(() => {}));
+    await page.addInitScript(() => { window.__xssHits = []; window.__xss = (n) => { window.__xssHits.push(n); }; });
+    const u = hostileUser(wild), label = `${tag} hostile ${route}${wild ? ' (enums and ids too)' : ''}`;
+    await page.goto(`http://localhost:${PORT}/manifest.json`);
+    if (route === 'storage') {
+      await page.evaluate((u) => { localStorage.clear(); localStorage.setItem('gp_cfg', JSON.stringify(u.cfg)); localStorage.setItem('gp_h', JSON.stringify(u.history)); localStorage.setItem('gp_bw', JSON.stringify(u.bw)); localStorage.setItem('gp_mw', JSON.stringify(u.mw)); localStorage.setItem('gp_p', '{}'); localStorage.setItem('gp_a2hs_dismissed', 'true'); localStorage.setItem('gp_last_export', new Date().toISOString()); }, u);
+      await page.goto(URL0);
+    } else {
+      await page.evaluate(() => { localStorage.clear(); localStorage.setItem('gp_cfg', JSON.stringify({ name: 'Plain', firstName: 'Plain', sex: 'male', setup: true, unit: 'kg', bw: 80, exp: 'beginner', split: 'pplul', freq: 3, lang: 'en', lastSeenVersion: '9.9.9', tutorialSeen: true, badgesIntroSeen: true, healthSyncStartShortcut: 'Mine' })); localStorage.setItem('gp_h', '[]'); localStorage.setItem('gp_a2hs_dismissed', 'true'); localStorage.setItem('gp_last_export', new Date().toISOString()); });
+      await page.goto(URL0); await page.waitForSelector('#s-home.active');
+      const file = path.join(OUT, `hostile-${wild ? 'wild' : 'plain'}.json`);
+      await writeFile(file, JSON.stringify({ ...u, exported: new Date().toISOString(), version: '2.0' }));
+      await page.evaluate(() => openDataSettings()); await page.setInputFiles('#import-file', file);
+    }
+    await page.waitForTimeout(900);
+    let made = 0, ran = 0, text = 0; const where = new Set();
+    for (const code of HOSTILE_STEPS) {
+      if (code) await page.evaluate(`try{${code}}catch(e){}`).catch(() => {}); // a damaged profile may not reach every step
+      await page.waitForTimeout(250);
+      const r = await page.evaluate(hostileInspect).catch(() => ({ made: 0, ran: 0, text: 0, where: [] }));
+      made = Math.max(made, r.made); ran = Math.max(ran, r.ran); text += r.text; r.where.forEach((x) => where.add(x));
+    }
+    check(`${label}: the text reached the screens (as text)`, text > 50, text);
+    check(`${label}: nothing became markup or a handler`, made === 0, [...where].slice(0, 12));
+    check(`${label}: nothing ran`, ran === 0, ran);
+    if (route === 'import' && !wild) check(`${label}: a file cannot switch on Health sync or name the Shortcut`, await page.evaluate(() => CFG.healthSync !== true && CFG.healthSyncStartShortcut === 'Mine'), await page.evaluate(() => [CFG.healthSync, String(CFG.healthSyncStartShortcut).slice(0, 12)]));
+    await ctx.close();
+  }
   await browser.close();
 }
 
@@ -620,9 +611,9 @@ async function main() {
   const results = [], errors = [];
   const check = (name, pass, detail) => results.push({ name, pass: !!pass, detail });
 
-  if (process.env.MIGRATE_ONLY) { // MIGRATE_ONLY=1: just the old→new origin transfer
-    await migrationTests(chromium, 'chromium', check, errors);
-    if (process.env.ENGINE !== 'chromium') await migrationTests(webkit, 'webkit', check, errors);
+  if (process.env.HOSTILE_ONLY) { // HOSTILE_ONLY=1: just the hostile-backup walk
+    await hostileTests(chromium, 'chromium', check, errors);
+    if (process.env.ENGINE !== 'chromium') await hostileTests(webkit, 'webkit', check, errors);
     server.close(); return printAndExit(results, errors);
   }
   if (process.env.BOOT_ONLY) { // BOOT_ONLY=1: just the F4 damaged-record boot cases
@@ -902,8 +893,8 @@ async function main() {
   await photoTests(webkit, 'webkit', check, errors);
   await auditTests(chromium, 'chromium', check, errors);
   await auditTests(webkit, 'webkit', check, errors);
-  await migrationTests(chromium, 'chromium', check, errors);
-  await migrationTests(webkit, 'webkit', check, errors);
+  await hostileTests(chromium, 'chromium', check, errors);
+  await hostileTests(webkit, 'webkit', check, errors);
   await bootTests(chromium, 'chromium', check, errors);
   await bootTests(webkit, 'webkit', check, errors);
   await privacyTests(chromium, 'chromium', check, errors);

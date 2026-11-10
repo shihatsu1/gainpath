@@ -2,6 +2,9 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
+<!-- Scripts only from this site (inline tags are refused where the browser knows script-src-elem; the
+     onclick handlers need 'unsafe-inline'), and data may only be sent to the counter and EmailJS. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; script-src-elem 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' data: blob:; connect-src 'self' https://gainpath-analytics.jedmangubat.workers.dev https://api.emailjs.com; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -856,7 +859,7 @@ textarea{resize:vertical;min-height:100px}
   <div class="card">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:10px" data-i18n="about_dev_hint">See what changed in the latest release, or follow ongoing development on GitHub.</div>
     <button type="button" class="bs" style="width:100%;margin-bottom:8px" onclick="showWhatsNew()"><i class="ti ti-sparkles" aria-hidden="true"></i> <span data-i18n="btn_whats_new">What's new</span></button>
-    <button type="button" class="bs" style="width:100%" onclick="window.open('https://github.com/jedmangubat/gainpath/blob/main/CHANGELOG.md','_blank','noopener')"><i class="ti ti-link" aria-hidden="true"></i> <span data-i18n="btn_full_changelog">Full changelog on GitHub</span></button>
+    <button type="button" class="bs" style="width:100%" onclick="window.open('https://github.com/shihatsu1/gainpath/blob/main/CHANGELOG.md','_blank','noopener')"><i class="ti ti-link" aria-hidden="true"></i> <span data-i18n="btn_full_changelog">Full changelog on GitHub</span></button>
   </div>
 </div>
 

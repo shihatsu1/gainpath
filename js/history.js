@@ -118,7 +118,7 @@ function renderCal(){
     const idxs=byDay[dk];const tod=dk===todayK?' cal-tod':'';const sel=dk===ST.calSel?' cal-sel':'';
     if(idxs){
       const last=idxs[idxs.length-1],h=ST.history[last];
-      grid+='<button class="cal-d cal-on'+tod+sel+'" style="background:'+(DC[h.day]||'var(--accent)')+'" onclick="selCalDay('+jsArg(dk)+')" aria-label="'+esc(idxs.length>1?t('hs_view_many').replace('{n}',idxs.length).replace('{d}',showDate(h.dk,h.date)):t('hs_view_one').replace('{d}',showDate(h.dk,h.date)))+'">'+d+(idxs.length>1?'<span class="cal-multi"></span>':'')+'</button>';
+      grid+='<button class="cal-d cal-on'+tod+sel+'" style="background:'+esc(DC[h.day]||'var(--accent)')+'" onclick="selCalDay('+jsArg(dk)+')" aria-label="'+esc(idxs.length>1?t('hs_view_many').replace('{n}',idxs.length).replace('{d}',showDate(h.dk,h.date)):t('hs_view_one').replace('{d}',showDate(h.dk,h.date)))+'">'+d+(idxs.length>1?'<span class="cal-multi"></span>':'')+'</button>';
     }
     else grid+='<div class="cal-d'+tod+'">'+d+'</div>';
   }
@@ -136,7 +136,7 @@ function renderCal(){
   const nM=monthSessions.length,volTxt=vol>0?fmtVol(vol,CFG.unit):'';
   const stats='<div class="cal-stats">'+(nM?t('cal_stats_'+(nM>1?'n':'1')+(volTxt?'v':'')).replace('{n}',nM).replace('{v}',volTxt):t(cur===curMk?'cal_none_yet':'cal_none'))+'</div>';
   const types=[...new Set(monthSessions.map(h=>h.day))];
-  const legend=types.length?'<div class="cal-foot">'+types.map(t=>'<span class="cal-leg"><span class="cal-dot" style="background:'+(DC[t]||'var(--accent)')+'"></span>'+esc(getDayName(t))+'</span>').join('')+'</div>':'';
+  const legend=types.length?'<div class="cal-foot">'+types.map(t=>'<span class="cal-leg"><span class="cal-dot" style="background:'+esc(DC[t]||'var(--accent)')+'"></span>'+esc(getDayName(t))+'</span>').join('')+'</div>':'';
   el.innerHTML='<div class="cal-wrap"><div class="cal-head">'+
     '<button class="cal-nav" onclick="calNav(-1)" aria-label="'+t('aria_prev_month')+'"'+(cur<=minMk?' disabled':'')+'><i class="ti ti-chevron-left" aria-hidden="true"></i></button>'+
     '<div class="cal-tit">'+new Date(Y,M-1,1).toLocaleDateString(locTag(),{year:'numeric',month:'long'})+'</div>'+
@@ -402,7 +402,7 @@ function refreshHome(){
     const isSug=k===sug;const last=lastSession(k);
     const exList=getEffectiveDayExercises(k);
     const btn=document.createElement('button');btn.className='day-btn'+(isSug?' sug':'');
-    btn.innerHTML='<div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti '+(DI[k]||'ti-player-play')+'" style="margin-right:8px;color:'+(DC[k]||'var(--accent)')+';font-size:16px" aria-hidden="true"></i>'+esc(getDayName(k))+(isSug?'<span class="bdg" style="margin-left:8px;background:var(--tint-amber-1);color:var(--tint-amber-text)">'+t('day_suggested_badge')+'</span>':'')+'</div><div style="font-size:13px;color:var(--txt2);margin-top:4px">'+exList.length+t('exercises_count_suffix')+' \u00b7 '+(last?t('last_colon_prefix')+esc(last.dk?fmtDk(last.dk):last.date):t('not_done_yet'))+'</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i>';
+    btn.innerHTML='<div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti '+esc(DI[k]||'ti-player-play')+'" style="margin-right:8px;color:'+esc(DC[k]||'var(--accent)')+';font-size:16px" aria-hidden="true"></i>'+esc(getDayName(k))+(isSug?'<span class="bdg" style="margin-left:8px;background:var(--tint-amber-1);color:var(--tint-amber-text)">'+t('day_suggested_badge')+'</span>':'')+'</div><div style="font-size:13px;color:var(--txt2);margin-top:4px">'+exList.length+t('exercises_count_suffix')+' \u00b7 '+(last?t('last_colon_prefix')+esc(last.dk?fmtDk(last.dk):last.date):t('not_done_yet'))+'</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i>';
     btn.onclick=()=>openDayEdit(k);con.appendChild(btn);
   });
   renderCal();

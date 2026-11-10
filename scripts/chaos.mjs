@@ -114,7 +114,7 @@ async function runScreen(page, engineName, screen, seed) {
 
 async function runEngine(engineName, engine) {
   const browser = await engine.launch();
-  const page = await browser.newPage();
+  const page = await browser.newPage({ bypassCSP: true }); // the gremlins bundle is injected as an inline script
   page.on('pageerror', e => failures.push({ engine: engineName, kind: 'page-exception', detail: e.message, seed: SEED }));
   page.on('console', msg => {
     if (msg.type() !== 'error') return;
@@ -122,8 +122,11 @@ async function runEngine(engineName, engine) {
     // fires from a synthetic gremlins click — the browser doesn't trust it as a
     // real user gesture. Constant noise on every 'wo'-screen run, not an app bug.
     if (msg.text().includes('Notification prompting can only be done from a user gesture')) return;
-    failures.push({ engine: engineName, kind: 'console-error', detail: msg.text(), seed: SEED });
+    failures.push({ engine: engineName, kind: 'console-error', detail: msg.text() + (lastBad ? ' [' + lastBad + ']' : ''), seed: SEED });
   });
+  // A bare "Failed to load resource" names no address: keep the last failed one to print with it.
+  let lastBad = '';
+  page.on('response', r => { if (r.status() >= 400) lastBad = r.status() + ' ' + r.url(); });
   page.on('dialog', d => d.dismiss().catch(() => {}));
   browser.on('page', p => p.close().catch(() => {}));
 

@@ -32,9 +32,9 @@ their own phone. Protect existing data first.
 - **One canonical origin:** `APP_ORIGIN` in `js/boot.js` (`https://shihatsu1.github.io`).
   Canonical links, sitemap, guides and the analytics worker's `ALLOWED_ORIGINS`
   must agree with it; `visual-check` and `test:worker` fail otherwise. The old
-  `jedmangubat.github.io` appears only in the worker allowlist and the migration
-  receiver (`js/data-safety.js`); `migration/old-origin/` is the kit to publish
-  there, never part of the app.
+  `jedmangubat.github.io` is an unclaimed name anyone could publish under: nothing
+  trusts it (no allowlist entry, no transfer code) and `visual-check` fails if a
+  published file names it.
 - **Nothing external is needed to start, and no library blocks parsing.**
   Chart.js, jsPDF and EmailJS live in `vendor/` (versioned file names, hashes in
   `vendor/README.md`) and load on demand through `loadLib(name)`; call sites

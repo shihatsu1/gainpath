@@ -13,7 +13,11 @@ const isProductionService = (url) => {
   } catch { return false; }
 };
 const stub = (route) => route.fulfill({ status: 204, body: '' });
-export const isolate = (context) => context.route(isProductionService, stub).then(() => context);
+// WebKit sends navigator.sendBeacon() outside request routing, so the app's
+// counter events reached the live worker from WebKit test runs (found by chaos,
+// 2026-11-10). Beacons go out as fetch() here, which the route above answers.
+const beaconAsFetch = () => { navigator.sendBeacon = (url, body) => { fetch(url, { method: 'POST', body, keepalive: true }).catch(() => {}); return true; }; };
+export const isolate = (context) => context.addInitScript(beaconAsFetch).then(() => context.route(isProductionService, stub)).then(() => context);
 
 for (const type of [chromium, webkit]) {
   if (type.__isolated) continue;

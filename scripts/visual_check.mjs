@@ -296,11 +296,11 @@ async function main() {
   }
 
   // The app moved from jedmangubat.github.io to APP_ORIGIN. Nothing served (or
-  // linked from the README / marketing) may still point at the old host; the one
-  // legitimate mention is the migration receiver, which must recognise it.
+  // linked from the README / marketing) may still point at the old host: that
+  // name is unclaimed, so nothing may link to or trust it.
   {
     const OLD_HOST = 'jedmangubat.github.io';
-    const ALLOW = new Set(['js/data-safety.js']);
+    const ALLOW = new Set();
     const TEXT = new Set(['.html', '.js', '.json', '.xml', '.css', '.txt', '.md', '.svg', '.webmanifest']);
     const walk = async (rel) => {
       const abs = path.join(ROOT, rel);

@@ -44,7 +44,7 @@ function gid(id){return document.getElementById(id);}
 // startup: loadLib(name) injects the script from vendor/ the first time a chart,
 // the PDF report or the feedback form needs it, and returns a promise. Call sites
 // guard with typeof Chart / window.jspdf, so a slow or failed load never blocks the app.
-const LIBS={chart:'vendor/chart-4.4.1.min.js',jspdf:'vendor/jspdf-2.5.1.min.js',emailjs:'vendor/emailjs-browser-4.4.1.min.js'};
+const LIBS={chart:'vendor/chart-4.4.1.min.js',jspdf:'vendor/jspdf-4.2.1.min.js',emailjs:'vendor/emailjs-browser-4.4.1.min.js'};
 const LIB_LOADED={};
 function loadLib(name){
   if(LIB_LOADED[name])return LIB_LOADED[name];

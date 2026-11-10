@@ -202,7 +202,7 @@ function saveInProgress(){
   if(!ST.day&&!ST.editDay){saveOK('wip');return;}
   const activeEl=document.querySelector('.screen.active');
   const screen=activeEl?activeEl.id.replace('s-',''):(ST.day?'wo':'dayedit');
-  const wip={day:ST.day,exi:ST.exi,sd:ST.sd,t0:ST.t0,paused:ST.paused||false,es:ST.es,pendingRec:ST.pendingRec,mwQueue:ST.mwQueue,mwCurrent:ST.mwCurrent,restEnd:ST.restEnd||null,restTotal:ST.restTotal||null,restInfo:ST.restInfo||null,rFbHtml:ST.rFbHtml||null,rNxHtml:ST.rNxHtml||null,plateIdx:ST.plateIdx,feelQueue:ST.feelQueue,feelTarget:ST.feelTarget,ssGroupEnd:ST.ssGroupEnd,restRated:ST.restRated||false,screen,ts:Date.now()};
+  const wip={day:ST.day,exi:ST.exi,sd:ST.sd,t0:ST.t0,paused:ST.paused||false,es:ST.es,pendingRec:ST.pendingRec,mwQueue:ST.mwQueue,mwCurrent:ST.mwCurrent,restEnd:ST.restEnd||null,restTotal:ST.restTotal||null,restInfo:ST.restInfo||null,plateIdx:ST.plateIdx,feelQueue:ST.feelQueue,feelTarget:ST.feelTarget,ssGroupEnd:ST.ssGroupEnd,restRated:ST.restRated||false,screen,ts:Date.now()};
   if(ST.editDay){wip.editDay=ST.editDay;wip.editList=ST.editList;wip.editMid=ST.editMid;wip.editIncludeCurrent=ST.editIncludeCurrent;wip.swapIdx=ST.swapIdx;wip.swapPart=ST.swapPart;wip.swapSearch=ST.swapSearch;wip.deExpanded=DE_EXPANDED;}
   if(HOLD_IDX!==null){wip.holdIdx=HOLD_IDX;wip.holdStart=HOLD_START;wip.holdTarget=HOLD_TARGET;wip.holdAlerted=HOLD_ALERTED;}
   try{lsSave('gp_wip',JSON.stringify(wip));saveOK('wip');}catch(e){saveFailed('wip');}
@@ -226,7 +226,7 @@ function restoreInProgress(){
     requestWakeLock();
     ST.day=wip.day;ST.exi=wip.exi;ST.sd=wip.sd;ST.t0=wip.t0;ST.pendingRec=wip.pendingRec;
     ST.mwQueue=wip.mwQueue||[];ST.mwCurrent=wip.mwCurrent||null;
-    ST.restEnd=wip.restEnd||null;ST.restTotal=wip.restTotal||ST.rs||90;ST.restInfo=wip.restInfo||null;ST.rFbHtml=wip.rFbHtml||null;ST.rNxHtml=wip.rNxHtml||null;
+    ST.restEnd=wip.restEnd||null;ST.restTotal=wip.restTotal||ST.rs||90;ST.restInfo=wip.restInfo||null;
     ST.plateIdx=wip.plateIdx!==undefined?wip.plateIdx:null;
     ST.feelQueue=wip.feelQueue||[];ST.feelTarget=wip.feelTarget!==undefined?wip.feelTarget:null;ST.ssGroupEnd=wip.ssGroupEnd!==undefined?wip.ssGroupEnd:null;ST.restRated=wip.restRated||false;
     ST.paused=wip.paused||false;
@@ -256,11 +256,8 @@ function restoreInProgress(){
     const ex=ST.sd[ST.exi].ex;const{si,done,next,isLastSet}=ST.restInfo;
     gid('r-en').textContent=exLabel(ex.name);
     gid('r-sl').textContent=restStatusLine(si,done,next,isLastSet,false);
-    gid('r-nx-h').textContent=restNextHeading(isLastSet,ST.exi<ST.sd.length-1);
     ST.rs=Math.max(0,Math.round((ST.restEnd-Date.now())/1000));updT();
-    gid('r-nx').innerHTML=ST.rNxHtml||'';
-    gid('r-fb').innerHTML=ST.rFbHtml||'';
-    if(isLastSet&&ST.restInfo.ssReturn==null){gid('r-feel').style.display='block';renderRestFeel(ST.exi);}else gid('r-feel').style.display='none';
+    gid('r-feel').style.display='none';renderRestNext(ex,ST.restInfo);
     ss('rest');startRestCountdown();
   }
   else if(scr==='feel'){ss('feel');}

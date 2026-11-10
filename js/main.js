@@ -24,7 +24,6 @@ try{
   LOAD_BAD.boot_crash=JSON.stringify({error:String(e&&e.message||e),keys:lsSnapshot()});
 }
 if(Object.keys(LOAD_BAD).length){saveFailed('lock');showLoadRecovery();}
-startMigrationReceiver();
 }
 // The current language's exercise text first (a cached file; English is already loaded), then start.
 // A hung network must not hold the app back: after 3 s it starts with the English text.

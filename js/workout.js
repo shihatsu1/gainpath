@@ -376,13 +376,10 @@ function renderRestFeel(P){
   gid('r-feel-btns').innerHTML=FEEL_OPTS.map(o=>'<button class="feel-btn" style="margin-bottom:0'+(sel===o.k?';border-color:var(--accent);background:var(--tint-green-1)':'')+'" onclick="restRate(\''+o.k+'\')"><span class="feel-icon">'+o.icon+'</span><div><div style="font-size:13px;font-weight:700;color:'+o.color+'">'+o.label+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+o.sub+'</div></div></button>').join('');
 }
 function restRate(feel){const P=ST.exi;if(!ST.sd[P])return;ST.sd[P].exFeel=feel;ST.restRated=true;renderRestFeel(P);saveInProgress();}
-function startRest(ex,si,done,next,ssReturn){
-  const isLastSet=!next;const ssRound=ssReturn!=null;
-  ST.restRated=false;gid('r-feel').style.display='none';
-  gid('r-en').textContent=exLabel(ex.name);
-  gid('r-sl').textContent=restStatusLine(si,done,next,isLastSet,ssRound);
-  ST.rs=done.t==='w'?Math.round(CFG.prefRest*0.67):CFG.prefRest;ST.restTotal=ST.rs;updT();
-  ST.restEnd=Date.now()+ST.rs*1000;ST.restInfo={si,done,next,isLastSet,ssReturn:ssReturn!=null?ssReturn:null};
+// The "next" card and tip on the rest screen, from the saved rest state. Also
+// used when a workout is resumed, so gp_wip never has to hold ready-made HTML.
+function renderRestNext(ex,info){
+  const {next,isLastSet,ssReturn}=info,ssRound=ssReturn!=null;
   const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[mwKey(ex.name)]!==undefined?ST.mw[mwKey(ex.name)]:0;
   const nextItem=ssRound?ST.sd[ssReturn]:(ST.exi<ST.sd.length-1?ST.sd[ST.exi+1]:null);
   if(ssRound){
@@ -409,8 +406,15 @@ function startRest(ex,si,done,next,ssReturn){
     gid('r-nx').innerHTML='<span style="color:var(--txt2)">'+t('wk_next')+'</span> '+repLbl+' @ <strong>'+dispW+'</strong>'+(ex.note&&!isBW?' ('+esc(ex.note)+')':'');
     gid('r-fb').innerHTML=tipFor(ex.name);
   }
-  ST.rNxHtml=gid('r-nx').innerHTML;
-  ST.rFbHtml=gid('r-fb').innerHTML;
+}
+function startRest(ex,si,done,next,ssReturn){
+  const isLastSet=!next;const ssRound=ssReturn!=null;
+  ST.restRated=false;gid('r-feel').style.display='none';
+  gid('r-en').textContent=exLabel(ex.name);
+  gid('r-sl').textContent=restStatusLine(si,done,next,isLastSet,ssRound);
+  ST.rs=done.t==='w'?Math.round(CFG.prefRest*0.67):CFG.prefRest;ST.restTotal=ST.rs;updT();
+  ST.restEnd=Date.now()+ST.rs*1000;ST.restInfo={si,done,next,isLastSet,ssReturn:ssReturn!=null?ssReturn:null};
+  renderRestNext(ex,ST.restInfo);
   ss('rest');ensureAudio();armRestAudioKick();startRestCountdown();
   saveInProgress();
 }

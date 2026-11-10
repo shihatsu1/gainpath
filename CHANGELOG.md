@@ -6,6 +6,43 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+Audit of 10 November 2026 (`docs/audits/2026-11-10/ASSESSMENT.md`, G1–G13).
+
+### Security
+- **A backup file could run script in the app (G2, G3).** A custom program day's
+  icon and colour were written into the page unescaped, and so was a custom
+  exercise's muscle group, so a crafted file ran script after Import (proven in
+  Chromium and WebKit). Those values are now escaped where they are written, and
+  `tidyCFG()` (`js/state.js`) holds stored and restored settings to their known
+  form at load and at restore: the unit is kg or lbs, a day colour is `#rrggbb`,
+  an icon is a `ti-…` name, a custom exercise's muscle group and equipment are
+  ones the app knows. `test:data` now restores a hostile file (and writes one
+  straight into storage) and walks 19 screens in both engines.
+- **A restored file can no longer switch on Health sync or choose the Shortcut
+  it runs (G6).** Those three settings stay as they are on the phone; after
+  restoring on a new phone, turn Health sync on again in Settings.
+- **An in-progress workout no longer stores ready-made HTML (G7).** The rest
+  screen's "next" card is rebuilt by `renderRestNext()` when a workout resumes.
+- **Nothing trusts the old `jedmangubat.github.io` address any more (G1).** That
+  GitHub name is unclaimed. The old-address transfer code and its kit
+  (`migration/`) are removed, the analytics worker refuses that origin, and the
+  changelog link in Settings points at the current repository.
+- **Content-Security-Policy on every page (G5):** scripts only from this site,
+  and data can be sent only to the counter and EmailJS.
+- **jsPDF 2.5.1 → 4.2.1 (G8).** The monthly PDF is byte-for-byte the same size
+  with the same text.
+
+### Fixed
+- **WebKit test runs reached the live counter (G13).** WebKit sends
+  `navigator.sendBeacon()` outside Playwright's request routing, so `chaos` (and
+  any WebKit test that logged an event) contacted the real worker, which answered
+  403. `scripts/lib/browsers.mjs` now sends beacons as `fetch()`, which the local
+  stub answers. `chaos` prints the address of a failed request.
+
+### Changed
+- Workflow actions are pinned to commit hashes and checkout no longer keeps
+  credentials (G10).
+
 ## [2.14.2] - 2026-10-30
 
 ### Fixed

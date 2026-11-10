@@ -85,11 +85,11 @@ function validateBackup(data){
 function applyBackup(data){
   const snap=JSON.parse(JSON.stringify({CFG,h:ST.history,p:ST.prs,mw:ST.mw,bw:ST.bw,b:ST.badges||{}}));
   try{
-    if(data.cfg)CFG=Object.assign(CFG,data.cfg);
+    if(data.cfg){const c={...data.cfg};['healthSync','healthSyncStartShortcut','healthSyncEndShortcut'].forEach(k=>delete c[k]);CFG=Object.assign(CFG,c);} // Health sync stays this phone's own choice: a file can't make it run a Shortcut
     if(data.history)ST.history=data.history.filter(h=>isPlainObj(h));
     if(data.prs)ST.prs=data.prs;if(data.mw){ST.mw=data.mw;migrateMW();}
     if(data.bw)ST.bw=data.bw.filter(e=>isPlainObj(e));
-    syncProgramMeta();migrateDkTz();migrateExNames();mergeCustomExercises();syncBW(true);recomputePRs();recomputeBadges();saveCFG();saveData();accentColor();
+    tidyCFG();syncProgramMeta();migrateDkTz();migrateExNames();mergeCustomExercises();syncBW(true);recomputePRs();recomputeBadges();saveCFG();saveData();accentColor();
   }catch(e){CFG=snap.CFG;ST.history=snap.h;ST.prs=snap.p;ST.mw=snap.mw;ST.bw=snap.bw;ST.badges=snap.b;throw e;}
 }
 function restoreDone(msg){hideLoadRecovery();refreshHome();ss('home');renderBackupStatus();const st=gid('ex-st');if(st){st.textContent=msg;setTimeout(()=>{st.textContent='';},4000);}}
@@ -105,12 +105,10 @@ function importData(input){const file=input.files[0];if(!file)return;const reade
   try{data=validateBackup(sanitizeImport(JSON.parse(e.target.result)));}catch(err){say(t('ds_invalid_file'));return;}
   restoreVerified(data,say);
 };reader.readAsText(file);input.value='';}
-// The confirm / keep-a-copy / apply steps, shared by a chosen file and by the
-// old-origin transfer below. `data` has already passed validateBackup().
-function restoreVerified(data,say,fromOldOrigin){
+// The confirm / keep-a-copy / apply steps. `data` has already passed validateBackup().
+function restoreVerified(data,say){
   const had=ST.history.length,badKeys=Object.keys(LOAD_BAD);
   if(hasMeaningfulData()&&!confirm(had?(had===1?t('ds_replace_one'):t('ds_replace_many').replace('{n}',had)):t('ds_replace_cfg')))return false;
-  if(fromOldOrigin&&!hasMeaningfulData()&&!confirm(t('mig_confirm').replace('{n}',(data.history||[]).length)))return false;
   if(hasMeaningfulData()&&!badKeys.length){try{localStorage.setItem('gp_pre_restore',JSON.stringify(backupPayload()));}catch(err){say(t('ds_no_space'));return false;}}
   // Unreadable keys are replaced by this restore: keep their raw text first.
   const locked={...LOAD_BAD};
@@ -119,31 +117,6 @@ function restoreVerified(data,say,fromOldOrigin){
   try{applyBackup(data);}catch(err){Object.assign(LOAD_BAD,locked);if(badKeys.length)saveFailed('lock');say(t('ds_apply_failed'));return false;}
   restoreDone(t(SAVE_FAILED?'ds_restored_unsaved':'ds_restored'));
   return true;
-}
-// ═══ Old-origin transfer (F1) ═══
-// The app used to live at the origin below; storage belongs to one origin, so
-// workouts logged there can only arrive from a page served there (see
-// migration/old-origin/). Opened as APP_ORIGIN/gainpath/?migrate=1 by that
-// page, this announces itself with a random nonce; the data is accepted once,
-// only from the old origin's own window, then the usual validate → confirm →
-// applyBackup path runs (so Undo works).
-const MIGRATE_FROM='https://jedmangubat.github.io';
-function startMigrationReceiver(){
-  if(!/[?&]migrate=1(&|$)/.test(location.search)||!window.opener||location.origin!==APP_ORIGIN)return;
-  const nonce=Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('');
-  let used=false;
-  const onMsg=e=>{
-    if(used||e.origin!==MIGRATE_FROM||e.source!==window.opener)return;
-    const m=e.data;if(!m||m.gpMigrate!=='data'||m.nonce!==nonce)return;
-    used=true;window.removeEventListener('message',onMsg);
-    let data;try{data=validateBackup(sanitizeImport(m.payload));}catch(err){alert(t('mig_invalid'));return;}
-    if(restoreVerified(data,alert,true)){
-      try{history.replaceState(null,'',location.pathname);}catch(err){}
-      try{window.opener.postMessage({gpMigrate:'done'},MIGRATE_FROM);}catch(err){}
-    }
-  };
-  window.addEventListener('message',onMsg);
-  try{window.opener.postMessage({gpMigrate:'ready',nonce},MIGRATE_FROM);}catch(err){}
 }
 // ═══ Recovery sheet for unreadable stored data (see load()/LOAD_BAD) ═══
 function keepBadCopies(){

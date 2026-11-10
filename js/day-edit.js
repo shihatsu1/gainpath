@@ -151,7 +151,7 @@ function renderDayEdit(){
       '<div class="de-row-actions"><span class="de-act-swap"><i class="ti ti-replace" aria-hidden="true"></i> '+t('de_swap')+'</span><span class="de-act-del"><i class="ti ti-trash" aria-hidden="true"></i> '+t('de_delete')+'</span></div>'+
       '<div class="de-row" onpointerdown="rowSwipeStart(event,'+i+')">'+
         (ST.editMid?'':'<i class="ti ti-grip-vertical de-handle" aria-hidden="true" onpointerdown="rowDragStart(event,'+i+')"></i>')+
-        '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:var(--txt)">'+grpTag+esc(ex.name)+'</div><div id="de-sub-'+i+'" style="font-size:11px;color:var(--txt2)">'+t('de_sub').replace('{mg}',humanizeMG(ex.mg)).replace('{n}',p.sets)+'</div></div>'+
+        '<div style="flex:1;min-width:0"><div style="font-size:15px;font-weight:600;color:var(--txt)">'+grpTag+esc(ex.name)+'</div><div id="de-sub-'+i+'" style="font-size:11px;color:var(--txt2)">'+t('de_sub').replace('{mg}',esc(humanizeMG(ex.mg))).replace('{n}',p.sets)+'</div></div>'+
         linkBtn+
         '<button class="bg" onclick="openSwap('+i+')" aria-label="'+esc(t('aria_swap_ex'))+'"><i class="ti ti-replace" aria-hidden="true"></i></button>'+
         '<button class="bg" onclick="deleteExFromEdit('+i+')" aria-label="'+esc(t('aria_delete_ex'))+'"'+(ST.editList.length===1?' disabled style="opacity:.3"':'')+'><i class="ti ti-trash" aria-hidden="true"></i></button>'+
@@ -333,7 +333,7 @@ function renderSwapParts(){
       const exList=open?'<div style="margin:8px 0 14px">'+
         EXPOOL_BY_MG[mg].map(swapExBtn).join('')+
       '</div>':'';
-      return '<button class="opt-btn'+(open?' on':'')+'" style="margin-bottom:8px" onclick="pickSwapPart(\''+mg+'\')">'+humanizeMG(mg)+'</button>'+exList;
+      return '<button class="opt-btn'+(open?' on':'')+'" style="margin-bottom:8px" onclick="pickSwapPart('+jsArg(mg)+')">'+esc(humanizeMG(mg))+'</button>'+exList;
     }).join('')+addCexBtn;
 }
 function pickSwapPart(mg){
@@ -352,7 +352,7 @@ const EQUIP_OPTS=[['barbell','Barbell'],['dumbbell','Dumbbell'],['kettlebell','K
 function openCustomEx(){
   ST.cexEquip='barbell';ST.cexHold=false;
   gid('cex-name').value='';gid('cex-basew').value='';gid('cex-unit').textContent=CFG.unit;
-  const mgSel=gid('cex-mg');mgSel.innerHTML=MG_LIST.map(mg=>'<option value="'+mg+'">'+humanizeMG(mg)+'</option>').join('');
+  const mgSel=gid('cex-mg');mgSel.innerHTML=MG_LIST.map(mg=>'<option value="'+esc(mg)+'">'+esc(humanizeMG(mg))+'</option>').join('');
   renderCexEquip();
   gid('cex-tog-hold').classList.remove('on');
   renderCustomExList();

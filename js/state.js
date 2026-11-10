@@ -11,7 +11,7 @@ let CFG={name:'',firstName:'',lastName:'',lang:'en',sex:'male',bw:75,ht:175,bf:n
   lastSeenVersion:'0',tutorialSeen:false,badgesIntroSeen:false,
   exportedAtHistoryLen:0,backupNudgeDismissedAtLen:0,
   deloadDismissedAtLen:-99};
-let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},badges:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,rFbHtml:null,rNxHtml:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',prOpenMG:{},chSeg:'strength',chRange:'1m',histAll:false,bwAll:false,editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
+let ST={day:null,exi:0,sd:[],rt:null,rs:90,restTotal:90,et:null,es:0,t0:null,paused:false,history:[],prs:{},badges:{},mw:{},chart:null,pendingRec:null,mwQueue:[],mwCurrent:null,fswPending:false,restEnd:null,restInfo:null,editDay:null,editList:[],swapIdx:null,swapPart:null,swapSearch:'',prOpenMG:{},chSeg:'strength',chRange:'1m',histAll:false,bwAll:false,editMid:false,editIncludeCurrent:false,plateIdx:null,bw:[],bwChart:null,feelQueue:[],feelTarget:null,ssGroupEnd:null,editProg:false,progDraft:null,restRated:false,calMonth:null};
 let HOLD_TIMER=null,HOLD_START=null,HOLD_IDX=null,HOLD_TARGET=null,HOLD_ALERTED=false,DE_EXPANDED=null;
 function startHoldTimerInterval(i){
   HOLD_TIMER=setInterval(()=>{
@@ -65,10 +65,19 @@ function loadKey(k,def,ok){
   try{const v=JSON.parse(raw);if(ok(v))return v;}catch(e){}
   LOAD_BAD[k]=raw;return def;
 }
+// Stored or restored settings are data from outside the code: values that are
+// later written into markup or looked up as keys are held to their known form
+// here, once, for load() and applyBackup() alike (audit 2026-11-10, G2–G4).
+function tidyCFG(){
+  if(CFG.unit!=='lbs')CFG.unit='kg';
+  const p=CFG.customProgram;
+  if(p&&Array.isArray(p.days))p.days.forEach(d=>{if(!/^#[0-9a-f]{6}$/i.test(d.color))delete d.color;if(!/^ti-[a-z0-9-]+$/.test(d.icon))delete d.icon;});
+  if(Array.isArray(CFG.customExercises))CFG.customExercises.forEach(e=>{if(!MG_LIST.includes(e.mg))e.mg='core';if(!EQUIP_OPTS.some(o=>o[0]===e.equip))e.equip='other';});
+}
 function load(){
   const c=loadKey('gp_cfg',null,LOAD_SHAPE.gp_cfg);if(c)CFG=Object.assign(CFG,c);
   ST.history=loadKey('gp_h',[],LOAD_SHAPE.gp_h);ST.prs=loadKey('gp_p',{},LOAD_SHAPE.gp_p);ST.mw=loadKey('gp_mw',{},LOAD_SHAPE.gp_mw);ST.bw=loadKey('gp_bw',[],LOAD_SHAPE.gp_bw);
-  try{syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();migrateMW();if(migrateExNames()){recomputePRs();saveCFG();saveData();}mergeCustomExercises();syncBW(true);}
+  try{tidyCFG();syncProgramMeta();migrateDkTz();migrateDumbbellInc();migrateName();migrateMW();if(migrateExNames()){recomputePRs();saveCFG();saveData();}mergeCustomExercises();syncBW(true);}
   catch(e){console.warn('[GainPath] startup migration stopped:',e&&e.message);}
 }
 // One-time migration: CFG.name used to be a single field; split it into

@@ -38,7 +38,7 @@ function keepIfOk(req, res) {
 // if one is missing, and a miss is fetched and cached on first use.
 const LIB_URLS = [
   './vendor/chart-4.4.1.min.js',
-  './vendor/jspdf-2.5.1.min.js',
+  './vendor/jspdf-4.2.1.min.js',
   './vendor/emailjs-browser-4.4.1.min.js'
 ];
 // The tutorial screenshots are lazy-loaded (they are not fetched until the

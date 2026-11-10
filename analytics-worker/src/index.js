@@ -7,9 +7,9 @@ const ALLOWED_EVENTS = new Set([
   'program_saved',
 ]);
 
-// The app's canonical origin (js/boot.js APP_ORIGIN, checked by the worker test)
-// plus the old one, so installs frozen there keep counting.
-const ALLOWED_ORIGINS = ['https://shihatsu1.github.io', 'https://jedmangubat.github.io'];
+// The app's canonical origin (js/boot.js APP_ORIGIN, checked by the worker test).
+// The old github.io name is not listed: it is unclaimed, so anyone could publish there.
+const ALLOWED_ORIGINS = ['https://shihatsu1.github.io'];
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 function corsHeaders(origin) {

@@ -226,6 +226,10 @@ async function miscTests(engine, tag) {
   // and they arrive the first time a chart/PDF/feedback needs them.
   const boot0 = await page.evaluate(() => ({ external: document.querySelectorAll('script[src^="http"]').length, chart: typeof Chart, pdf: typeof window.jspdf, mail: typeof window.emailjs }));
   check(`${tag} startup: no external scripts, and Chart.js, jsPDF and EmailJS are not loaded yet`, boot0.external === 0 && boot0.chart === 'undefined' && boot0.pdf === 'undefined' && boot0.mail === 'undefined', boot0);
+  // The page's Content-Security-Policy: an injected <script> tag must not run, a
+  // request to a host that isn't the counter or EmailJS must be refused, and the app's own onclick handlers still work.
+  const csp = await page.evaluate(async () => { const s = document.createElement('script'); s.textContent = 'window.__inl=1'; document.body.appendChild(s); const b = document.createElement('button'); b.setAttribute('onclick', 'window.__att=1'); document.body.appendChild(b); b.click(); b.remove(); let sent = true; try { await fetch('https://example.invalid/x', { mode: 'no-cors' }); } catch (e) { sent = false; } return { inline: window.__inl || 0, attr: window.__att || 0, sent }; });
+  check(`${tag} policy: injected script tags do not run, other hosts are refused, onclick still works`, csp.inline === 0 && csp.attr === 1 && csp.sent === false, csp);
   await page.evaluate(() => {
     const rec = (dk, w) => ({ day: 'push', dayName: 'Push', date: dk, dk, mk: dk.slice(0, 7), dur: '1:00', sets: 1, feel: 'good', exercises: [{ name: 'Barbell bench press', sets: [{ done: true, t: 'x', w, r: 5 }] }] });
     const ago = (n) => dkey(new Date(Date.now() - n * 864e5)); // inside the 30-day window Climb opens on

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import worker from '../src/index.js';
 
 const ORIGIN = 'https://shihatsu1.github.io';
-// Frozen installs on the old origin keep counting until the old username is reclaimed.
+// The old github.io name is unclaimed: anyone could publish there, so it must be refused.
 const OLD_ORIGIN = 'https://jedmangubat.github.io';
 
 // Minimal KV. `delay` makes every operation yield, so overlapping requests
@@ -39,8 +39,9 @@ test('a valid event from the app origin is stored and counted', async () => {
   assert.equal(rec.c.session_start, 1);
 });
 
-test('each allowed origin is accepted and echoed back; a lookalike is refused', async () => {
-  for (const origin of [ORIGIN, OLD_ORIGIN]) {
+test('the app origin is accepted and echoed back; the old origin and a lookalike are refused', async () => {
+  assert.equal((await worker.fetch(post('/e', ev(ID), { origin: OLD_ORIGIN }), mkEnv())).status, 403);
+  for (const origin of [ORIGIN]) {
     const env = mkEnv();
     const r = await worker.fetch(post('/e', ev(ID), { origin }), env);
     assert.equal(r.status, 204, origin);

@@ -1336,6 +1336,66 @@ async function main() {
     return out;
   });
 
+  // ── Exercise picture URLs. A regenerated picture gets ?v=<rev> so a phone that already
+  // cached the old file (cache-first, never renamed) fetches the new one once; every
+  // other picture keeps its plain URL so it is not downloaded again.
+  {
+    const u = await page.evaluate(() => {
+      const slugs = typeof EX_IMG_REV === 'object' ? Object.keys(EX_IMG_REV) : [];
+      const own = new Set(Object.keys(EXPOOL).filter((n) => !EXPOOL[n].custom).map((n) => exSlug(EX_OLD_NAME[n] || n)));
+      return {
+        n: slugs.length,
+        regen: typeof exImgSrc === 'function' ? exImgSrc('barbell-reverse-curl', true) : null,
+        plain: typeof exImgSrc === 'function' ? exImgSrc('barbell-back-squat', true) : null,
+        png: typeof exImgSrc === 'function' ? exImgSrc('zz-no-such-exercise', false) : null,
+        orphans: slugs.filter((s) => !own.has(s)),
+      };
+    });
+    const pic = (name, actual, expected) => results.push({ name, pass: JSON.stringify(actual) === JSON.stringify(expected), actual, expected });
+    pic('picture urls: regenerated pictures are all listed (206)', u.n, 206);
+    pic('picture urls: a regenerated picture carries ?v=<rev>', u.regen, 'images/exercises/barbell-reverse-curl.webp?v=1');
+    pic('picture urls: an untouched picture keeps its plain url', u.plain, 'images/exercises/barbell-back-squat.webp');
+    pic('picture urls: a non-webp picture is plain too', u.png, 'images/exercises/zz-no-such-exercise.png');
+    pic('picture urls: every listed slug is a built-in exercise picture', u.orphans, []);
+  }
+
+  // ── Picture loop. The expanded exercise picture plays one panel at a time on a CSS loop
+  // (no extra files). p = 1-2-3, c = 1-2-3-2, a = 1-2-1-3; p is the default and only the
+  // c and a slugs are listed. A tap on the picture switches back to the three-pose strip.
+  {
+    const L = await page.evaluate(() => {
+      const own = new Set(Object.keys(EXPOOL).filter((n) => !EXPOOL[n].custom).map((n) => exSlug(EX_OLD_NAME[n] || n)));
+      const listed = typeof EX_LOOP === 'object' ? Object.keys(EX_LOOP) : [];
+      const ex = EXPOOL['Barbell bench press'], slug = exSlug(EX_OLD_NAME[ex.name] || ex.name);
+      const build = () => { ST.day = 'push'; ST.exi = 0; ST.sd = [{ ex: { ...ex }, sets: [{ w: 60, r: 8, t: 'x', done: false }], sugDone: true }]; CFG.exImgSeen = []; renderEx(); };
+      build();
+      const box = document.querySelector('#ex-area .ex-imgbox'), loop = box && box.querySelector('.ex-loop');
+      const info = {
+        fn: typeof exLoopSeq === 'function' ? [exLoopSeq('zz-none'), exLoopSeq(listed.find((k) => EX_LOOP[k] === 'a') || ''), exLoopSeq(listed.find((k) => EX_LOOP[k] === 'c') || '')] : null,
+        n: listed.length, bad: listed.filter((k) => !own.has(k) || !/^[ca]$/.test(EX_LOOP[k])),
+        hasLoop: !!loop, seq: loop && loop.getAttribute('data-seq'), want: typeof exLoopSeq === 'function' ? exLoopSeq(slug) : null,
+        anim: loop ? getComputedStyle(loop).animationName : null,
+        bg: loop ? loop.style.backgroundImage : null,
+        toggles: box ? box.querySelectorAll('.ex-loop-toggle').length : 0,
+        labelled: box ? [...box.querySelectorAll('.ex-loop-toggle')].every((b) => (b.getAttribute('aria-label') || '').trim().length > 3) : false,
+      };
+      const t = box && box.querySelector('.ex-loop-toggle'); if (t) { t.click(); info.afterToggle = document.querySelector('#ex-area .ex-imgbox').classList.contains('ex-flat'); build(); info.persists = document.querySelector('#ex-area .ex-imgbox').classList.contains('ex-flat'); document.querySelector('#ex-area .ex-loop-toggle').click(); info.back = !document.querySelector('#ex-area .ex-imgbox').classList.contains('ex-flat'); }
+      CFG.exImgSeen = [];
+      const cust = { ...ex, name: 'My custom move', custom: true, webp: false }; ST.sd = [{ ex: cust, sets: [{ w: 1, r: 1, t: 'x', done: false }], sugDone: true }]; renderEx();
+      info.customHasLoop = !!document.querySelector('#ex-area .ex-loop');
+      return info;
+    });
+    const lp = (name, actual, expected) => results.push({ name, pass: JSON.stringify(actual) === JSON.stringify(expected), actual, expected });
+    lp('loop: exLoopSeq gives p by default, a and c for listed slugs', L.fn, ['p', 'a', 'c']);
+    lp('loop: only built-in picture slugs are listed, each as c or a', L.bad, []);
+    lp('loop: the c and a lists are long enough to be real (>300)', L.n > 300, true);
+    lp('loop: an expanded built-in picture has a loop panel with its sequence', [L.hasLoop, L.seq === L.want], [true, true]);
+    lp('loop: the loop animates (animation-name set)', /^exl-[pca]$/.test(L.anim || ''), true);
+    lp('loop: the loop panel draws the exercise picture', /images\/exercises\//.test(L.bg || ''), true);
+    lp('loop: one labelled toggle, switches to the strip, is remembered next render, and switches back', [L.toggles, L.labelled, L.afterToggle, L.persists, L.back], [1, true, true, true, true]);
+    lp('loop: a custom exercise has no loop', L.customHasLoop, false);
+  }
+
   // ── Translations. Every language has every key, placeholders ({n}, {w}…) match,
   // nothing is blank, and every key the code or markup names exists. t() falls back
   // to English silently, so a gap would otherwise only show up as English text

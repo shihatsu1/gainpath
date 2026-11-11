@@ -10,14 +10,15 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 
 ---
 
-## ✨ What's new in v2.14.0
+## ✨ What's new in v2.15.0
 
-- **Better default workouts.** Every split day now starts with the big lifts (squat, bench, row, Romanian deadlift) and covers each muscle more fully. Days you customised are unchanged.
-- **Fairer 1RM estimates.** A single counts as the weight you lifted, and sets above 12 reps no longer count toward the estimate, so some chart points and PR cards may change.
+- **Exercise pictures move.** The picture plays one pose at a time; tap the button on it to see all three poses side by side.
+- **A cleaner picture library.** 206 exercise pictures were redrawn so the same person, background and style run through the whole app.
 
 ## Features
 
 **Training**
+- Every split day starts with the big lifts and covers each muscle fully.
 - Six built-in splits: PPL / Upper-Lower, Bro Split, Alternating Legs/Push/Pull, Upper / Lower, Push / Pull / Legs, Full Body. You can also build your own program.
 - A weekly target you can change in Settings; past weeks keep the target they had.
 - Edit any day before or during a workout: reorder, swap, add or delete exercises, and link supersets and circuits.
@@ -36,12 +37,13 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 
 **During a workout**
 - One-tap set logging, with thumb-sized steppers to adjust the weight; plate calculator and delete sit behind each set's "…" button.
-- The exercise picture shows in full the first time and folds to a strip afterwards, so the sets stay on screen.
+- The exercise picture plays as a short loop the first time and folds to a strip afterwards, so the sets stay on screen; one tap shows all three poses.
 - Rest timer with sound, vibration, form tips and a preview of the next set.
 - Hold timers for planks and carries, drop sets, notes that remind you next time, and a keep-screen-awake option.
 
 **Progress**
 - Charts of estimated 1RM, top weight and volume, plus muscle-group balance and body weight.
+- 1RM estimates count a single as the weight lifted and ignore sets above 12 reps.
 - Automatic PRs with their full history, and 16 achievement badges.
 - Dated progress photos on Climb → Body. They stay on your phone and aren't in backups, so save the ones you want to keep to your photo library.
 - A workout calendar that lets you edit or delete past sessions.

@@ -96,6 +96,11 @@ function saveMW(skip){
   processMWQueue();
 }
 function exSlug(name){return name.toLowerCase().replace(/\s+/g,'-');}
+function exImgSrc(slug,webp){return 'images/exercises/'+slug+(webp?'.webp':'.png')+(EX_IMG_REV[slug]?'?v='+EX_IMG_REV[slug]:'');}
+function exLoopSeq(slug){return EX_LOOP_OFF[slug]?'':(EX_LOOP[slug]||'p');}
+const EX_LOOP_ICONS='<svg class="ex-ico-strip" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="5" height="14" rx="1"/><rect x="9.5" y="5" width="5" height="14" rx="1"/><rect x="16" y="5" width="5" height="14" rx="1"/></svg><svg class="ex-ico-play" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+let EX_FLAT=false;// this visit: show the three-pose strip instead of the loop
+function toggleExLoop(btn){const box=btn.closest('.ex-imgbox');EX_FLAT=box.classList.toggle('ex-flat');btn.setAttribute('aria-pressed',EX_FLAT?'true':'false');}
 function toggleSetMore(btn){
   const panel=btn.closest('.sr').nextElementSibling;if(!panel||!panel.classList.contains('sr-more'))return;
   const open=panel.style.display==='none';panel.style.display=open?'flex':'none';btn.setAttribute('aria-expanded',open?'true':'false');
@@ -180,7 +185,7 @@ function renderEx(){
   const isLast=ST.exi>=ST.sd.length-1;
   // First view of an exercise: full picture. After that it is collapsed to a strip (tap to expand) so the set rows sit above the fold.
   const imgSlug=exSlug(EX_OLD_NAME[ex.name]||ex.name),imgSeen=(CFG.exImgSeen||[]).indexOf(imgSlug)>=0;
-  const exImg='<div class="ex-imgbox'+(imgSeen?' collapsed':'')+'"><img src="images/exercises/'+esc(imgSlug)+(ex.webp?'.webp':'.png')+'" alt="'+esc(ex.name)+'" class="ex-img" onerror="exImgFallback(this,'+jsArg(ex.yt||'')+','+(ex.custom?1:0)+')">'+(imgSeen?'<button type="button" class="ex-img-toggle" aria-expanded="false" onclick="toggleExImg(this)" aria-label="'+esc(t('aria_ex_img_toggle'))+'"><span class="ex-img-hint" data-open="'+esc(t('ex_img_hide'))+'" data-closed="'+esc(t('ex_img_show'))+'">'+esc(t('ex_img_show'))+'</span></button>':'')+'</div>';
+  const exImg=(()=>{const sq=(ex.webp&&!ex.custom?exLoopSeq(imgSlug):'');return '<div class="ex-imgbox'+(imgSeen?' collapsed':'')+(sq?' ex-hasloop':'')+(sq&&EX_FLAT?' ex-flat':'')+'"><img src="'+esc(exImgSrc(imgSlug,ex.webp))+'" alt="'+esc(ex.name)+'" class="ex-img" onerror="exImgFallback(this,'+jsArg(ex.yt||'')+','+(ex.custom?1:0)+')">'+(imgSeen?'<button type="button" class="ex-img-toggle" aria-expanded="false" onclick="toggleExImg(this)" aria-label="'+esc(t('aria_ex_img_toggle'))+'"><span class="ex-img-hint" data-open="'+esc(t('ex_img_hide'))+'" data-closed="'+esc(t('ex_img_show'))+'">'+esc(t('ex_img_show'))+'</span></button>':'')+(sq?'<div class="ex-loop" data-seq="'+sq+'" style="background-image:url(\''+esc(exImgSrc(imgSlug,ex.webp))+'\')" role="img" aria-label="'+esc(ex.name)+'"></div><button type="button" class="ex-loop-toggle" aria-pressed="'+(EX_FLAT?'true':'false')+'" onclick="toggleExLoop(this)" aria-label="'+esc(t('aria_ex_loop_toggle'))+'">'+EX_LOOP_ICONS+'</button>':'')+'</div>';})();
   if(!imgSeen){CFG.exImgSeen=(CFG.exImgSeen||[]).concat(imgSlug);saveCFG();}
   let sugHtml='';
   if(!item.sugDone&&!sets.some(s=>s.done)&&!isBW&&!ex.holdSecs&&ex.plannedW===undefined){

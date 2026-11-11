@@ -104,6 +104,21 @@ async function run(engine, tag) {
   const inst = await page.evaluate(async (c) => { const cache = await caches.open(c); let bytes = 0; const urls = []; for (const r of await cache.keys()) { urls.push(new URL(r.url).pathname); bytes += (await (await cache.match(r)).blob()).size; } return { bytes, urls }; }, NEW);
   check(`${tag} sw install: the release cache is under ${INSTALL_MAX_MB} MB (${(inst.bytes / 1048576).toFixed(1)} MB)`, inst.bytes < INSTALL_MAX_MB * 1048576, inst.bytes);
   check(`${tag} sw install: no exercise image is downloaded by an update`, !inst.urls.some((u) => u.startsWith('/images/exercises/')), inst.urls.filter((u) => u.startsWith('/images/exercises/')).length);
+  // v2.15 redrew 206 pictures and gave them ?v=<rev> (EX_IMG_REV). The worker keeps pictures
+  // cache-first, so this must hold: the plain URL still answers from the old cached copy, while
+  // the versioned URL is a different cache key that goes to the network once and is stored.
+  const rev = await page.evaluate(async () => {
+    const load = (u) => new Promise((res) => { const i = new Image(); i.onload = () => res('ok'); i.onerror = () => res('err'); i.src = u; });
+    const c = await caches.open('gainpath-img-v1');
+    await c.put('/images/exercises/barbell-reverse-curl.webp', new Response('old-picture'));
+    const plain = await (await fetch('images/exercises/barbell-reverse-curl.webp')).text();
+    const loaded = await load(exImgSrc('barbell-reverse-curl', true));
+    const list = async () => (await c.keys()).map((k) => new URL(k.url).pathname + new URL(k.url).search);
+    let keys = await list();
+    for (let i = 0; i < 30 && !keys.some((k) => k.endsWith('?v=1')); i++) { await new Promise((r) => setTimeout(r, 100)); keys = await list(); } // the worker stores the copy after answering
+    return { plain, loaded, keys, src: exImgSrc('barbell-reverse-curl', true) };
+  });
+  check(`${tag} sw pictures: a versioned url skips the stale cached copy and is stored under its own key`, rev.plain === 'old-picture' && rev.loaded === 'ok' && rev.keys.includes('/images/exercises/barbell-reverse-curl.webp?v=1'), rev);
   check(`${tag} sw update: the workout in progress is untouched`, await page.evaluate(() => ST.day === 'push' && ST.sd.length === 1 && ST.sd[0].sets[0].w === 60));
   const wipSaved = await page.evaluate(() => !!localStorage.getItem('gp_wip'));
   await page.evaluate(() => { finishWo(); submitFeel('good'); });

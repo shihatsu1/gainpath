@@ -203,6 +203,11 @@ their own phone. Protect existing data first.
   `EX_TIPS` (~6) and `EX_INSTRUCTIONS` (~5); assistance lifts get `noPR:true`.
   A broken built-in image shows a placeholder; only `custom:true` exercises
   fall back to a YouTube link (`exImgFallback`).
+  A redrawn picture needs its slug in `EX_IMG_REV` (`js/exercises.js`; bump the
+  number) or phones that cached the old file keep it: `exImgSrc()` adds `?v=`.
+  The expanded picture loops one panel at a time from `EX_LOOP` (`c` = 1-2-3-2,
+  `a` = 1-2-1-3, default 1-2-3; `EX_LOOP_OFF` = still strip); a new picture
+  needs its panels at exact thirds and, if it returns to the start, a `c` entry.
 - **Generating images** costs money: `scripts/gen_exercise_image.py` (Gemini,
   ~$0.14/image, shared prepaid key) — ask before batch runs, pass approved
   images as references, write corrections as explicit geometry, log spend.

@@ -6,7 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.15.0] - 2026-11-11
+
 Audit of 10 November 2026 (`docs/audits/2026-11-10/ASSESSMENT.md`, G1–G13).
+
+### Added
+- **Exercise pictures move.** The expanded picture plays one panel at a time on a
+  CSS loop (no new files, no timers): 1-2-3, 1-2-3-2 or 1-2-1-3 depending on the
+  exercise (`EX_LOOP`, `exLoopSeq()`, the `exl-*` keyframes in `index.html`). A
+  button on the picture (`toggleExLoop()`, `aria_ex_loop_toggle` in en, ja and ko)
+  switches to the three-pose strip and back for the rest of the visit. The
+  collapsed strip, custom exercises and the five pictures whose panels are not at
+  exact thirds stay still, and with reduced motion on the strip is shown as before.
+
+### Changed
+- **206 exercise pictures redrawn in the house style** (one man, flat grey
+  background, no sparkle mark, letterbox bars or other characters), from the picture
+  audit's E, S and Q lists. They carry `?v=1` (`EX_IMG_REV`, `exImgSrc()`), so a
+  phone that already saved the old file fetches the new one once; the other 853
+  pictures keep their URL and are not downloaded again. `test:sw` checks that a
+  versioned URL skips the stale cached copy.
 
 ### Security
 - **A backup file could run script in the app (G2, G3).** A custom program day's

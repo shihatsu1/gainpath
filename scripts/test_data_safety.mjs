@@ -418,6 +418,87 @@ async function auditTests(engine, tag, check, errors) {
   const ls = (p, k) => p.evaluate((k) => localStorage.getItem(k), k);
   const histLen = async (p) => JSON.parse(await ls(p, 'gp_h') || '[]').length;
 
+  // GP-02: a one-shot failure at each replacement boundary must never leave a
+  // mixture of the old and imported data after a reload.
+  for (const key of ['gp_cfg', 'gp_h', 'gp_p', 'gp_mw', 'gp_bw']) {
+    const [c, p] = await mk(); await seed(p, bigUser(135));
+    const before = await stored(p);
+    const result = await p.evaluate((key) => {
+      const replacement = JSON.parse(JSON.stringify(backupPayload()));
+      replacement.cfg.firstName = 'Imported'; replacement.history = [];
+      replacement.mw = { 'Smith machine': 99 }; replacement.bw = [];
+      const real = Storage.prototype.setItem; let failed = false;
+      Storage.prototype.setItem = function (k, v) {
+        if (k === key && !failed) { failed = true; throw new DOMException('full', 'QuotaExceededError'); }
+        return real.call(this, k, v);
+      };
+      try { restoreVerified(replacement, () => {}); } finally { Storage.prototype.setItem = real; }
+      return failed;
+    }, key);
+    await p.reload(); await p.waitForSelector('#s-home.active');
+    const after = await stored(p);
+    check(`${tag} GP-02 ${key}: failed restore reloads the complete previous data`, result && core(after) === core(before) && JSON.stringify(after.prs) === JSON.stringify(before.prs), { result, diff: firstDiff(before, after) });
+    await c.close();
+  }
+
+  // GP-01: two pages in one context share localStorage, as two app tabs do.
+  {
+    const [c, a] = await mk(); await seed(a, bigUser(135));
+    const b = await c.newPage(); await b.goto(URL0); await b.waitForSelector('#s-home.active');
+    await a.evaluate(() => { CFG.firstName = 'Newer'; saveCFG(); });
+    const stale = await b.evaluate(() => { CFG.firstName = 'Stale'; return saveCFG(); });
+    check(`${tag} GP-01: a stale tab cannot overwrite a newer settings save`, !stale && JSON.parse(await ls(a, 'gp_cfg')).firstName === 'Newer');
+    await c.close();
+  }
+
+  // GP-01: two tabs each finish a workout; the stale one is parked, not lost, and merges after a reload.
+  {
+    const [c, a] = await mk(); await seed(a, bigUser(135));
+    const b = await c.newPage(); await b.goto(URL0); await b.waitForSelector('#s-home.active');
+    const n0 = await histLen(a);
+    await a.evaluate(() => { ST.history.push({ date: 'Nov 20, 2026', dk: '2026-11-20', cid: 111, exercises: [] }); saveData(); });
+    const staleSave = await b.evaluate(() => { ST.pendingRec = { date: 'Nov 21, 2026', dk: '2026-11-21', cid: 222, exercises: [], dayName: 'x', dur: '0:01', feel: null }; ST.history.push(ST.pendingRec); const ok = saveData(); try { localStorage.setItem('gp_done', JSON.stringify(ST.pendingRec)); } catch (e) {} return ok; });
+    await b.waitForTimeout(300);
+    check(`${tag} GP-01: the stale tab's save is refused, a sheet explains, keyboard focus is inside it`, !staleSave && await b.evaluate(() => getComputedStyle(gid('stale-tab')).display !== 'none' && gid('stale-tab').contains(document.activeElement)));
+    check(`${tag} GP-01: the first tab's workout is still the stored history`, await histLen(a) === n0 + 1 && !(await ls(a, 'gp_h')).includes('"cid":222'));
+    await b.reload(); await b.waitForSelector('#s-home.active'); await b.waitForTimeout(500);
+    const h = JSON.parse(await ls(b, 'gp_h'));
+    check(`${tag} GP-01: after reload both workouts are in history, once each`, h.filter((x) => x.cid === 111).length === 1 && h.filter((x) => x.cid === 222).length === 1, h.length);
+    await c.close();
+  }
+  // GP-01: another tab's reset opens the sheet in the tab that stays open.
+  {
+    const [c, a] = await mk(); await seed(a, bigUser(135));
+    const b = await c.newPage(); await b.goto(URL0); await b.waitForSelector('#s-home.active');
+    await b.evaluate(() => { localStorage.clear(); });
+    await a.waitForTimeout(300);
+    check(`${tag} GP-01: a reset in another tab shows the sheet here`, await a.evaluate(() => getComputedStyle(gid('stale-tab')).display !== 'none'));
+    await c.close();
+  }
+  // GP-02: an unfinished restore (marker left behind) is undone at launch from the pre-restore copy.
+  {
+    const [c, p] = await mk(); await seed(p, bigUser(135));
+    const before = await stored(p);
+    await p.evaluate(() => { localStorage.setItem('gp_pre_restore', JSON.stringify(backupPayload())); localStorage.setItem('gp_restore_pending', 'pre'); const c = JSON.parse(localStorage.getItem('gp_cfg')); c.firstName = 'Half'; localStorage.setItem('gp_cfg', JSON.stringify(c)); localStorage.setItem('gp_h', '[]'); });
+    p.once('dialog', (d) => d.dismiss());
+    await p.reload(); await p.waitForSelector('#s-home.active');
+    const after = await stored(p);
+    check(`${tag} GP-02: launch undoes an interrupted restore and clears the marker`, core(after) === core(before) && await ls(p, 'gp_restore_pending') === null, firstDiff(before, after));
+    await c.close();
+  }
+  // GP-03: if the mirror cannot be erased, photos must never be deleted.
+  {
+    const [c, p] = await mk(); await seed(p, bigUser(135));
+    const result = await p.evaluate(async () => {
+      const erase = idbErase, photos = photoClear; let photoCalled = false;
+      idbErase = async () => false; photoClear = async () => { photoCalled = true; return { ok: true }; };
+      try { await resetApp(); } finally { idbErase = erase; photoClear = photos; }
+      return { photoCalled, cfg: localStorage.getItem('gp_cfg') };
+    });
+    check(`${tag} GP-03: a failed mirror erase leaves photos and local data alone`, !result.photoCalled && !!result.cfg, result);
+    await c.close();
+  }
+
   // A01 + A02: a failed completion stays recoverable, and nothing hides the alert.
   let [c1, p1] = await mk();
   await seed(p1, bigUser(135));

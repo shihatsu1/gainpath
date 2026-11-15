@@ -82,16 +82,49 @@ function validateBackup(data){
 // PRs and badges are derived, so they are rebuilt from the restored history
 // rather than trusted from the file. The live state is snapshotted first: if
 // anything throws part-way, it is put back and the error is re-raised.
-function applyBackup(data){
+// saveCFG()/saveData() report failure by returning false, not by throwing, so a
+// failed write is checked here and everything is put back from the snapshot (config and
+// the numbers it describes are one unit). gp_restore_pending stays set until the whole
+// restore is stored; if the app is closed in between, restoreReconcile() puts back the
+// gp_pre_restore copy at the next launch.
+function applyBackup(data,hasPre){
   const snap=JSON.parse(JSON.stringify({CFG,h:ST.history,p:ST.prs,mw:ST.mw,bw:ST.bw,b:ST.badges||{}}));
+  localStorage.setItem('gp_restore_pending',hasPre?'pre':'nopre'); // can't be stored -> throws before anything changes
   try{
     if(data.cfg){const c={...data.cfg};['healthSync','healthSyncStartShortcut','healthSyncEndShortcut'].forEach(k=>delete c[k]);CFG=Object.assign(CFG,c);} // Health sync stays this phone's own choice: a file can't make it run a Shortcut
     if(data.history)ST.history=data.history.filter(h=>isPlainObj(h));
     if(data.prs)ST.prs=data.prs;if(data.mw){ST.mw=data.mw;migrateMW();}
     if(data.bw)ST.bw=data.bw.filter(e=>isPlainObj(e));
-    tidyCFG();syncProgramMeta();migrateDkTz();migrateExNames();mergeCustomExercises();syncBW(true);recomputePRs();recomputeBadges();saveCFG();saveData();accentColor();
-  }catch(e){CFG=snap.CFG;ST.history=snap.h;ST.prs=snap.p;ST.mw=snap.mw;ST.bw=snap.bw;ST.badges=snap.b;throw e;}
+    tidyCFG();syncProgramMeta();migrateDkTz();migrateExNames();mergeCustomExercises();syncBW(true);recomputePRs();recomputeBadges();
+    if(!(saveCFG()&&saveData()))throw new Error('restore could not be stored');
+    accentColor();
+    try{localStorage.removeItem('gp_restore_pending');}catch(e){}
+  }catch(e){
+    CFG=snap.CFG;ST.history=snap.h;ST.prs=snap.p;ST.mw=snap.mw;ST.bw=snap.bw;ST.badges=snap.b;
+    if(saveCFG()&&saveData()){try{localStorage.removeItem('gp_restore_pending');}catch(x){}}
+    throw e;
+  }
 }
+// At launch, before load(): a restore that never finished (marker still set) is undone
+// from the gp_pre_restore copy, so the app opens on the complete old data, never a mix.
+// Without that copy the old state was empty and nothing is deleted. Returns true if it acted.
+function restoreReconcile(){
+  let pend=null;try{pend=localStorage.getItem('gp_restore_pending');}catch(e){}
+  if(!pend)return false;
+  // Only a copy made by that same restore ('pre') can undo it; an older gp_pre_restore is someone else's.
+  let pre=null;if(pend==='pre'){try{pre=JSON.parse(localStorage.getItem('gp_pre_restore')||'null');}catch(e){}}
+  if(pre&&typeof pre==='object'&&pre.cfg&&typeof pre.cfg==='object'){
+    const put={gp_cfg:pre.cfg,gp_h:pre.history||[],gp_p:pre.prs||{},gp_mw:pre.mw||{},gp_bw:pre.bw||[]};
+    try{Object.keys(put).forEach(k=>{const v=JSON.stringify(put[k]);localStorage.setItem(k,v);if(localStorage.getItem(k)!==v)throw new Error('read-back '+k);});
+      localStorage.setItem('rev_gp',String(curRev()+1));MY_REV=curRev();} // other open tabs are now stale
+    catch(e){console.warn('[GainPath] could not undo an unfinished restore:',e&&e.message);RESTORE_STUCK=true;return false;}
+  }
+  try{localStorage.removeItem('gp_restore_pending');}catch(e){RESTORE_STUCK=true;return false;}
+  RESTORE_UNDONE=!!pre;return true;
+}
+// Set when an unfinished restore could not be undone: this launch reads the data but writes nothing
+// (a later save would make the mix permanent); the next launch tries again.
+let RESTORE_UNDONE=false,RESTORE_STUCK=false;
 function restoreDone(msg){hideLoadRecovery();refreshHome();ss('home');renderBackupStatus();const st=gid('ex-st');if(st){st.textContent=msg;setTimeout(()=>{st.textContent='';},4000);}}
 // Anything a restore would replace: sessions, a finished set-up, weigh-ins or
 // machine bases. A configured user with no sessions yet is protected too.
@@ -107,14 +140,14 @@ function importData(input){const file=input.files[0];if(!file)return;const reade
 };reader.readAsText(file);input.value='';}
 // The confirm / keep-a-copy / apply steps. `data` has already passed validateBackup().
 function restoreVerified(data,say){
-  const had=ST.history.length,badKeys=Object.keys(LOAD_BAD);
+  const had=ST.history.length,badKeys=Object.keys(LOAD_BAD),hasMeaningfulData0=hasMeaningfulData();
   if(hasMeaningfulData()&&!confirm(had?(had===1?t('ds_replace_one'):t('ds_replace_many').replace('{n}',had)):t('ds_replace_cfg')))return false;
   if(hasMeaningfulData()&&!badKeys.length){try{localStorage.setItem('gp_pre_restore',JSON.stringify(backupPayload()));}catch(err){say(t('ds_no_space'));return false;}}
   // Unreadable keys are replaced by this restore: keep their raw text first.
   const locked={...LOAD_BAD};
   if(badKeys.length&&!keepBadCopies()){say(t('lr_copy_fail'));return false;}
   badKeys.forEach(k=>delete LOAD_BAD[k]);saveOK('lock');
-  try{applyBackup(data);}catch(err){Object.assign(LOAD_BAD,locked);if(badKeys.length)saveFailed('lock');say(t('ds_apply_failed'));return false;}
+  try{applyBackup(data,hasMeaningfulData0&&!badKeys.length);}catch(err){Object.assign(LOAD_BAD,locked);if(badKeys.length)saveFailed('lock');say(t('ds_apply_failed'));return false;}
   restoreDone(t(SAVE_FAILED?'ds_restored_unsaved':'ds_restored'));
   return true;
 }

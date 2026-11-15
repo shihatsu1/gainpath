@@ -1295,6 +1295,16 @@ textarea{resize:vertical;min-height:100px}
   </div>
 </div>
 
+<!-- ANOTHER TAB SAVED NEWER DATA (shown by showStale() in storage.js; answered, never dismissed) -->
+<div id="stale-tab" role="alertdialog" aria-modal="true" aria-labelledby="st-title" aria-describedby="st-body" style="display:none;position:fixed;inset:0;z-index:9990;background:var(--bg);overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 84px) 16px 32px">
+  <div style="max-width:520px;margin:0 auto">
+    <div id="st-title" class="tt" style="font-size:20px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="stale_title">Updated in another tab</div>
+    <p id="st-body" style="font-size:14px;color:var(--txt2);line-height:1.55;margin:12px 0 20px" data-i18n="stale_body"></p>
+    <button class="bp" style="width:100%;justify-content:center;margin-bottom:10px" onclick="location.reload()" data-i18n="stale_reload">Reload</button>
+    <button class="bs" style="width:100%;justify-content:center" onclick="exportData()" data-i18n="save_alert_btn">Back up</button>
+  </div>
+</div>
+
 <!-- BADGE DETAIL -->
 <div id="bdg-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeBadge()"></div>
 <div id="bdg-sheet" role="dialog" aria-modal="true" aria-labelledby="bdg-sheet-name" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">

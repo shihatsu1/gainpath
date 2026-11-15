@@ -163,16 +163,19 @@ function closeSettingsSection(){collectSettingsFields();accentColor();refreshHom
 // Erase must clear the IndexedDB mirror too, or idbRecover() would bring the data back.
 // Reset erases everything, including the pre-migration IndexedDB snapshot that
 // upgrades keep. localStorage is cleared LAST and only once the other stores
-// are really gone: if photo deletion is blocked (another tab) or a store can't
-// be erased, nothing is touched, so the IndexedDB mirror can't bring the data
-// back after a half-finished reset. (A blocked delete stays queued in the
-// browser and completes when the other tab closes.)
+// are really gone, so the IndexedDB mirror can't bring the data back after a
+// half-finished reset. Order: mirror, photos, localStorage. If the photos can't be
+// deleted (another tab holds them open, and the browser still completes a blocked
+// delete once that tab closes) the training data is left, and the message says so.
 async function resetApp(){
   if(!confirm(t('st_reset_confirm')))return;
   const say=m=>{const el=gid('reset-st');if(el)el.textContent=m;};say('');
-  const ph=await photoClear();
-  if(!ph.ok){say(t(ph.reason==='blocked'?'reset_blocked':'reset_failed'));return;}
+  // Stages, safest first: the IndexedDB mirror (one transaction, all or nothing, and rebuilt from
+  // localStorage at the next launch), then the photos (irreversible, outside every backup), then
+  // localStorage. So "nothing was changed" is only ever said when it is true.
   if(!await idbErase()){say(t('reset_failed'));return;}
+  const ph=await photoClear();
+  if(!ph.ok){say(t(ph.reason==='blocked'?'reset_blocked':'reset_partial'));return;}
   localStorage.clear();location.reload();
 }
 

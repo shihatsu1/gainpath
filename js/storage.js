@@ -61,7 +61,22 @@ function retryFailed(except){
 }
 // A key whose stored value couldn't be read (see load()) is never written: the
 // unreadable original stays on disk until the user recovers or starts fresh.
-function lsSave(k,v){if(LOAD_BAD[k]!==undefined)throw new Error('locked: '+k+' is unreadable');localStorage.setItem(k,v);idbMirror(k,v);}
+// Several tabs share one localStorage. rev_gp counts saves of the five user-data keys; a tab
+// that last saw an older number is stale and must not write over what another tab saved.
+// (Not a gp_* key: the IndexedDB mirror, backups and recovery copy only gp_* keys.)
+const REV_KEYS={gp_cfg:1,gp_h:1,gp_p:1,gp_mw:1,gp_bw:1};
+function curRev(){try{return+localStorage.getItem('rev_gp')||0;}catch(e){return 0;}}
+let MY_REV=curRev();
+function showStale(){const el=gid('stale-tab');if(!el||el.style.display==='block')return;el.style.display='block';modalOpen('stale-tab',null,{escape:false});}
+window.addEventListener('storage',e=>{if(e.storageArea!==localStorage)return;if(e.key===null||(e.key==='rev_gp'&&(+e.newValue||0)!==MY_REV)||(e.key==='gp_cfg'&&e.newValue===null))showStale();});
+function lsSave(k,v){
+  if(LOAD_BAD[k]!==undefined)throw new Error('locked: '+k+' is unreadable');
+  if(RESTORE_STUCK&&REV_KEYS[k])throw new Error('locked: an unfinished restore could not be undone');
+  if(REV_KEYS[k]&&curRev()!==MY_REV){showStale();throw new Error('stale: another tab saved newer data');}
+  localStorage.setItem(k,v);
+  if(REV_KEYS[k]){const n=curRev()+1;try{localStorage.setItem('rev_gp',String(n));MY_REV=n;}catch(e){MY_REV=curRev();throw new Error('could not record the save',{cause:e});}}
+  idbMirror(k,v);
+}
 function saveCFG(){try{lsSave('gp_cfg',JSON.stringify(CFG));saveOK('cfg');return true;}catch(e){saveFailed(LOAD_BAD.gp_cfg!==undefined?'lock':'cfg');return false;}}
 function saveData(){
   try{lsSave('gp_h',JSON.stringify(ST.history));lsSave('gp_p',JSON.stringify(ST.prs));lsSave('gp_mw',JSON.stringify(ST.mw));lsSave('gp_bw',JSON.stringify(ST.bw));saveOK('data');}

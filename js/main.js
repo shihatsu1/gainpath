@@ -1,7 +1,7 @@
 // GainPath: the startup sequence
 // A plain script (not a module) sharing one global scope with the other
 // js/ files; index.html sets the load order. Map: docs/index-section-map.md
-load();
+restoreReconcile();load();
 // Anything after load() that throws on a set-up profile must end on the recovery
 // sheet (Download keeps the raw data), never on onboarding, which would invite
 // the user to overwrite gp_cfg.
@@ -15,6 +15,7 @@ try{
     if(!restoreInProgress()){
       refreshHome();ss('home');
       if(cmpVer(CFG.lastSeenVersion,WHATS_NEW_VERSION)<0)showWhatsNew();
+      if(RESTORE_UNDONE){RESTORE_UNDONE=false;setTimeout(()=>alert(t('ds_restore_undone')),300);}
     }
   }else{ss('ob');}
 }catch(e){
@@ -23,6 +24,7 @@ try{
   gid('s-ob').classList.remove('active');
   LOAD_BAD.boot_crash=JSON.stringify({error:String(e&&e.message||e),keys:lsSnapshot()});
 }
+if(RESTORE_STUCK)saveFailed('data');
 if(Object.keys(LOAD_BAD).length){saveFailed('lock');showLoadRecovery();}
 }
 // The current language's exercise text first (a cached file; English is already loaded), then start.

@@ -133,6 +133,11 @@ function saveBWLog(){
   ST.bw.sort((a,b)=>a.dk.localeCompare(b.dk));
   saveData();syncBW();closeLogBW();renderBWSection();
 }
+// Chart.js is fetched on demand; when it can't load, the card says so, keeps the numbers as text and offers Retry.
+function chartLoadFailed(canvas,one,summary,retry){
+  canvas.style.display='none';one.style.display='block';
+  one.innerHTML='<div style="font-size:13px;color:var(--txt2)">'+t('chart_load_failed')+'</div>'+(summary?'<div style="font-size:15px;font-weight:700;color:var(--txt);margin-top:6px">'+esc(summary)+'</div>':'')+'<button class="bs" style="margin-top:10px" onclick="'+retry+'()">'+t('chart_retry')+'</button>';
+}
 function renderBWSection(){
   const latestEl=gid('bw-latest');if(!latestEl)return;
   const sorted=ST.bw;
@@ -150,7 +155,7 @@ function renderBWSection(){
   if(inWin.length>=2){
   const theme=chartTheme(canvas,140);
   const bwDays=inWin.map(e=>dkDay(e.dk));
-  if(typeof Chart==='undefined'){loadLib('chart').then(renderBWSection).catch(()=>{});return;}
+  if(typeof Chart==='undefined'){loadLib('chart').then(renderBWSection).catch(()=>chartLoadFailed(canvas,one,inWin.length?t('chart_summary').replace('{a}',inWin[inWin.length-1].w+CFG.unit).replace('{b}',Math.max(...inWin.map(e=>e.w))+CFG.unit):'','renderBWSection'));return;}
   ST.bwChart=new Chart(canvas,{type:'line',data:{datasets:[{label:'Body weight ('+CFG.unit+')',data:inWin.map((e,i)=>({x:bwDays[i],y:e.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:theme.accent,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius:5,pointHoverRadius:7,borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(win.from===null?bwDays:[win.from,win.to],theme.tick)}}});
   }
   const BWCAP=8,bwOrdered=sorted.slice().reverse(),bwShown=ST.bwAll?bwOrdered:bwOrdered.slice(0,BWCAP);
@@ -221,8 +226,8 @@ function drawChart(){
   const first=all.length-pts.length===0;
   const pointRadius=isWaypoint.map((wp,i)=>i===0&&first?5:wp?8:4);
   const pointColor=isWaypoint.map((wp,i)=>(i>0||!first)&&wp?theme.forge:theme.accent);
-  if(typeof Chart==='undefined'){loadLib('chart').then(drawChart).catch(()=>{});return;}
-  ST.chart=new Chart(canvas,{type:'line',data:{datasets:[{label,data:pts.map(p=>({x:p.day,y:p.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:pointColor,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius,pointHoverRadius:pointRadius.map(r=>r+2),borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit+(isWaypoint[c.dataIndex]&&(c.dataIndex>0||!first)?' — waypoint':'')}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(win.from===null?pts.map(p=>p.day):[win.from,win.to],theme.tick)}}});
+  if(typeof Chart==='undefined'){loadLib('chart').then(drawChart).catch(()=>chartLoadFailed(canvas,one,t('chart_summary').replace('{a}',pts[pts.length-1].w+CFG.unit).replace('{b}',Math.max(...pts.map(p=>p.w))+CFG.unit),'drawChart'));return;}
+  ST.chart=new Chart(canvas,{type:'line',data:{datasets:[{label,data:pts.map(p=>({x:p.day,y:p.w})),borderColor:theme.accent,backgroundColor:theme.fill,tension:.35,pointBackgroundColor:pointColor,pointBorderColor:theme.bg,pointBorderWidth:2,pointRadius,pointHoverRadius:pointRadius.map(r=>r+2),borderWidth:2.5,fill:true}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{title:c=>dayLabel(c[0].parsed.x,true),label:c=>c.parsed.y+' '+CFG.unit+(isWaypoint[c.dataIndex]&&(c.dataIndex>0||!first)?' — '+t('chart_waypoint'):'')}}},scales:{y:{beginAtZero:false,grid:{color:theme.grid},ticks:{color:theme.tick,callback:v=>(Math.round(v*10)/10)+CFG.unit,font:{size:11}}},x:timeAxis(win.from===null?pts.map(p=>p.day):[win.from,win.to],theme.tick)}}});
 }
 function prCard(k){const pr=ST.prs[k];const ex=EXPOOL[k];const isBW=ex&&ex.note==='bodyweight';const sub='×'+(ex&&ex.holdSecs?t('wk_held').replace('{t}',fmt(pr.r)):t('wk_reps').replace('{n}',pr.r))+(pr.w>0&&!(ex&&ex.holdSecs)&&e1rm(pr.w,pr.r)>0?' · ~'+e1rm(pr.w,pr.r)+CFG.unit+' 1RM':'');return'<div class="card" role="button" tabindex="0" onclick="showPRHistory('+jsArg(k)+')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;margin-bottom:8px;border-radius:16px"><div style="min-width:0"><div style="font-family:var(--font-display);font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)">'+esc(k)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:4px">'+esc(pr.date)+'</div></div><div style="display:flex;align-items:center;gap:11px;flex-shrink:0"><div style="text-align:right"><div style="font-family:var(--font-display);font-size:20px;font-weight:900;letter-spacing:-.02em;color:var(--accent)">'+(isBW?bwWeightLabel(pr.w):pr.w+CFG.unit)+'</div><div style="font-size:11px;color:var(--txt2);font-family:var(--font-mono)">'+sub+'</div></div><i class="ti ti-flag" style="color:var(--accent);font-size:19px" aria-hidden="true"></i></div></div>';}
 function togglePRGroup(mg){ST.prOpenMG[mg]=!ST.prOpenMG[mg];renderPRs();}

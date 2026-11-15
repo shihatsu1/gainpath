@@ -101,6 +101,31 @@ async function sheetTests(engine, tag) {
   await page.keyboard.press('Escape');
   const lrAfter = await page.evaluate(() => getComputedStyle(gid('load-recovery')).display !== 'none');
   check(`${tag} recovery sheet: takes focus, is an alertdialog and Escape does not dismiss it`, lr.inside && lr.role === 'alertdialog' && lrAfter, { lr, lrAfter });
+  // GP-07: the failed-save alert's Back up button stays reachable by Tab while the recovery sheet is open.
+  await page.evaluate(() => { saveFailed('data'); });
+  let reachedBackup = false;
+  for (let i = 0; i < 12 && !reachedBackup; i++) { await page.keyboard.press('Tab'); reachedBackup = await page.evaluate(() => gid('save-alert').contains(document.activeElement)); }
+  check(`${tag} GP-07: Tab reaches Back up in the save alert while a sheet is open`, reachedBackup);
+  // GP-08: the viewport does not turn off pinch zoom.
+  check(`${tag} GP-08: viewport allows user zoom`, await page.evaluate(() => !/user-scalable\s*=\s*(no|0)|maximum-scale\s*=\s*1(\.0)?\b/.test(document.querySelector('meta[name=viewport]').content)));
+  check(`${tag} GP-09: backup and feedback results are polite status regions`, await page.evaluate(() => ['ex-st', 'fb-status'].every((id) => gid(id).getAttribute('role') === 'status' && gid(id).getAttribute('aria-live') === 'polite')));
+  check(`${tag} no page errors`, errors.length === 0, errors);
+  await browser.close();
+}
+
+// GP-10: when Chart.js can't load, the card says so, keeps the numbers as text, and Retry draws the chart.
+async function chartFailTests(engine, tag) {
+  const { browser, page, errors } = await boot(engine);
+  let block = true;
+  await page.route('**/vendor/chart-*.js', (r) => (block ? r.abort() : r.continue()));
+  await page.evaluate(() => { ST.bw = [{ dk: '2026-11-01', w: 80 }, { dk: '2026-11-08', w: 79 }, { dk: '2026-11-14', w: 78.5 }]; stab('ch'); chSeg('body'); });
+  await page.waitForFunction(() => /couldn.t load/i.test(gid('bw-one').innerText), null, { timeout: 8000 });
+  const failed = await page.evaluate(() => ({ text: gid('bw-one').innerText, canvas: getComputedStyle(gid('bw-cv')).display }));
+  check(`${tag} GP-10: a blocked chart library shows a message, the latest and best values and Retry`, failed.canvas === 'none' && /78\.5/.test(failed.text) && /80/.test(failed.text) && /try again/i.test(failed.text), failed);
+  block = false;
+  await page.evaluate(() => gid('bw-one').querySelector('button').click());
+  await page.waitForFunction(() => typeof Chart !== 'undefined' && !!ST.bwChart, null, { timeout: 8000 });
+  check(`${tag} GP-10: Retry draws exactly one chart`, await page.evaluate(() => getComputedStyle(gid('bw-cv')).display === 'block' && gid('bw-one').style.display === 'none'));
   check(`${tag} no page errors`, errors.length === 0, errors);
   await browser.close();
 }
@@ -291,6 +316,7 @@ async function langTests(engine, tag, lang) {
 
 for (const [engine, tag] of [[chromium, 'chromium'], [webkit, 'webkit']]) {
   await sheetTests(engine, tag);
+  await chartFailTests(engine, tag);
   for (const lang of ['en', 'ja', 'ko']) await setRowTests(engine, tag, lang);
   await exImageTests(engine, tag);
   await homeTests(engine, tag);

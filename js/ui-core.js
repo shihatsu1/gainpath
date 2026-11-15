@@ -113,7 +113,9 @@ document.addEventListener('keydown',e=>{
   if(m){
     if(e.key==='Escape'&&m.escape&&m.onClose){e.preventDefault();m.onClose();return;}
     if(e.key==='Tab'){
-      const f=modalFocusables(m.el);if(!f.length){e.preventDefault();return;}
+      // The failed-save alert sits above every sheet and stays usable (see modalInert), so its Back up
+      // button is part of the cycle while it is showing.
+      const sa=gid('save-alert'),f=modalFocusables(m.el).concat(sa&&sa.style.display!=='none'?modalFocusables(sa):[]);if(!f.length){e.preventDefault();return;}
       // Moved by hand so every engine behaves alike (WebKit's own Tab order skips
       // buttons unless Full Keyboard Access is on); DOM order is the tab order here.
       const i=f.indexOf(document.activeElement);

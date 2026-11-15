@@ -14,6 +14,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - A restore that can't be fully stored (cfg and history are checked, not just exceptions) is rolled back to what you had, and an unfinished restore (`gp_restore_pending`) is undone from `gp_pre_restore` at the next launch, so settings and history never come from different files.
 - Reset erases the IndexedDB mirror first, then photos, then local data. A failure no longer says "nothing was changed" after photos were erased; a blocked photo delete says your training data was not erased and the photos may be removed once the other tab closes.
 
+- The failed-save alert's Back up button can be reached with Tab while a sheet is open.
+- Pinch zoom is no longer disabled (`user-scalable=no` removed from the viewport).
+- The backup and feedback result lines are polite status regions, so screen readers announce them.
+- When Chart.js can't load, the Climb chart card says so, shows the latest and best values as text and offers Try again (it used to stay blank).
+- The strength chart's "waypoint" tooltip is translated.
+
 ### Tests
 - Regression coverage for stale tab writes (two workouts, reset in another tab), restore write failures at every boundary, interrupted-restore recovery, and reset ordering.
 

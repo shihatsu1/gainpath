@@ -8,7 +8,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="icon" type="image/png" sizes="32x32" href="images/branding/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="images/branding/favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="images/branding/apple-touch-icon.png">
@@ -960,7 +960,7 @@ textarea{resize:vertical;min-height:100px}
       <div style="font-size:13px;color:var(--txt2);margin-bottom:8px" data-i18n="backup_remind_label">Remind me to back up every (days)</div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"><button class="opt-btn" id="bkd-3" onclick="setBackupEvery(3)">3</button><button class="opt-btn" id="bkd-7" onclick="setBackupEvery(7)">7</button><button class="opt-btn" id="bkd-14" onclick="setBackupEvery(14)">14</button><button class="opt-btn" id="bkd-30" onclick="setBackupEvery(30)">30</button></div>
     </div>
-    <div id="ex-st" style="margin-top:12px;font-size:13px;color:var(--txt2);text-align:center"></div>
+    <div id="ex-st" role="status" aria-live="polite" style="margin-top:12px;font-size:13px;color:var(--txt2);text-align:center"></div>
 </div>
 
 <!-- TUTORIAL -->
@@ -1152,7 +1152,7 @@ textarea{resize:vertical;min-height:100px}
   <label data-i18n="your_email_label">Your email <span style="font-weight:400;color:var(--txt3)" data-i18n="optional_for_reply">(optional — for reply)</span></label>
   <input class="inp" id="fb-email" type="email" placeholder="your@email.com">
   <button class="bp" style="width:100%;justify-content:center" id="fb-send-btn" onclick="sendFeedback()"><i class="ti ti-send" aria-hidden="true"></i> <span data-i18n="btn_send_feedback">Send feedback</span></button>
-  <div id="fb-status" style="margin-top:12px;font-size:13px;text-align:center"></div>
+  <div id="fb-status" role="status" aria-live="polite" style="margin-top:12px;font-size:13px;text-align:center"></div>
 </div>
 
 <!-- WORKOUT -->

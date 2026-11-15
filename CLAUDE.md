@@ -90,6 +90,15 @@ their own phone. Protect existing data first.
   groups `cfg`/`data`/`wip`/`lock` fail and clear independently, so one
   successful save never hides another's failure). Rescue paths (`exportData`)
   work from memory, not from a successful write.
+- **Stale tabs never overwrite newer saves.** Every user-data `lsSave()`
+  (`gp_cfg`/`gp_h`/`gp_p`/`gp_mw`/`gp_bw`) checks `rev_gp` against `MY_REV`.
+  A stale tab refuses to write and shows the non-dismissible `#stale-tab`
+  sheet (Reload / Back up). Record the revision **before** the data write,
+  including launch reconciliation. `rev_gp` deliberately isn't a `gp_*` key,
+  so the mirror and backups ignore it. A workout finished in a stale tab stays
+  in `gp_done` and merges after reload.
+- **The failed-save alert stays keyboard-accessible.** Its Back up button is
+  part of the modal Tab cycle in `js/ui-core.js`, even while a sheet is open.
 - **A finished workout is never lost to a failed save.** `submitFeel()` keeps
   `gp_wip` and parks the record in `gp_done` if `saveData()` fails;
   `settlePendingDone()` saves it later. History records carry `cid` (the
@@ -106,7 +115,9 @@ their own phone. Protect existing data first.
   IDB is a separate future step.
 - **Anything that erases user data calls `idbErase()` and `photoClear()`** (not
   `idbClear()`, which spares the `backups` store), or the data comes back.
-  `resetApp()` clears localStorage last, only after both succeeded.
+  `resetApp()` runs `idbErase()` → `photoClear()` → `localStorage.clear()`;
+  clear localStorage only after both succeeded. Never say "nothing was
+  changed" after photos may be gone.
 - **Progress photos** (`js/photos.js`) live only in IndexedDB `gainpath-photos`
   (`photos` = metadata + thumbnail, `full` = image; one transaction for both),
   never in the mirror or `backupPayload()`. Store **ArrayBuffers, never Blobs**
@@ -116,6 +127,18 @@ their own phone. Protect existing data first.
 - **Restore = `validateBackup()` → `applyBackup()`**: ask before replacing,
   keep `gp_pre_restore` for Undo, stop if it can't be stored, recompute PRs and
   badges. Extend `test:data` whenever backup, restore or storage changes.
+  `applyBackup()` sets `gp_restore_pending`: `'pre'` means `gp_pre_restore`
+  is a whole dataset used by this restore or undo; `'nopre'` means no undo
+  copy. Check the `saveCFG()` / `saveData()` booleans (they don't throw) and
+  roll back on failure. `restoreReconcile()` runs before `load()` in
+  `js/main.js`, undoing an unfinished restore or finishing an interrupted undo
+  forward. If it can't write that complete dataset, `RESTORE_STUCK` blocks
+  saves; without an undo copy, announce the possibly partial restore.
+- **Exercise history uses chronological order.** `exHistory()`,
+  `carrySessions()` and `lastNoteForExercise()` read `chronologicalHistory()`
+  (date, then `cid`, then save order). `idx` still points into `ST.history`.
+- **Keep recovery UI usable.** The viewport must not disable zoom. A Chart.js
+  load failure shows the `chartLoadFailed()` card with Retry.
 - **Mid-workout edits are session-only.** `openMidWorkoutEdit()` rebuilds only
   `ST.sd`; its branches in `commitDayEdit()`/`closeDayEdit()` must not write
   `CFG.customDays`/`dayLinks`/`dayPlan`. Pre-start day edits do persist.
@@ -276,6 +299,11 @@ their own phone. Protect existing data first.
 
 The Appium deps' `npm audit` advisories are left as they are: the only fixes
 are major downgrades, and it's dev-only tooling that never sees untrusted input.
+
+Known gotcha: `npm run simulate` / `npm run chaos` in WebKit currently emit
+page-exception 403 errors to the real analytics worker, even on untouched
+v2.15.0. A WebKit beacon escapes test isolation on reload; this is pre-existing
+and not yet fixed.
 
 Failing `simulate`/`chaos` runs print a seed: `SEED=<n> npm run …` replays it.
 Set `PW_CHROMIUM_PATH` / `PW_WEBKIT_PATH` to use preinstalled browsers instead of the pinned Playwright

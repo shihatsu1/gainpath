@@ -107,24 +107,26 @@ function applyBackup(data,hasPre){
 }
 // At launch, before load(): a restore that never finished (marker still set) is undone
 // from the gp_pre_restore copy, so the app opens on the complete old data, never a mix.
-// Without that copy the old state was empty and nothing is deleted. Returns true if it acted.
+// A restore with no such copy (unreadable data, or nothing to lose) can't be undone: nothing is deleted,
+// and the user is told it may be partly applied. Returns true if it acted.
 function restoreReconcile(){
   let pend=null;try{pend=localStorage.getItem('gp_restore_pending');}catch(e){}
   if(!pend)return false;
   // Only a copy made by that same restore ('pre') can undo it; an older gp_pre_restore is someone else's.
   let pre=null;if(pend==='pre'){try{pre=JSON.parse(localStorage.getItem('gp_pre_restore')||'null');}catch(e){}}
-  if(pre&&typeof pre==='object'&&pre.cfg&&typeof pre.cfg==='object'){
+  if(!pre||typeof pre!=='object'||!pre.cfg||typeof pre.cfg!=='object')pre=null;
+  if(pre){
     const put={gp_cfg:pre.cfg,gp_h:pre.history||[],gp_p:pre.prs||{},gp_mw:pre.mw||{},gp_bw:pre.bw||[]};
-    try{Object.keys(put).forEach(k=>{const v=JSON.stringify(put[k]);localStorage.setItem(k,v);if(localStorage.getItem(k)!==v)throw new Error('read-back '+k);});
-      localStorage.setItem('rev_gp',String(curRev()+1));MY_REV=curRev();} // other open tabs are now stale
+    try{const n=curRev()+1;localStorage.setItem('rev_gp',String(n));MY_REV=n; // other open tabs are now stale, before any data changes
+      Object.keys(put).forEach(k=>{const v=JSON.stringify(put[k]);localStorage.setItem(k,v);if(localStorage.getItem(k)!==v)throw new Error('read-back '+k);});}
     catch(e){console.warn('[GainPath] could not undo an unfinished restore:',e&&e.message);RESTORE_STUCK=true;return false;}
   }
   try{localStorage.removeItem('gp_restore_pending');}catch(e){RESTORE_STUCK=true;return false;}
-  RESTORE_UNDONE=!!pre;return true;
+  if(pre)RESTORE_UNDONE=true;else RESTORE_PARTIAL=true;return true;
 }
 // Set when an unfinished restore could not be undone: this launch reads the data but writes nothing
 // (a later save would make the mix permanent); the next launch tries again.
-let RESTORE_UNDONE=false,RESTORE_STUCK=false;
+let RESTORE_UNDONE=false,RESTORE_PARTIAL=false,RESTORE_STUCK=false;
 function restoreDone(msg){hideLoadRecovery();refreshHome();ss('home');renderBackupStatus();const st=gid('ex-st');if(st){st.textContent=msg;setTimeout(()=>{st.textContent='';},4000);}}
 // Anything a restore would replace: sessions, a finished set-up, weigh-ins or
 // machine bases. A configured user with no sessions yet is protected too.
@@ -192,7 +194,7 @@ function startFreshBad(){
 function undoRestore(){
   let prev=null;try{prev=JSON.parse(localStorage.getItem('gp_pre_restore')||'null');}catch(e){prev=null;}
   if(!prev||!confirm(t('ds_undo_confirm')))return;
-  try{applyBackup(validateBackup(prev));}catch(err){const st=gid('ex-st');if(st)st.textContent=t('ds_undo_failed');return;}
+  try{applyBackup(validateBackup(prev),true);}catch(err){const st=gid('ex-st');if(st)st.textContent=t('ds_undo_failed');return;} // gp_pre_restore is a whole dataset, so an interrupted undo is finished forward at the next launch
   if(!SAVE_FAILED){try{localStorage.removeItem('gp_pre_restore');}catch(e){}}
   restoreDone(t('ds_undone'));
 }

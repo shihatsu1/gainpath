@@ -73,8 +73,10 @@ function lsSave(k,v){
   if(LOAD_BAD[k]!==undefined)throw new Error('locked: '+k+' is unreadable');
   if(RESTORE_STUCK&&REV_KEYS[k])throw new Error('locked: an unfinished restore could not be undone');
   if(REV_KEYS[k]&&curRev()!==MY_REV){showStale();throw new Error('stale: another tab saved newer data');}
+  // The revision goes first: if it can't be recorded nothing is written, and if the data write then fails
+  // the only effect is that other tabs reload once. Never the reverse (data saved, no revision, silent overwrite).
+  if(REV_KEYS[k]){const n=curRev()+1;localStorage.setItem('rev_gp',String(n));MY_REV=n;}
   localStorage.setItem(k,v);
-  if(REV_KEYS[k]){const n=curRev()+1;try{localStorage.setItem('rev_gp',String(n));MY_REV=n;}catch(e){MY_REV=curRev();throw new Error('could not record the save',{cause:e});}}
   idbMirror(k,v);
 }
 function saveCFG(){try{lsSave('gp_cfg',JSON.stringify(CFG));saveOK('cfg');return true;}catch(e){saveFailed(LOAD_BAD.gp_cfg!==undefined?'lock':'cfg');return false;}}

@@ -418,6 +418,27 @@ async function auditTests(engine, tag, check, errors) {
   const ls = (p, k) => p.evaluate((k) => localStorage.getItem(k), k);
   const histLen = async (p) => JSON.parse(await ls(p, 'gp_h') || '[]').length;
 
+  // GP-01: a revision write failure must happen before any user data changes.
+  {
+    const [c, p] = await mk(); await seed(p, bigUser(135));
+    const before = await ls(p, 'gp_cfg');
+    await blockKeys(p, ['rev_gp']);
+    const saved = await p.evaluate(() => { CFG.firstName = 'Unrecorded'; return saveCFG(); });
+    check(`${tag} GP-01: a failed revision write leaves stored data untouched`, !saved && await ls(p, 'gp_cfg') === before);
+    await unblock(p); await c.close();
+  }
+
+  // GP-02: launch reconciliation also records its revision before replacing data.
+  {
+    const [c, p] = await mk(); await seed(p, bigUser(135));
+    const before = await stored(p);
+    await p.evaluate(() => { const pre = backupPayload(); pre.cfg = { ...pre.cfg, firstName: 'Recovered' }; localStorage.setItem('gp_pre_restore', JSON.stringify(pre)); localStorage.setItem('gp_restore_pending', 'pre'); });
+    await blockKeys(p, ['rev_gp']);
+    const acted = await p.evaluate(() => restoreReconcile());
+    check(`${tag} GP-02: a failed reconciliation revision blocks saves and preserves data and marker`, !acted && await p.evaluate(() => RESTORE_STUCK) && core(await stored(p)) === core(before) && await ls(p, 'gp_restore_pending') === 'pre');
+    await unblock(p); await c.close();
+  }
+
   // GP-02: a one-shot failure at each replacement boundary must never leave a
   // mixture of the old and imported data after a reload.
   for (const key of ['gp_cfg', 'gp_h', 'gp_p', 'gp_mw', 'gp_bw']) {
@@ -480,10 +501,27 @@ async function auditTests(engine, tag, check, errors) {
     const [c, p] = await mk(); await seed(p, bigUser(135));
     const before = await stored(p);
     await p.evaluate(() => { localStorage.setItem('gp_pre_restore', JSON.stringify(backupPayload())); localStorage.setItem('gp_restore_pending', 'pre'); const c = JSON.parse(localStorage.getItem('gp_cfg')); c.firstName = 'Half'; localStorage.setItem('gp_cfg', JSON.stringify(c)); localStorage.setItem('gp_h', '[]'); });
-    p.once('dialog', (d) => d.dismiss());
     await p.reload(); await p.waitForSelector('#s-home.active');
     const after = await stored(p);
     check(`${tag} GP-02: launch undoes an interrupted restore and clears the marker`, core(after) === core(before) && await ls(p, 'gp_restore_pending') === null, firstDiff(before, after));
+    await c.close();
+  }
+  // GP-02: an unfinished restore with no matching undo copy is reported, never silently accepted.
+  {
+    const [c, p] = await mk(); await seed(p, bigUser(135));
+    await p.evaluate(() => { localStorage.setItem('gp_restore_pending', 'nopre'); });
+    let said = ''; p.once('dialog', (d) => { said = d.message(); });
+    await p.reload(); await p.waitForSelector('#s-home.active'); await p.waitForTimeout(800);
+    check(`${tag} GP-02: an unfinished restore that can't be undone is announced, and the marker is cleared`, /interrupted/i.test(said) && await ls(p, 'gp_restore_pending') === null, said);
+    await c.close();
+  }
+  // GP-02: the warning also reaches users whose interrupted restore left onboarding active.
+  {
+    const [c, p] = await mk(); await seed(p, bigUser(135));
+    await p.evaluate(() => { const cfg = JSON.parse(localStorage.getItem('gp_cfg')); cfg.setup = false; localStorage.setItem('gp_cfg', JSON.stringify(cfg)); localStorage.setItem('gp_restore_pending', 'nopre'); });
+    p.dialogs.length = 0;
+    await p.reload(); await p.waitForSelector('#s-ob.active'); await p.waitForTimeout(800);
+    check(`${tag} GP-02: onboarding announces an interrupted restore without an undo copy`, p.dialogs.some(m => /interrupted/i.test(m)), p.dialogs);
     await c.close();
   }
   // GP-03: if the mirror cannot be erased, photos must never be deleted.

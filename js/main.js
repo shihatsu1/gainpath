@@ -15,7 +15,6 @@ try{
     if(!restoreInProgress()){
       refreshHome();ss('home');
       if(cmpVer(CFG.lastSeenVersion,WHATS_NEW_VERSION)<0)showWhatsNew();
-      if(RESTORE_UNDONE){RESTORE_UNDONE=false;setTimeout(()=>alert(t('ds_restore_undone')),300);}
     }
   }else{ss('ob');}
 }catch(e){
@@ -24,6 +23,7 @@ try{
   gid('s-ob').classList.remove('active');
   LOAD_BAD.boot_crash=JSON.stringify({error:String(e&&e.message||e),keys:lsSnapshot()});
 }
+if(RESTORE_UNDONE||RESTORE_PARTIAL){const m=t(RESTORE_UNDONE?'ds_restore_undone':'ds_restore_partial');RESTORE_UNDONE=RESTORE_PARTIAL=false;setTimeout(()=>alert(m),300);}
 if(RESTORE_STUCK)saveFailed('data');
 if(Object.keys(LOAD_BAD).length){saveFailed('lock');showLoadRecovery();}
 }

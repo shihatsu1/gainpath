@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - A tab that is out of date no longer overwrites a workout or setting another tab saved (`rev_gp` counter). It stops saving and shows an "Updated in another tab" sheet with Reload and Back up; a workout finished in that tab is parked in `gp_done` and added after the reload.
 - A restore that can't be fully stored (cfg and history are checked, not just exceptions) is rolled back to what you had, and an unfinished restore (`gp_restore_pending`) is undone from `gp_pre_restore` at the next launch, so settings and history never come from different files.
+- Undo last restore is finished forward at the next launch if it is interrupted; a restore that can't be undone (unreadable data) is announced instead of silently accepted, including during onboarding or a resumed workout. The save revision is recorded before the data it protects, including launch reconciliation, so a full store can't leave an unannounced write.
 - Reset erases the IndexedDB mirror first, then photos, then local data. A failure no longer says "nothing was changed" after photos were erased; a blocked photo delete says your training data was not erased and the photos may be removed once the other tab closes.
 
 - The failed-save alert's Back up button can be reached with Tab while a sheet is open.

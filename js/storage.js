@@ -167,9 +167,10 @@ async function idbRecover(){
   // Write everything but gp_cfg first, then gp_cfg last: a partly written
   // profile must never look set up. If any write fails or doesn't read back,
   // undo what was written and stay on the current screen (no reload, no flag).
-  const keys=Object.keys(all).filter(k=>k!=='gp_cfg').concat('gp_cfg'),wrote=[];
-  try{for(const k of keys){localStorage.setItem(k,all[k]);wrote.push(k);if(localStorage.getItem(k)!==all[k])throw new Error('read-back mismatch: '+k);}}
-  catch(e){wrote.forEach(k=>{try{localStorage.removeItem(k);}catch(x){}});console.warn('[GainPath] could not restore from the IndexedDB mirror:',e&&e.message);return false;}
+  const keys=Object.keys(all).filter(k=>k!=='gp_cfg').concat('gp_cfg'),before={};
+  try{keys.forEach(k=>{before[k]=localStorage.getItem(k);});}catch(e){console.warn('[GainPath] could not snapshot localStorage before recovery:',e&&e.message);return false;}
+  try{for(const k of keys){localStorage.setItem(k,all[k]);if(localStorage.getItem(k)!==all[k])throw new Error('read-back mismatch: '+k);}}
+  catch(e){keys.forEach(k=>{try{if(before[k]===null)localStorage.removeItem(k);else if(localStorage.getItem(k)!==before[k])localStorage.setItem(k,before[k]);}catch(x){console.warn('[GainPath] could not roll back recovery for '+k,x);}});console.warn('[GainPath] could not restore from the IndexedDB mirror:',e&&e.message);return false;}
   try{window.sessionStorage.setItem('gp_idb_recovered','1');}catch(e){}
   console.warn('[GainPath] localStorage had lost your data; restored it from the IndexedDB mirror.');
   location.reload();return true;

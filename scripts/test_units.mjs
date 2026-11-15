@@ -176,6 +176,18 @@ async function main() {
     const rowEx = { name: 'Barbell bent over row', mg: 'back' };
     const mkSess = (name, exFeel, w) => ({ date: 'd', exercises: [{ name, exFeel, sets: [{ done: true, t: 'x', w, r: 8 }] }] });
 
+    const orderedSessions = [
+      { ...mkSess(rowEx.name, 'easy', 40), date: '2026-11-10', dk: '2026-11-10', cid: 100 },
+      { ...mkSess(rowEx.name, 'good', 50), date: '2026-11-10', dk: '2026-11-10', cid: 200 },
+      { ...mkSess(rowEx.name, 'hard', 30), date: '2026-10-01', dk: '2026-10-01', cid: 300 }
+    ];
+    ST.history = orderedSessions.slice();
+    const chronologicalResult = [suggestWeight(rowEx, 50), carriedWeight(rowEx), lastNoteForExercise(rowEx.name)];
+    ST.history = orderedSessions.slice().reverse();
+    check('history chronology is independent of insertion order, including same-day sessions',
+      [suggestWeight(rowEx, 50), carriedWeight(rowEx), lastNoteForExercise(rowEx.name)], chronologicalResult);
+    check('history keeps the original index of the latest session', exHistory(rowEx.name).at(-1).idx, 1);
+
     ST.history = [mkSess('Barbell bent over row', 'easy', 50)];
     check('suggestWeight: 5+ reps left → +full increment (5kg)',
       suggestWeight(rowEx, 50), { feel: 'easy', delta: 5, newW: 55 });

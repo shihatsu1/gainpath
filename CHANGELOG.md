@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+- Failed mirror recovery restores any surviving local values instead of removing them.
+- Exercise history and carry-over now use session date and start time, even after sessions are imported or edited out of order.
+
 ## [2.15.0] - 2026-11-11
 
 Audit of 10 November 2026 (`docs/audits/2026-11-10/ASSESSMENT.md`, G1–G13).

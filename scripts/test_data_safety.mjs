@@ -579,6 +579,23 @@ async function auditTests(engine, tag, check, errors) {
   check(`${tag} A06: and does not mark recovery as done`, await p7.evaluate(() => sessionStorage.getItem('gp_idb_recovered')) === null);
   await c7.close();
 
+  // GP-04: a failed recovery must preserve keys that survived locally.
+  const [c7b, p7b] = await mk(); await seed(p7b, bigUser(135));
+  await p7b.waitForFunction(() => IDB_READY, null, { timeout: 8000 });
+  await p7b.evaluate(() => { saveCFG(); saveData(); }); await p7b.waitForTimeout(500);
+  const recoveryRollback = await p7b.evaluate(async () => {
+    localStorage.removeItem('gp_cfg'); sessionStorage.removeItem('gp_idb_recovered');
+    localStorage.setItem('gp_h', JSON.stringify([{ date: '2026-11-14', exercises: [] }]));
+    const keys = ['gp_cfg', 'gp_h', 'gp_p', 'gp_mw', 'gp_bw'];
+    const before = keys.map(k => localStorage.getItem(k));
+    const real = Storage.prototype.setItem; let failed = false;
+    Storage.prototype.setItem = function (k, v) { if (k === 'gp_p' && !failed) { failed = true; throw new Error('injected'); } return real.call(this, k, v); };
+    try { await idbRecover(); } finally { Storage.prototype.setItem = real; }
+    return { failed, before, after: keys.map(k => localStorage.getItem(k)) };
+  });
+  check(`${tag} GP-04: failed recovery preserves every prior local value`, recoveryRollback.failed && JSON.stringify(recoveryRollback.before) === JSON.stringify(recoveryRollback.after), recoveryRollback);
+  await c7b.close();
+
   // A07: Reset reports a blocked deletion, and a real Reset erases the pre-migration backup too.
   const [c8, p8] = await mk(); await seed(p8, bigUser(135));
   await p8.waitForFunction(() => IDB_READY, null, { timeout: 8000 }).catch(() => {});

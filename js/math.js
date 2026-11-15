@@ -45,8 +45,9 @@ function buildSets(ex,savedW){
 // −30%, tagged deload:true per exercise): a planned light day is never carried
 // forward, so the session after it resumes from the last normal one. If a
 // deload is all there is, it is used.
+function chronologicalHistory(){return ST.history.map((h,idx)=>({h,idx})).sort((a,b)=>{const day=h=>h.dk||((h.date&&!isNaN(new Date(h.date)))?dkey(new Date(h.date)):String(h.date||''));return day(a.h).localeCompare(day(b.h))||String(a.h.cid||'').localeCompare(String(b.h.cid||''),undefined,{numeric:true})||a.idx-b.idx;});}
 function carrySessions(exName){
-  const all=ST.history.filter(h=>h.exercises&&h.exercises.find(e=>e.name===exName));
+  const all=chronologicalHistory().map(x=>x.h).filter(h=>h.exercises&&h.exercises.find(e=>e.name===exName));
   const live=all.filter(h=>!h.exercises.find(e=>e.name===exName).deload);
   return live.length?live:all;
 }
@@ -411,9 +412,9 @@ function getAIEstimatedWeight(ex){
 function e1rm(w,r){if(w<=0||r<=0||r>12)return 0;if(r===1)return Math.round(w*2)/2;return Math.round(w*(1+r/30)*2)/2;}
 function sessionVolume(rec){return(rec.exercises||[]).reduce((a,ex)=>a+(ex.sets||[]).filter(s=>s.done&&s.t!=='w'&&s.w>0).reduce((b,s)=>b+s.w*s.r,0),0);}
 function fmtVol(v,unit){const u=unit||'';return v>=1000?(Math.round(v/100)/10)+'k'+(u?' '+u:''):String(Math.round(v))+u;}
-function exHistory(name){const out=[];ST.history.forEach((h,idx)=>{const ex=(h.exercises||[]).find(e=>e.name===name);if(!ex)return;const ws=(ex.sets||[]).filter(s=>s.done&&s.t!=='w');if(ws.length)out.push({idx,date:h.date,exFeel:ex.exFeel,note:ex.note||null,deload:!!ex.deload,sets:ws});});return out;}
+function exHistory(name){const out=[];chronologicalHistory().forEach(({h,idx})=>{const ex=(h.exercises||[]).find(e=>e.name===name);if(!ex)return;const ws=(ex.sets||[]).filter(s=>s.done&&s.t!=='w');if(ws.length)out.push({idx,date:h.date,exFeel:ex.exFeel,note:ex.note||null,deload:!!ex.deload,sets:ws});});return out;}
 function lastSessionEx(name){const hist=carrySessions(name);return hist.length?hist[hist.length-1].exercises.find(e=>e.name===name):null;}
-function lastNoteForExercise(name){for(let i=ST.history.length-1;i>=0;i--){const ex=(ST.history[i].exercises||[]).find(e=>e.name===name);if(ex&&ex.note)return ex.note;}return null;}
+function lastNoteForExercise(name){const hist=chronologicalHistory();for(let i=hist.length-1;i>=0;i--){const ex=(hist[i].h.exercises||[]).find(e=>e.name===name);if(ex&&ex.note)return ex.note;}return null;}
 // The 5kg step is for barbell/machine lower-body and back lifts; a dumbbell is
 // per hand, so +5kg a hand (a 25% jump on a 20kg lunge) is too much.
 function weightIncrement(ex){const big=['quads','hamstrings','back'].includes(ex.mg)&&!isHandWeight(ex);return CFG.unit==='kg'?(big?5:2.5):(big?10:5);}

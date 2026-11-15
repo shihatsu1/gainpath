@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Fixed
+- Clarified unit conversion rounding and privacy disclosures for shared data.
+- Startup measurements now distinguish DOM readiness from the first usable screen; visual checks capture Home without a sheet and capture What’s New separately.
 - Failed mirror recovery restores any surviving local values instead of removing them.
 - Exercise history and carry-over now use session date and start time, even after sessions are imported or edited out of order.
 
@@ -19,6 +21,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - The backup and feedback result lines are polite status regions, so screen readers announce them.
 - When Chart.js can't load, the Climb chart card says so, shows the latest and best values as text and offers Try again (it used to stay blank).
 - The strength chart's "waypoint" tooltip is translated.
+
+- Reports & backup now leads with backup (Back up / Restore backup, then backup status and reminders); the monthly PDF report moved below them. The two buttons were called Export and Import.
+- Tutorial step 5 now says to tap "…" on the set row, then Delete set (it still pointed at a bin icon that moved behind "…"); tutorial screenshots regenerated.
+- The in-app Privacy text no longer says settings are never uploaded: a few profile details go out only if you send feedback.
 
 ### Tests
 - Regression coverage for stale tab writes (two workouts, reset in another tab), restore write failures at every boundary, interrupted-restore recovery, and reset ordering.

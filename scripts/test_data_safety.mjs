@@ -876,7 +876,7 @@ async function main() {
   const pp = await (await e.context()).newPage(); const ext = []; const perr = [];
   pp.on('request', r => { const h = new URL(r.url()).hostname; if (h !== 'localhost') ext.push(h); }); pp.on('pageerror', x => perr.push(String(x)));
   await pp.goto(`http://localhost:${PORT}/privacy.html`); await pp.waitForLoadState('networkidle');
-  check('privacy.html: loads with no third-party requests and no errors', ext.length === 0 && perr.length === 0 && /Your workouts stay on your device/.test(await pp.textContent('body')), { ext, perr });
+  check('privacy.html: loads with no third-party requests and no errors', ext.length === 0 && perr.length === 0 && /Your training data stays on your device unless you choose to share it/.test(await pp.textContent('body')), { ext, perr });
   await pp.setViewportSize({ width: 390, height: 844 }); await pp.screenshot({ path: path.join(OUT, 'privacy-page.png'), fullPage: true });
   check('privacy.html: no horizontal scroll at phone width', await pp.evaluate(() => document.documentElement.scrollWidth <= 390));
   await pp.close();

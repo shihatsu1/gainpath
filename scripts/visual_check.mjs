@@ -51,6 +51,7 @@ async function main() {
 
   await page.goto(`http://localhost:${PORT}/index.html`);
   await page.waitForSelector('#s-ob.active');
+  await page.waitForTimeout(350);
   await page.screenshot({ path: path.join(OUT_DIR, 'onboarding.png') });
 
   // First run is three steps (v2.9.0): name/sex → unit/body weight/experience
@@ -84,17 +85,31 @@ async function main() {
     localStorage.setItem('gp_cfg', JSON.stringify({
       name: 'Smoke Test', sex: 'male', setup: true, unit: 'kg', exp: 'intermediate',
       goal: 'definition', split: 'pplul', freq: 5, warmup: true, wuReps: 12,
-      prefReps: 10, prefRest: 90, prefSets: 3, startingWeights: 'ai', keyLifts: {}
+      prefReps: 10, prefRest: 90, prefSets: 3, startingWeights: 'ai', keyLifts: {}, lastSeenVersion: APP_VERSION
     }));
     localStorage.setItem('gp_h', JSON.stringify([
       { day: 'push', dayName: 'Push', date: '2026-06-20', dur: '45m', sets: 12, mk: '2026-06', dk: '2026-06-20', exercises: [] }
     ]));
+    localStorage.setItem('gp_a2hs_dismissed', 'true');
+    localStorage.setItem('gp_last_export', new Date().toISOString());
     localStorage.setItem('gp_p', JSON.stringify({}));
     localStorage.setItem('gp_mw', JSON.stringify({}));
   });
   await page.reload();
   await page.waitForSelector('#s-home.active');
+  await page.waitForTimeout(350);
+  const openLayers = await page.evaluate(() => ({
+    inert: document.querySelectorAll('[inert]').length,
+    dialogs: [...document.querySelectorAll('[role="dialog"]')].filter((el) => el.getClientRects().length && getComputedStyle(el).visibility === 'visible').map((el) => el.id)
+  }));
+  if (openLayers.inert || openLayers.dialogs.length) issues.push(`Home has an open modal or sheet: ${JSON.stringify(openLayers)}`);
   await page.screenshot({ path: path.join(OUT_DIR, 'home.png') });
+  await page.evaluate(() => showWhatsNew());
+  await page.waitForSelector('#whatsnew-sheet:visible');
+  await page.waitForTimeout(350);
+  await page.screenshot({ path: path.join(OUT_DIR, 'whatsnew.png') });
+  await page.evaluate(() => closeWhatsNew());
+  await page.waitForTimeout(350);
 
   // Set rows carry up to ten controls and must stay on ONE line at phone
   // widths, with neither the row overflowing nor the weight/reps inputs

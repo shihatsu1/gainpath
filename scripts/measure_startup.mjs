@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Cold-start measurement (A10): transfer, script time, heap and time until the
-// app is interactive (interactiveMs = DOMContentLoaded: every app script is
-// parser-blocking at the end of <body>, so DCL is when main.js has run), with CPU 4x slower and a slow-4G network as a modest-phone proxy.
+// Cold-start measurement (A10): transfer, script time, heap, DOM ready and
+// time until the first usable screen, with CPU 4x slower and a slow-4G network.
+// interactiveMs remains the DOMContentLoaded metric for existing consumers.
 // It measures first and decides later: the numbers gate whether the exercise
 // text should be split, and show what the optional libraries cost.
 //
@@ -51,6 +51,19 @@ function exDisplayName(n){return n;}function tipsFor(){return [];}function tipFo
 const isCdn = (u) => /cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net/.test(u);
 const median = (a) => { const s = [...a].sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };
 
+// The onboarding screen is initially marked active in HTML, before startApp.
+// obDots() runs in startApp, so require its output as well as a usable control.
+async function waitForUsable(page) {
+  const handle = await page.waitForFunction(() => {
+    const dots = document.querySelector('#ob-dots');
+    const control = document.querySelector('#s-home.active #h-start-btn, #s-ob.active #ob-fname');
+    if (!dots || !dots.children.length || !control || control.disabled || control.closest('[inert]')) return false;
+    const style = getComputedStyle(control);
+    return control.getClientRects().length && style.visibility === 'visible' ? performance.now() : false;
+  }, null, { timeout: 120000 });
+  return handle.jsonValue();
+}
+
 async function chromiumRun(variant) {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ serviceWorkers: 'block', viewport: { width: 390, height: 844 } });
@@ -67,7 +80,7 @@ async function chromiumRun(variant) {
   cdp.on('Network.loadingFinished', (e) => { bytes[e.requestId] = e.encodedDataLength; });
   const t0 = Date.now();
   await page.goto(`http://localhost:${PORT}/index.html`, { waitUntil: 'commit', timeout: 120000 });
-  await page.waitForSelector('#s-ob.active, #s-home.active', { timeout: 120000 });
+  const usableMs = await waitForUsable(page);
   await page.waitForLoadState('load', { timeout: 120000 });
   const loadMs = Date.now() - t0;
   await cdp.send('HeapProfiler.enable'); await cdp.send('HeapProfiler.collectGarbage');
@@ -77,7 +90,7 @@ async function chromiumRun(variant) {
   const sum = (f) => res.filter(f).reduce((a, r) => a + r.bytes, 0);
   await browser.close();
   return {
-    interactiveMs: nav.dcl, loadMs, loadEventMs: nav.load,
+    interactiveMs: nav.dcl, domReadyMs: nav.dcl, usableMs, loadMs, loadEventMs: nav.load,
     scriptMs: m.ScriptDuration * 1000, taskMs: m.TaskDuration * 1000, heapMB: m.JSHeapUsedSize / 1048576,
     transferKB: sum(() => true) / 1024, cdnKB: sum((r) => isCdn(r.url)) / 1024, exerciseTextKB: sum((r) => /exercise-text-/.test(r.url)) / 1024,
     requests: res.length,
@@ -89,10 +102,10 @@ async function webkitRun() {
   const browser = await webkit.launch();
   const page = await (await browser.newContext({ serviceWorkers: 'block', viewport: { width: 390, height: 844 } })).newPage();
   await page.goto(`http://localhost:${PORT}/index.html`, { waitUntil: 'commit', timeout: 120000 });
-  await page.waitForSelector('#s-ob.active, #s-home.active', { timeout: 60000 });
+  const usableMs = await waitForUsable(page);
   await page.waitForLoadState('load');
-  const r = await page.evaluate(() => { const n = performance.getEntriesByType('navigation')[0]; return { interactiveMs: n.domContentLoadedEventEnd, loadEventMs: n.loadEventEnd }; });
-  await browser.close(); return r;
+  const r = await page.evaluate(() => { const n = performance.getEntriesByType('navigation')[0]; return { interactiveMs: n.domContentLoadedEventEnd, domReadyMs: n.domContentLoadedEventEnd, loadEventMs: n.loadEventEnd }; });
+  await browser.close(); return { ...r, usableMs };
 }
 
 const out = { label: LABEL, at: new Date().toISOString(), runs: RUNS, profile: 'CPU 4x slower, slow 4G (1.6 Mbps down, 150 ms RTT), gzip like GitHub Pages, cold cache, first-run user', chromium: {}, webkit: {} };

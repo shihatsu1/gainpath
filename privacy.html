@@ -43,14 +43,14 @@ th{color:var(--txt2);font-weight:600}
   <p class="sub">Last updated 28 September 2026 · applies to GainPath v2.9.0 and later</p>
 
   <div class="card">
-    <p class="lead">Your workouts stay on your device.</p>
-    <p>GainPath has no accounts and no ads. Your workouts, weights, body weight, notes and settings are never uploaded. The only data that leaves your device is listed below.</p>
+    <p class="lead">Your training data stays on your device unless you choose to share it.</p>
+    <p>GainPath has no accounts and no ads. Automatic anonymous usage counts and the information you choose to send or save are described below.</p>
   </div>
 
-  <h2>1. Stored on your device only</h2>
-  <p>Everything you log is kept in this browser's own storage on your phone or computer: localStorage, plus a second copy in IndexedDB. GainPath's developer can't see it, and nobody else can either.</p>
+  <h2>1. Stored on your device</h2>
+  <p>Your training data and settings are kept in this browser's storage on your phone or computer: localStorage, plus a second copy in IndexedDB. The developer cannot see that stored data unless you choose to share it; someone with access to your device or a file you share may be able to see it.</p>
   <ul>
-    <li><strong>Backups</strong> are files you save yourself, wherever you choose. GainPath never uploads them.</li>
+    <li><strong>Backups</strong> are files you save yourself, wherever you choose. GainPath does not upload them; anyone you share a backup with may be able to read it.</li>
     <li><strong>Progress photos</strong>, if you add any, are shrunk and stored in this browser's IndexedDB on your device. They are never uploaded, and they are <strong>not</strong> included in backup files, so save any you want to keep to your photo library.</li>
     <li><strong>Deleting it:</strong> <strong>Reset app</strong> at the bottom of Settings erases everything GainPath stored in this browser. So does clearing this website's data in your browser.</li>
     <li>On an iPhone, Safari deletes a website's stored data if you don't open it for 7 days, unless GainPath is installed to your Home Screen. Keep backups.</li>
@@ -86,8 +86,8 @@ th{color:var(--txt2);font-weight:600}
   <p><strong>Feedback</strong> (Settings → Send feedback) is emailed to the developer through <a href="https://www.emailjs.com/legal/privacy-policy/">EmailJS</a>. It contains:</p>
   <ul>
     <li>the feedback type, subject and message you typed</li>
-    <li>the reply email, if you enter one</li>
-    <li>your name, sex, training split and experience level from your profile, to help understand the report</li>
+    <li>the reply email you enter, or <code>no-reply@gainpath.app</code> if you leave it blank</li>
+    <li>your profile name (also used as the sender name, or <code>GainPath User</code> if blank), sex, training split and experience level</li>
   </ul>
   <p><strong>Native app updates</strong> (Settings → Native app updates): tapping “Notify me” stores the email address you enter, with the date, so you can be told when a native app ships. Choosing “Use a different email” adds the new address; it doesn't delete the old one. To remove your email, use Settings → Send feedback or a GitHub issue.</p>
 

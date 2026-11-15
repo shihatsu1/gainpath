@@ -885,7 +885,7 @@ textarea{resize:vertical;min-height:100px}
   </div>
   <div class="card">
     <div style="font-size:15px;font-weight:600;color:var(--txt)" data-i18n="priv_local_t">Your workouts stay on this device</div>
-    <div style="font-size:13px;color:var(--txt2);margin-top:6px;line-height:1.55" data-i18n="priv_local_b">Workouts, weights, body weight, notes and settings are stored only in this browser. They're never uploaded. Backups go only where you save them.</div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:6px;line-height:1.55" data-i18n="priv_local_b">Workouts, weights, body weight, notes and progress photos are stored only in this browser and are never uploaded. Settings stay here too, except the few profile details you choose to send with feedback. Backups go only where you save them, and photos aren't included in backups.</div>
   </div>
   <div class="card">
     <div style="font-size:15px;font-weight:600;color:var(--txt)" data-i18n="priv_counts_t">Anonymous usage counts</div>
@@ -936,14 +936,7 @@ textarea{resize:vertical;min-height:100px}
     <button class="bg" onclick="ss('settings')" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_data">Reports &amp; backup</div>
   </div>
-    <h2 data-i18n="pdf_report_title">Monthly PDF report</h2>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:14px" data-i18n="pdf_report_sub">Graphical summary — sessions, streak, strength gains, new PRs</div>
-    <div style="display:flex;gap:8px;margin-bottom:14px">
-      <select id="ex-mo" aria-label="Month" data-i18n-aria="aria_month" style="margin-bottom:0;flex:1"></select>
-      <select id="ex-yr" aria-label="Year" data-i18n-aria="aria_year" style="margin-bottom:0;width:90px"></select>
-    </div>
-    <button class="bp" style="width:100%;justify-content:center" onclick="genPDF()"><i class="ti ti-download" aria-hidden="true"></i> <span data-i18n="btn_generate_pdf">Generate PDF</span></button>
-    <div style="margin-top:16px;border-top:1px solid var(--bdr);padding-top:16px">
+    <div>
       <h2 data-i18n="backup_restore_title">Backup &amp; restore</h2>
       <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" data-i18n="backup_restore_sub">Keep your data safe or move to another device</div>
       <div style="display:flex;gap:8px">
@@ -959,6 +952,15 @@ textarea{resize:vertical;min-height:100px}
       <div id="bk-status" style="font-size:13px;color:var(--txt2);line-height:1.55;margin-bottom:12px"></div>
       <div style="font-size:13px;color:var(--txt2);margin-bottom:8px" data-i18n="backup_remind_label">Remind me to back up every (days)</div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"><button class="opt-btn" id="bkd-3" onclick="setBackupEvery(3)">3</button><button class="opt-btn" id="bkd-7" onclick="setBackupEvery(7)">7</button><button class="opt-btn" id="bkd-14" onclick="setBackupEvery(14)">14</button><button class="opt-btn" id="bkd-30" onclick="setBackupEvery(30)">30</button></div>
+    </div>
+    <div style="margin-top:16px;border-top:1px solid var(--bdr);padding-top:16px">
+    <h2 data-i18n="pdf_report_title">Monthly PDF report</h2>
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:14px" data-i18n="pdf_report_sub">Graphical summary — sessions, streak, strength gains, new PRs</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <select id="ex-mo" aria-label="Month" data-i18n-aria="aria_month" style="margin-bottom:0;flex:1"></select>
+      <select id="ex-yr" aria-label="Year" data-i18n-aria="aria_year" style="margin-bottom:0;width:90px"></select>
+    </div>
+    <button class="bp" style="width:100%;justify-content:center" onclick="genPDF()"><i class="ti ti-download" aria-hidden="true"></i> <span data-i18n="btn_generate_pdf">Generate PDF</span></button>
     </div>
     <div id="ex-st" role="status" aria-live="polite" style="margin-top:12px;font-size:13px;color:var(--txt2);text-align:center"></div>
 </div>

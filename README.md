@@ -33,7 +33,7 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 - It suggests easing back after a break, offers a higher weight when related lifts went up while you were away from a lift for 4 weeks or more (a tap to apply), and offers a deload when you stall.
 - Every proposed weight snaps to the plates, dumbbells and kettlebells your gym has (Settings → My gym).
 - Plate calculator, machine base weights, warm-up sets, and straight or pyramid sets.
-- Switch between kg and lbs anytime. Switching back restores your exact numbers.
+- Switch between kg and lbs anytime. Values are rounded to 0.1; switching back restores them exactly where the conversion is unambiguous.
 
 **During a workout**
 - One-tap set logging, with thumb-sized steppers to adjust the weight; plate calculator and delete sit behind each set's "…" button.
@@ -54,7 +54,7 @@ If it's been useful to you, consider [☕ supporting development via PayPal](htt
 - Everything is stored on your device, with a second verified copy in IndexedDB.
 - A failed save shows an alert with a one-tap backup, and iPhone Safari users are warned about its 7-day data wipe and how to avoid it.
 - JSON and CSV export, backup to Files or iCloud Drive, restore on any device with undo, and backup reminders you can schedule.
-- Settings → Privacy lists exactly what leaves your device. Your workouts never do.
+- Settings → Privacy lists exactly what leaves your device. Your training data stays on your device unless you choose to share it.
 - English, 日本語 and 한국어.
 - Optional Apple Watch workout start and end through Shortcuts (may not work on iOS 27).
 

@@ -1,0 +1,306 @@
+GAINPATH RELEASE READINESS REVIEW
+14 November 2026
+
+GainPath has a coherent product foundation, but I would not sign off on release readiness until the remaining data-integrity cases below are addressed. The complete release gate passed. Nevertheless, targeted inspection and isolated reproductions found failure cases outside that coverage.
+
+No source files were changed during the assessment. Tests used synthetic data and the project's service-isolation infrastructure. No dependencies were installed, and nothing was published or pushed.
+
+This is a substantive but bounded review, not an exhaustive certification: browser coverage came from the existing automated journeys and inspection of their screenshots. I did not perform real-device, screen-reader, user-research, or comprehensive exercise-content validation.
+
+1. OVERALL VERDICT
+
+The strongest choices deserve preservation:
+
+- The plain-script architecture is appropriate to the product. Its constraints are documented, and there is no demonstrated need for a framework or build pipeline.
+- Explicit Apply/Dismiss suggestions preserve the user's control over training.
+- Local storage protection, unreadable-key recovery, pending-workout retention, and photo transactions demonstrate deliberate engineering.
+- Train · Days · Climb · PRs is a coherent navigation model.
+- Kinetic has a recognizable identity: dark green surfaces, lime actions, strong headings, and restrained training-oriented imagery.
+- The automated checks cover substantially more than happy-path rendering, including storage failures, hostile imports, localization, and offline behavior.
+
+The main weaknesses are at boundaries between otherwise well-designed mechanisms: multiple tabs writing snapshots, operations spanning multiple stores, chronological interpretation of imported history, and emergency controls interacting with modal focus management.
+
+Passing tests currently give stronger confidence in individual mechanisms than in these combinations.
+
+2. IMMEDIATE PRIORITIES
+
+1. Prevent stale tabs from overwriting newer data. This is a reproduced loss of a saved workout, not a cosmetic or theoretical concern.
+2. Make interrupted restore and reset outcomes explicit and recoverable. The current implementation can produce partially completed operations.
+3. Use chronological history consistently for progression. Imported or backdated history must not silently become the latest training evidence.
+4. Make emergency backup reachable during dialogs and restore user zoom.
+5. Correct misleading recovery and backup copy. Users need accurate statements precisely when something has failed.
+6. Improve visual evidence and targeted regression coverage. The current Home screenshot can pass while showing an overlay instead of Home.
+
+3. DETAILED FINDINGS
+
+Effort estimates are approximate engineering days, including focused regression checks. File references are relative to the project root.
+
+DATA INTEGRITY AND RECOVERY
+
+GP-01 — A stale tab can silently erase a workout saved by another tab
+High · Verified defect · High confidence
+
+Location: js/storage.js:66, saveData(); shared state and startup handling.
+Evidence: Two isolated contexts ran the actual storage implementation against shared mock localStorage. Both started with workout 1. Context A added workout 2 and saved; context B added workout 3 and saved. Final gp_h contained 1 and 3, losing 2.
+Scope: Deterministic storage-code reproduction, not a two-browser-tab reproduction. A source search found no storage-event or BroadcastChannel coordination.
+Consequence: An old tab can overwrite newer history or repopulate data after another tab resets it.
+Recommendation: Introduce a small revision/conflict protocol. Detect stale writers before replacing snapshots and require refresh or explicit conflict recovery. Do not blindly merge records: edits and deletions also need protection.
+Verify: Two tabs completing different workouts; editing versus completing; deleting versus saving; resetting while another tab remains open. Confirm both localStorage and mirror results.
+Effort/risk: 2–4 days. High regression sensitivity around autosave, reset, and pending completion.
+
+GP-02 — Restore can persist configuration and history from different datasets
+High · Unverified risk · High confidence in the failure path
+
+Location: js/data-safety.js:85, applyBackup(); js/storage.js:66.
+Evidence: Restore mutates memory, then calls saveCFG() and saveData(). These return failure flags rather than throwing. The surrounding exception rollback therefore does not roll back ordinary storage failures. saveData() also writes several keys sequentially.
+Representative case: Restore a pounds backup over a kilograms profile; allow gp_cfg to save but fail gp_h; close the app before retry. The next launch can interpret old numeric history using the newly saved unit.
+Consequence: The app can reopen with internally inconsistent data even though an Undo snapshot exists.
+Recommendation: Add a recoverable restore transaction marker and startup reconciliation. Treat the configuration and corresponding numeric data as one logical operation. Do not rely only on the current in-memory alert.
+Verify: Fail every write boundary individually, then reload immediately. Assert that startup exposes either the complete old dataset or complete new dataset, with recoverable state otherwise.
+Effort/risk: 2–4 days. Coordinate with unit conversion and mirror recovery. Browser fault-injection reproduction remains needed.
+
+GP-03 — Reset can erase photos and then claim nothing changed
+High · Verified defect · High confidence
+
+Location: js/settings.js:170, js/photos.js:110, reset_failed and reset_blocked translations.
+Evidence: resetApp() awaits successful photo deletion before attempting mirror erasure. An isolated execution of the actual reset function with successful photo deletion and failed mirror erasure produced: photos erased → reset_failed. The English error says “nothing was changed”; Japanese and Korean make the same assurance.
+Additional concern: photoClear() resolves failure on onblocked, but the database deletion request can remain pending and later complete.
+Consequence: Users may believe irreplaceable photos remain intact after a reported failure.
+Recommendation: Model reset as an operation with explicit stages and truthful partial-failure messaging. Retain a pending-reset state where needed; do not describe a blocked deletion as safely cancelled.
+Verify: Successful photo erase followed by mirror failure; blocked photo deletion followed by closing the blocking connection; reload during each stage.
+Effort/risk: 1–3 days. Photos are outside backups, making this especially sensitive.
+
+GP-04 — Automatic mirror-recovery rollback removes existing values
+High · Unverified risk · Medium confidence
+
+Location: js/storage.js:160, idbRecover().
+Evidence: Recovery begins when gp_cfg is missing, which does not prove every other localStorage key is missing. It overwrites mirror keys; on failure, it removes keys already written instead of restoring their prior values.
+Consequence: A partial localStorage loss followed by a failed recovery can remove surviving data.
+Recommendation: Snapshot previous values for every affected key and restore them on failure, distinguishing absent keys from existing ones.
+Verify: Remove only gp_cfg, retain newer history locally, fail a later recovery write, and compare every original key after failure.
+Effort/risk: 1–2 days. Requires careful read-back and rollback failure handling.
+
+FITNESS LOGIC AND NUMERICAL CORRECTNESS
+
+GP-05 — “Latest exercise history” means insertion order, not training date
+High · Verified defect · High confidence
+
+Location: js/math.js:414, exHistory(); suggestWeight() and other last-entry consumers.
+Evidence: Running the actual math script with November 10 followed by October 1 returned October 1 as exHistory(...).at(-1). The helper preserves array order; progression reads the last entry.
+Consequence: Backdated or unsorted imported sessions can supply the wrong RIR, carried weight, or progression evidence. The charts' chronological sorting does not correct this.
+Recommendation: Define a stable chronological order in the history helper while preserving original indices for editing. Specify a tie-breaker for multiple sessions on one day.
+Verify: Permute identical history records and confirm identical progression results; include same-day sessions, imports, and date edits.
+Effort/risk: 1–2 days. This changes formula inputs, so follow the project's approval/known-issue convention before changing behavior.
+
+GP-06 — Exact unit round-trip copy exceeds the implementation's guarantee
+Low · Verified defect · High confidence
+
+Location: README, “Switching back restores your exact numbers”; js/math.js:457.
+Evidence: Conversion explicitly declines to memoize ambiguous collisions where different source values round to the same converted value.
+Consequence: A precise promise is made for cases the implementation deliberately cannot preserve exactly.
+Recommendation: Qualify the copy to describe rounding and preservation where possible. Do not redesign the conversion system merely to preserve this sentence.
+Verify: Round-trip two distinct values that collide at 0.1 precision; align documentation with the result.
+Effort/risk: Under half a day; minimal implementation risk.
+
+INTERACTION AND ACCESSIBILITY
+
+GP-07 — Dialog focus trapping excludes the emergency backup action
+Medium · Verified defect by source inspection · High confidence
+
+Location: js/ui-core.js:84, modal inertness and keyboard handler; #save-alert.
+Evidence: The modal manager deliberately exempts the save alert from inertness, but Tab traversal includes only focusable descendants of the dialog. The screenshot of a failed-save state confirms the alert can remain visible above other UI.
+Consequence: A keyboard user can see an emergency Back up action without being able to Tab to it while a dialog remains open.
+Recommendation: Provide the rescue action inside the active dialog or deliberately include the emergency region in the modal's accessible interaction model.
+Verify: Trigger storage failure with ordinary and non-dismissible recovery dialogs open; reach and activate backup using only the keyboard.
+Effort/risk: 1 day. Retest nested dialogs, focus return, and background inertness. Screen-reader behavior remains unverified.
+
+GP-08 — The viewport asks browsers to disable user zoom
+Medium · Verified configuration defect · High confidence
+
+Location: index.html:11.
+Evidence: user-scalable=no is present.
+Consequence: Browsers that honor it restrict a basic low-vision accommodation. Actual enforcement varies by browser.
+Recommendation: Remove the restriction and verify enlarged layouts, especially the workout row and sheets.
+Verify: Pinch zoom on physical devices and text enlargement at narrow widths; ensure controls remain reachable.
+Effort/risk: Half to one day plus device testing. Preserve the existing row width budget.
+
+GP-09 — Backup and feedback results lack an explicit live announcement region
+Medium · Usability concern · Medium confidence
+
+Location: index.html:963, #ex-st; index.html:1155, #fb-status.
+Evidence: These dynamically updated result containers lack role="status" or aria-live; some messages disappear after four seconds. Photo and reset messages already use status semantics.
+Consequence: Users relying on assistive technology may miss completion or failure feedback.
+Recommendation: Standardize polite status regions and keep actionable errors visible until resolved or dismissed.
+Verify: VoiceOver and another screen reader through successful, cancelled, and failed operations. Avoid duplicate announcements.
+Effort/risk: Half to one day. Screen-reader testing was not performed in this review.
+
+RELIABILITY AND LOCALIZATION
+
+GP-10 — Chart-library failures leave no actionable explanation
+Medium · Verified defect by source inspection · High confidence
+
+Location: js/climb.js:153 and js/climb.js:224.
+Evidence: Both lazy-load paths swallow rejected Chart.js loads with .catch(()=>{}).
+Consequence: Missing or unavailable library assets can leave a blank chart area instead of an understandable error or retry.
+Recommendation: Show a localized retry state and retain a useful textual summary of the underlying measurements.
+Verify: Block the chart asset in a fresh context with no cached library; then restore availability and retry.
+Effort/risk: One day. Confirm repeated rendering does not create duplicate charts.
+
+GP-11 — Chart tooltip text bypasses localization
+Low · Verified defect by source inspection · High confidence
+
+Location: js/climb.js:225.
+Evidence: The tooltip appends the literal English string “ — waypoint”.
+Consequence: Japanese and Korean users encounter English in an operational chart state, despite passing localization checks.
+Recommendation: Translate the tooltip through t(). Extend localization coverage to chart interactions, not just DOM text.
+Verify: Hover or tap a qualifying new-best point in all three languages.
+Effort/risk: Under half a day. No formula change.
+
+GP-12 — Tutorial instructions still point directly to a hidden delete control
+Low · Verified defect; already documented · High confidence
+
+Location: js/i18n.js:501, tutorial step 5; corresponding static markup.
+Evidence: “Tap the bin” remains, although deletion is behind “…”. CHANGELOG already records this limitation.
+Consequence: The tutorial teaches an interaction the screen does not expose directly.
+Recommendation: Explain “… → Delete” consistently in all three languages. Keep text, spotlight, and capture coordinated.
+Verify: Follow the tutorial as a new user without prior knowledge of the overflow menu.
+Effort/risk: Half a day including regenerated tutorial evidence.
+
+PRIVACY AND TECHNICAL WRITING
+
+GP-13 — Privacy's opening promises contradict its later disclosure
+Medium · Verified content defect · High confidence
+
+Location: privacy.html, introduction and sections 1 and 3; sendFeedback() in js/data-safety.js.
+Evidence: The opening says settings are “never uploaded” and that “nobody else” can see locally stored data. Later text correctly discloses that feedback sends profile name, sex, split, and experience.
+Consequence: Readers receive an absolute assurance before encountering its exception.
+Recommendation: Say that training data remains local unless explicitly shared, then distinguish automatic counts, voluntary feedback metadata, and backups. Replace “nobody else” with a precise statement about developer access.
+Verify: Compare every disclosed field with actual request construction. This is a code/copy consistency finding, not a legal compliance determination.
+Effort/risk: Half a day; coordinate app privacy copy and README.
+
+VISUAL DESIGN AND ENGINEERING CONFIDENCE
+
+GP-14 — The Home smoke screenshot does not reliably capture Home
+Medium · Verified verification defect · High confidence
+
+Location: scripts/visual_check.mjs:97.
+Evidence: The newly generated scripts/.visual-check/home.png is covered by What's New. The capture waits for .active, but does not explicitly wait past transitions or ensure the sheet is absent.
+Consequence: Visual review can pass without showing the intended screen clearly.
+Recommendation: Seed a current lastSeenVersion, wait for the specified transition interval, and capture What's New separately. Assert the expected overlay state before screenshots.
+Verify: Open the artifacts themselves at 360, 390, and a larger width, including Japanese and Korean.
+Effort/risk: Half to one day. Test-only change.
+
+GP-15 — Reports & backup gives the less essential task greater prominence
+Low · Design judgment · Medium confidence
+
+Location: Reports & backup; scripts/.data-safety/iphone-data-settings.png.
+Evidence: PDF generation occupies the first section and primary full-width action. Backup controls and safety status follow lower down.
+Consequence: The screen's hierarchy underplays the function most important to a local-only product.
+Recommendation: Put backup status and “Back up” first, especially when overdue or degraded. Keep PDF reporting in a secondary section. Prefer “Back up” and “Restore backup” over generic “Export” and “Import.”
+Verify: Short task-based testing: locate and save a backup, identify whether photos are included, and understand restore consequences.
+Effort/risk: One day plus localization and screenshots. This is a product decision, not an accessibility failure.
+
+GP-16 — Startup measurement labels DOM readiness as interactivity
+Low · Verified measurement defect · High confidence
+
+Location: scripts/measure_startup.mjs:75, js/main.js.
+Evidence: interactiveMs is DOMContentLoaded. Startup now awaits language text or a three-second fallback before startApp().
+Consequence: The reported metric can precede a usable application, especially in Japanese or Korean.
+Recommendation: Keep DOMContentLoaded as a separate metric and measure the first usable screen/control after startup.
+Verify: Delayed language loading, failed language loading, cold boot, and offline boot.
+Effort/risk: Half to one day. No performance regression was measured in this review.
+
+4. VISUAL DESIGN DIRECTION
+
+Refine Kinetic rather than redesign it.
+
+The inspected onboarding and Body screens show a consistent visual language. Strong headings, lime selection, dark panels, and readable grouped actions work together. There is no evidence here that new decoration or a different aesthetic would improve training.
+
+Focus refinement on:
+
+- Priority: Give safety-critical actions greater prominence in Reports & backup. Preserve Train's single primary workout action.
+- Component consistency: Standardize result messages, retry states, destructive-action explanations, and backup verbs. These inconsistencies matter more than speculative radius adjustments.
+- Density: Preserve compact workout controls. Do not increase padding indiscriminately at the expense of the narrow-phone budget.
+- Background treatment: Keep the contour motif as identity, but evaluate a quieter treatment behind dense explanatory text. This is a design option, not a verified contrast defect.
+- Charts: Pair the visual history with useful text and explicit loading/failure states.
+- Evidence: Maintain separate captures for ordinary, empty, error, and overlay states. A sheet screenshot should not stand in for the screen underneath it.
+
+Different treatments remain justified: prominent lime for the next training action, subdued repeated navigation, and alert styling for failed saves. They should not be flattened into one uniform button style.
+
+I am not reporting pixel-level alignment defects without adequate rendered evidence.
+
+5. IMPLEMENTATION SEQUENCE
+
+Stage 1 — Data safety and correctness
+
+Address GP-01 through GP-05 first. Begin with reproductions that survive reloads and compare both stores. Define conflict and interrupted-operation behavior before implementation.
+
+Chronological progression inputs require explicit approval under the math-change convention. No new training formula or coefficient is proposed.
+
+Stage 2 — Interaction and accessibility
+
+Resolve emergency backup reachability, zoom restrictions, status announcements, and chart failure states. Validate with keyboard and real screen readers.
+
+Stage 3 — Content and visual refinement
+
+Correct privacy and unit guarantees, translate tooltip text, update tutorial instructions, and decide whether backup should lead Reports & backup.
+
+Stage 4 — Verification and remaining polish
+
+Repair screenshot fixtures and startup metrics. Then inspect narrow-phone layouts, long translated labels, enlarged text, and complete real-device journeys.
+
+The documented 320 px workout-row overflow remains a separate known limitation; I did not reproduce or reclassify it here.
+
+6. VERIFICATION AND COVERAGE
+
+The complete npm run precheck passed:
+
+- Lint: Passed
+- Unit checks: 333/333 passed
+- Data safety: 311/311 passed
+- Accessibility: 274/274 passed
+- Localization crawl: 12/12 passed
+- Service-worker checks: Passed
+- Analytics worker: 14/14 passed
+- Visual smoke: Passed
+
+Accessibility and visual checks were also run independently and passed.
+
+The first precheck attempt failed because the sandbox prohibited binding a local server port. The authorized rerun passed. That initial failure is environmental, not an app regression.
+
+Logs:
+- /tmp/gainpath-review-precheck.log
+- /tmp/gainpath-review-a11y.log
+- /tmp/gainpath-review-visual.log
+
+COVERAGE LEDGER
+
+Instructions and architecture — Inspected. Read project instructions, release documentation, section map, README, current/relevant changelog sections.
+
+Storage, restore, recovery, reset — Inspected and tested. Existing browser suite plus targeted isolated code reproductions; new failure combinations need browser regressions.
+
+Workout and history mutation — Partially inspected and tested. Representative completion/edit paths; not every interaction permutation.
+
+Onboarding, navigation, settings — Tested through existing journeys. No moderated user research.
+
+Visual design — Partially inspected. Current onboarding, overlay/Home, backup, photo, and save-alert artifacts viewed; not every screen/language/width.
+
+Accessibility — Automated tests passed; source inspected. No screen-reader, physical pinch-zoom, or comprehensive contrast audit.
+
+Fitness logic — Partially inspected; unit suite passed. Evidence table sampled; studies and all guide examples not independently revalidated.
+
+Offline and updates — Existing suite passed. No physical installed-PWA update test.
+
+Localization — Automated crawl passed; source sampled. No fluent Japanese/Korean editorial review; canvas tooltip gap found.
+
+Security/privacy — Partially inspected and tested. Import protections and disclosures reviewed; no comprehensive penetration assessment.
+
+Performance — Measurement code inspected. No new startup, long-history, memory, or input-latency benchmark.
+
+Exercise content — Unverified comprehensively. All 1,059 illustrations, instructions, and tips were not individually audited.
+
+Delivery — Local release gate passed. No deployment, tag, published-site, or real-user upgrade verification.
+
+At the end of the assessment, the working tree still contained the pre-existing untracked review prompt and incoming exercise-image directory. They were left untouched. Test-generated artifacts were the only project-side outputs from the assessment itself; this text report was subsequently saved at the user's request.
+
+Release judgment: preserve the architecture and product direction, but resolve the reproduced stale-writer loss and chronological-history defect, and verify interrupted restore/reset recovery before treating the passing release gate as sufficient.

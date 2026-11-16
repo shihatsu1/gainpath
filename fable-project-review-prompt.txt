@@ -1,0 +1,156 @@
+Act as a senior multidisciplinary team reviewing GainPath: a principal engineer, product designer, UX researcher, accessibility specialist, QA engineer, performance engineer, security reviewer, technical writer, and fitness-domain reviewer.
+
+Your task is to assess the entire project with the scrutiny of a professional team preparing a mature product for release. Find everything that makes it feel unfinished, inconsistent, fragile, confusing, generic, or carelessly generated—including small details. Do not implement changes yet.
+
+Read AGENTS.md and CLAUDE.md first and follow their instructions. Read the relevant documentation, including RELEASING.md, CHANGELOG.md, README.md, privacy.html, and docs/index-section-map.md. Understand the actual architecture and product decisions before judging them.
+
+GainPath is a dark-only, local-first fitness-tracking PWA with real users whose only copy of their data may be on their phone. Protecting that data takes priority over visual polish. Its plain-script architecture, lack of a build step, three-language support, and established product rules are deliberate constraints. Do not recommend frameworks, dependencies, architectural rewrites, or fashionable patterns merely because they are familiar.
+
+THE STANDARD
+
+Evaluate whether the app feels deliberately designed, carefully engineered, coherent, and trustworthy at every level.
+
+“No AI slop” means identifying observable shortcomings: generic or inflated copy, arbitrary decoration, weak hierarchy, inconsistent components, gratuitous effects, awkward flows, redundant abstractions, speculative features, shallow tests, misleading claims, and code that appears plausible but fails in real use.
+
+Do not use “AI-generated” as an explanation or speculate about authorship. Describe the specific defect, its evidence, its consequence, and the better alternative. Do not mistake minimalism for quality, complexity for sophistication, or personal taste for a usability requirement. Preserve distinctive choices that work.
+
+HOW TO WORK
+
+1. Map the app and its important flows before forming conclusions.
+2. Inspect the implementation, not just documentation or screenshots.
+3. Run the app and exercise it in a browser where tools permit. Inspect actual rendered states and interactions.
+4. Run relevant existing checks. Review what they cover and what they miss. Report commands, outcomes, and limitations honestly.
+5. Follow representative data through creation, persistence, editing, export, restore, recovery, and deletion.
+6. Review components both in isolation and as part of complete user journeys.
+7. Use multiple passes: architecture and data safety; product and flows; visual and interaction details; content and localization; verification and cross-checking.
+8. Keep a coverage ledger. Mark each area as inspected, tested, partially inspected, or unverified. Never imply exhaustive verification if tools, time, or access prevented it.
+9. Do not modify source files, install dependencies, change real user data, publish, push, or contact external services. Use isolated test data and the project’s local test infrastructure. If a useful check requires additional authorization, record it as pending and continue with independent review.
+
+REVIEW SCOPE
+
+A. Product coherence and user journeys
+- Is the purpose immediately clear?
+- Do onboarding questions earn their place and support the first workout?
+- Are Train, Days, Climb, PRs, and Settings coherent and easy to navigate?
+- Is the primary action clear without competing calls to action?
+- Review first use, returning use, active workouts, interrupted workouts, completion, history editing, progress review, and long-term use.
+- Find unnecessary steps, hidden actions, unclear consequences, repeated decisions, dead ends, accidental taps, and mismatches between user expectations and behavior.
+- Assess whether features help someone train or merely add interface clutter.
+
+B. Visual design and art direction
+- Evaluate the Kinetic identity, composition, hierarchy, typography, spacing, alignment, density, color, contrast, iconography, illustrations, photography, charts, and motion.
+- Look for inconsistent radii, borders, shadows, padding, baselines, font weights, optical alignment, text wrapping, truncation, and touch-target placement.
+- Check repeated components for subtle divergence.
+- Inspect crowded screens as carefully as sparse ones.
+- Assess whether effects and decoration serve a clear purpose.
+- Identify generic template patterns and give specific alternatives consistent with GainPath’s existing identity.
+- Inspect actual screenshots at narrow phone widths and relevant larger layouts. Do not base visual conclusions solely on CSS.
+
+C. Interaction quality
+- Review buttons, inputs, steppers, menus, tabs, dialogs, sheets, pickers, charts, notifications, confirmations, and navigation.
+- Check pressed, focused, selected, disabled, loading, success, error, and empty states.
+- Evaluate feedback timing, repeated taps, cancellation, dismissal, focus restoration, scroll behavior, keyboard appearance, and screen transitions.
+- Pay particular attention to the workout row width budget, session-only edits, and explicit Apply/Dismiss weight suggestions.
+
+D. Accessibility
+- Inspect semantics, accessible names, keyboard operation, focus order and visibility, modal traps, background inertness, and focus return.
+- Check contrast, non-color cues, zoom, text enlargement, reduced motion, touch targets, and chart alternatives.
+- Review dynamic announcements and error recovery.
+- Distinguish automated findings from manually verified behavior. Do not claim screen-reader testing without performing it.
+
+E. Code quality and architecture
+- Review script load order, shared globals, state ownership, coupling, mutation paths, async races, event handling, DOM updates, and lifecycle behavior.
+- Find actual duplication, inconsistent conventions, misleading names, brittle assumptions, stale comments, orphaned code, and unnecessary complexity.
+- Inspect defensive handling of missing, malformed, unexpected, and legacy data.
+- Recommend the smallest maintainable correction consistent with the project’s architecture.
+- Do not label deliberate plain-script conventions as defects without demonstrating a concrete problem.
+
+F. Data integrity and recovery
+- Scrutinize localStorage writes, independent failure groups, unreadable-key protection, IndexedDB mirroring, pending completed workouts, and retry deduplication.
+- Review backup validation, restore confirmation, pre-restore Undo, partial failure, export from memory, reset ordering, and prevention of erased data returning.
+- Inspect photo transactions, ArrayBuffer storage, failure flags, and clear disclosure that photos are not backed up.
+- Check derived PRs and badges after every relevant mutation.
+- Consider quota exhaustion, interrupted writes, reloads, multiple tabs, older schemas, corrupt payloads, and failures between related operations.
+- Treat reproducible risks of data loss or silent corruption as the highest priority.
+
+G. Fitness logic and numerical correctness
+- Trace estimates, progression, deloads, RIR, carried weights, gym snapping, equipment racks, body weight, unit conversion, and lift relationships through the real functions.
+- Check boundary values, rounding, zero values, missing history, mixed units, date boundaries, and exact round trips.
+- Verify charts sort and deduplicate dates and position time proportionally.
+- Compare guides and product claims with actual calculations.
+- Separate implementation defects, documented known issues, and questions requiring domain evidence.
+- Do not silently redefine formulas or introduce unsupported training claims.
+
+H. Performance, offline behavior, and platform reliability
+- Assess startup, input responsiveness, rendering, layout shifts, long histories, large backups, photos, charts, and memory use.
+- Review lazy loading, font and asset loading, cache versions, service-worker updates, offline boot, language switching offline, and workout survival during updates.
+- Inspect iPhone Safari and installed-PWA constraints, safe areas, viewport sizing, virtual keyboards, backgrounding, and restoration where available.
+- Identify actual bottlenecks with measurements where possible; label hypotheses clearly.
+
+I. Security and privacy
+- Review DOM injection paths, imported backup content, user-provided text, external links, secret handling, third-party requests, and trust boundaries.
+- Verify what analytics and external integrations actually transmit and when.
+- Compare privacy statements with code.
+- Prioritize credible risks in this app’s threat model rather than generic security checklists.
+
+J. Copy, localization, and content
+- Review clarity, brevity, tone, grammar, naming, terminology, capitalization, punctuation, and consistency.
+- Flag hype, filler, patronizing language, vague encouragement, technical leakage, and misleading certainty.
+- Check that operational text and accessible labels use translations correctly in English, Japanese, and Korean.
+- Inspect rendered wrapping, placeholders, dates, units, pluralization, mixed-language text, and culturally awkward phrasing.
+- Separate verified translation defects from wording that needs a fluent reviewer.
+- Review exercise names, images, instructions, tips, guides, tutorial content, and broken-asset behavior.
+- Ensure all copy matches actual behavior and respects the product’s prohibition on AI branding.
+
+K. Engineering confidence and delivery
+- Assess whether tests exercise meaningful outcomes and realistic failures.
+- Find gaps in regression coverage, test isolation, fixtures, browser coverage, and assertions.
+- Review release/version coordination, precaching, documentation accuracy, asset integrity, and reproducibility.
+- Identify where passing checks could still conceal a user-visible defect.
+- Avoid requesting tests that merely mirror implementation or add little confidence.
+
+L. Final polish
+- Inspect small details: alignment by a few pixels, inconsistent verbs, awkward line breaks, cramped labels, misplaced icons, uneven chart labels, unclear timestamps, stale counts, missing feedback, inconsistent empty states, and unusual content lengths.
+- Keep these findings, but do not let cosmetic volume obscure serious defects.
+
+EVIDENCE AND FINDINGS
+
+For every actionable finding, provide:
+- A stable ID and clear title.
+- Severity: critical, high, medium, low, or polish.
+- Classification: verified defect, usability concern, design judgment, or unverified risk.
+- Confidence: high, medium, or low.
+- The affected screen, flow, component, and file/line references where applicable.
+- Concrete evidence or reproduction steps, including relevant viewport, language, browser, and data state.
+- Why it matters to users or maintainers.
+- A specific, proportionate recommendation.
+- How the correction should be verified.
+- Approximate effort and any dependencies or regression risks.
+
+Do not invent findings to fill categories. Do not duplicate the same root cause across many entries: consolidate it and list affected instances. Distinguish existing documented limitations from newly discovered issues. A screenshot or source snippet should support a claim, not substitute for explaining it.
+
+OUTPUT
+
+Deliver a thorough report in this order:
+
+1. Overall verdict
+Give a candid assessment of how close GainPath is to professional product quality, its strongest qualities worth preserving, and the most important barriers. Avoid flattery and unsupported numerical scores.
+
+2. Immediate priorities
+Identify the changes with the greatest effect on safety, reliability, usability, and perceived quality. Explain their order.
+
+3. Detailed findings
+Organize by review area, ordered by severity within each area. Include minor polish findings after material issues. Make this useful as an implementation backlog.
+
+4. Visual design direction
+Describe a coherent refinement direction grounded in the current Kinetic identity. Give concrete component and screen examples. Explain which differences should be standardized and which are justified. Avoid a generic redesign or an unrelated aesthetic.
+
+5. Implementation sequence
+Group recommendations into practical stages: data safety and correctness, interaction and accessibility, visual and content refinement, and remaining polish. Call out changes that require a product decision or formula approval.
+
+6. Verification and coverage
+List what was inspected and tested, checks that passed or failed, environments used, areas that remain unverified, and the next checks needed. Report pre-existing failures separately when evidence supports that distinction.
+
+Be exhaustive in inspection and precise in reporting. The goal is a coherent, dependable fitness app whose details demonstrate care—not an impressive-looking audit, a larger codebase, or a fashionable redesign.
+
+Begin the assessment now. Do not implement the recommendations.

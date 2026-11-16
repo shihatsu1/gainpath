@@ -40,7 +40,7 @@
 @font-face{font-family:'Archivo';font-style:normal;font-weight:500 900;font-display:swap;src:url('fonts/archivo-latin-var.woff2') format('woff2')}
 @font-face{font-family:'Space Grotesk';font-style:normal;font-weight:400 700;font-display:swap;src:url('fonts/space-grotesk-latin-var.woff2') format('woff2')}
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/space-mono-latin-400.woff2') format('woff2')}
-@font-face{font-family:'Space Mono';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/space-mono-latin-700.woff2') format('woff2')}
+@font-face{font-family:'Space Mono';font-style:normal;font-weight:600;font-display:swap;src:url('fonts/space-mono-latin-700.woff2') format('woff2')}
 /* ═══ "Trail" theme (v1.10.0) — leans into the GainPath mountain-path logo.
    Light = fog & contour lines, dark = summit night. Fraunces serif display
    type for headers/numerals, topographic contour motif, moss+amber accent
@@ -119,54 +119,55 @@ body{background:var(--page-bg);min-height:100vh;display:flex;justify-content:cen
 
 /* Display type & numerals — the "handwritten entries" of the logbook */
 .bp,.bs,.cal-tit,.tt,#wo-tit,#de-tit,#sw-tit,#se-tit,#ef-name,#mw-title,#r-en,#exinfo-name{font-family:var(--font-display);font-weight:800;text-transform:uppercase;letter-spacing:-.01em}
-h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spacing:.03em}
+h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit}
+.streak-hero-cta{letter-spacing:.03em}
 .tn,.sv,.wi,.ri,.streak-hero-num,#wo-el,#plate-target,input[type=number]{font-family:var(--font-display);font-weight:600;font-variant-numeric:tabular-nums}
-.pr-stamp{display:flex;align-items:center;gap:8px;background:var(--tint-gold-1);border:1.5px solid var(--brand-forge);border-radius:8px;padding:12px 16px;margin-bottom:8px;font-size:13px;font-weight:700;color:var(--forge-text);transform:rotate(-1.5deg);animation:pr-stamp .18s ease-out}
+.pr-stamp{display:flex;align-items:center;gap:8px;background:var(--tint-gold-1);border:1.5px solid var(--brand-forge);border-radius:8px;padding:12px 16px;margin-bottom:8px;font-size:13px;font-weight:600;color:var(--forge-text);transform:rotate(-1.5deg);animation:pr-stamp .18s ease-out}
 .card{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--radius);padding:16px 16px;margin-bottom:10px;box-shadow:var(--shadow-sm)}
-.pr-grp{display:flex;align-items:center;gap:10px;width:100%;background:var(--bg);border:1px solid var(--bdr);border-radius:16px;padding:13px 16px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow-sm);transition:border-color .15s}
+.pr-grp{display:flex;align-items:center;gap:10px;width:100%;background:var(--bg);border:1px solid var(--bdr);border-radius:16px;padding:12px 16px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow-sm);transition:border-color .15s}
 .pr-grp:hover,.pr-grp.on{border-color:var(--accent)}
 .pr-grp-t{font-family:var(--font-display);font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;color:var(--txt)}
-.pr-grp-s{font-size:11px;color:var(--txt2);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pr-grp-n{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--accent-ink);background:var(--accent);border-radius:999px;padding:2px 9px;flex-shrink:0}
-.pr-grp-body{padding-left:10px;border-left:2px solid var(--bdr);margin:0 0 14px 6px}
+.pr-grp-s{font-size:11px;color:var(--txt2);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr-grp-n{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--accent-ink);background:var(--accent);border-radius:999px;padding:2px 8px;flex-shrink:0}
+.pr-grp-body{padding-left:10px;border-left:2px solid var(--bdr);margin:0 0 16px 6px}
 .ex-img{display:block;width:100%;height:auto;border-radius:10px;margin-bottom:12px;background:var(--bg2)}
 .ex-imgbox{position:relative;margin-bottom:12px}
 .ex-imgbox .ex-img{margin-bottom:0}
 .ex-imgbox.collapsed .ex-img{height:56px;object-fit:cover;object-position:50% 38%}
 .ex-img-toggle{position:absolute;right:6px;bottom:6px;min-height:40px;padding:0 12px;border:0;border-radius:20px;background:rgba(12,21,18,.78);color:var(--txt);font:600 12px inherit;cursor:pointer}
 .ex-imgbox.collapsed .ex-img-toggle{inset:0;width:100%;border-radius:10px;background:transparent;display:flex;align-items:flex-end;justify-content:flex-end;padding:0 10px 6px}
-.ex-imgbox.collapsed .ex-img-hint{background:rgba(12,21,18,.78);border-radius:14px;padding:5px 10px}
+.ex-imgbox.collapsed .ex-img-hint{background:rgba(12,21,18,.78);border-radius:14px;padding:4px 10px}
 .cal-wrap{background:var(--bg);border:1px solid var(--bdr);border-radius:var(--radius);padding:12px 16px;box-shadow:var(--shadow-sm)}
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.cal-tit{font-size:15px;font-weight:700;color:var(--txt)}
+.cal-tit{font-size:15px;font-weight:600;color:var(--txt)}
 .cal-nav{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2);font-size:15px}
 .cal-nav:disabled{opacity:.35;cursor:default}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-dow{text-align:center;font-size:11px;font-weight:600;color:var(--txt3);padding:2px 0;text-transform:uppercase}
+.cal-dow{text-align:center;font-size:11px;font-weight:500;color:var(--txt3);padding:2px 0}
 .cal-d{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--txt2);border-radius:8px;border:none;background:none;padding:0}
-.cal-on{color:#fff;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .12s}
+.cal-on{color:#fff;font-weight:600;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .12s}
 .cal-on:active{transform:scale(.92)}
-.cal-tod{outline:2px solid var(--accent);outline-offset:1px;font-weight:700}
+.cal-tod{outline:2px solid var(--accent);outline-offset:1px;font-weight:600}
 .cal-d.cal-tod:not(.cal-on){color:var(--txt)}
 .cal-multi{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.9)}
 .cal-sel{outline:2px solid var(--txt);outline-offset:1px}
 .cal-day-panel{margin-top:10px;border-top:1px solid var(--bdr);padding-top:10px}
 .cal-sess{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border:1px solid var(--bdr);border-radius:var(--radius);padding:12px 12px;margin-bottom:6px;cursor:pointer}
 .cal-sess:hover{background:var(--bg2)}
-.cal-foot{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:10px;padding-top:9px;border-top:1px solid var(--bdr)}
-.cal-leg{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--txt2)}
+.cal-foot{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--bdr)}
+.cal-leg{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--txt2)}
 .cal-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .cal-stats{font-size:13px;color:var(--txt2);margin-top:8px;text-align:center}
 .day-btn{width:100%;text-align:left;background:var(--bg);border:1px solid var(--bdr);border-radius:var(--radius);padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;transition:transform .15s,box-shadow .15s,background .15s;box-shadow:var(--shadow-sm)}
 .day-btn:hover{background:var(--bg2);transform:translateY(-2px);box-shadow:var(--shadow-md)}
 .day-btn:active{transform:translateY(0);box-shadow:var(--shadow-sm)}
 .day-btn.sug{border:2px solid var(--brand-forge);background:var(--bg);box-shadow:var(--shadow-sm)}
-.bp{background:var(--accent);color:var(--accent-ink);border:none;border-radius:10px;padding:12px 24px;font-size:15px;font-weight:700;letter-spacing:.01em;cursor:pointer;transition:transform .12s,box-shadow .15s,opacity .15s;display:inline-flex;align-items:center;gap:6px;box-shadow:var(--shadow-sm)}
+.bp{background:var(--accent);color:var(--accent-ink);border:none;border-radius:10px;padding:12px 24px;font-size:15px;font-weight:600;letter-spacing:.01em;cursor:pointer;transition:transform .12s,box-shadow .15s,opacity .15s;display:inline-flex;align-items:center;gap:6px;box-shadow:var(--shadow-sm)}
 .bp:hover{opacity:.92}.bp:active{transform:scale(.97)}
 .bs{background:var(--bg);color:var(--txt);border:1px solid var(--bdr);border-radius:10px;padding:12px 24px;font-size:15px;cursor:pointer;transition:background .15s,transform .12s}
 .bs:hover{background:var(--bg3)}.bs:active{transform:scale(.97)}
 .bg{background:transparent;color:var(--txt2);border:none;font-size:15px;cursor:pointer;padding:8px 12px}
-.byt{display:inline-flex;align-items:center;gap:5px;background:#E24B4A;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}
+.byt{display:inline-flex;align-items:center;gap:4px;background:#E24B4A;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none}
 .sr{display:flex;align-items:center;gap:4px;padding:8px 8px;margin-bottom:8px;background:var(--bg2);border:1px solid var(--bdr);border-radius:14px;transition:opacity .15s}
 .sr.done{opacity:.5}
 .sr.active{background:linear-gradient(100deg,var(--tint-green-1),var(--bg2));border:1.5px solid var(--accent)}
@@ -178,14 +179,14 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .sst:active{transform:scale(.92)}.sst.plate{font-size:13px}
 .sdel{width:28px;height:28px;flex-shrink:0;border-radius:9px;background:transparent;border:1px solid var(--bdr);color:var(--txt3);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 .sdel:active{transform:scale(.92)}.sdel.hide{visibility:hidden;pointer-events:none}
-.addset{width:100%;margin:2px 0 12px;padding:9px 12px;border:1px dashed var(--bdr);border-radius:12px;background:transparent;color:var(--txt2);font-family:var(--font-display);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.addset{width:100%;margin:2px 0 12px;padding:8px 12px;border:1px dashed var(--bdr);border-radius:12px;background:transparent;color:var(--txt2);font-family:var(--font-display);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
 .addset:active{transform:scale(.99)}.addset:hover{border-color:var(--accent);color:var(--accent)}
-.wi{flex:1 1 5ch;min-width:5ch;border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:right;padding:0}
-.ri{width:28px;width:round(up,3.3ch,1px);border:none;background:transparent;font-family:var(--font-mono);font-weight:700;font-size:15px;color:var(--txt);text-align:center;padding:0}
+.wi{flex:1 1 5ch;min-width:5ch;border:none;background:transparent;font-family:var(--font-mono);font-weight:600;font-size:15px;color:var(--txt);text-align:right;padding:0}
+.ri{width:28px;width:round(up,3.3ch,1px);border:none;background:transparent;font-family:var(--font-mono);font-weight:600;font-size:15px;color:var(--txt);text-align:center;padding:0}
 .wi,.ri{-moz-appearance:textfield;appearance:textfield}.wi::-webkit-inner-spin-button,.wi::-webkit-outer-spin-button,.ri::-webkit-inner-spin-button,.ri::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .sr-u{font-size:11px;color:var(--txt2);margin:0 2px 0 1px}
-.sr-x{font-size:13px;color:var(--txt2);margin:0 1px 0 5px}
-.bw-mode{min-width:38px;padding:6px 4px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-weight:700;background:var(--bg3);color:var(--accent);cursor:pointer;text-align:center;flex-shrink:0}
+.sr-x{font-size:13px;color:var(--txt2);margin:0 1px 0 4px}
+.bw-mode{min-width:38px;padding:6px 4px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-weight:600;background:var(--bg3);color:var(--accent);cursor:pointer;text-align:center;flex-shrink:0}
 .log{flex-shrink:0;min-width:44px;min-height:40px;background:var(--accent);color:var(--accent-ink);border:none;border-radius:11px;padding:0 10px;font-family:var(--font-display);font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;white-space:nowrap}
 /* .wi is the row's flexible element, so it absorbs the slack and leaves .log
    flush right. Bodyweight rows in "BW" mode render no weight input at all,
@@ -196,7 +197,7 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .sr-more{gap:8px;margin:-2px 0 8px;padding:0 4px}.sr-more .sr-act{flex:1;min-height:40px;display:flex;align-items:center;justify-content:center;gap:6px;padding:0 10px;font-size:13px}
 /* Narrow phones: the plate-loaded set row carries ten controls, which overflow
    below ~400px. Tighten every element so the row stays on one line. */
-@media(max-width:400px){.sr{gap:2px;padding:6px 3px}.sn{width:18px;height:18px;font-size:10px}.sst{font-size:17px}.wi{font-size:14px}.ri{font-size:14px}.sr-u{display:none}.log{min-width:40px;padding:0 2px}.log.done{padding:0 2px}.sr-x{margin:0}}
+@media(max-width:400px){.sr{gap:2px;padding:6px 4px}.sn{width:18px;height:18px;font-size:10px}.sst{font-size:17px}.wi{font-size:14px}.ri{font-size:14px}.sr-u{display:none}.log{min-width:40px;padding:0 2px}.log.done{padding:0 2px}.sr-x{margin:0}}
 /* Sub-340px (iPhone SE 1st gen and similar): even compacted the controls
    don't fit, so the plate calculator goes too — a clipped, unreachable
    button is worse than an absent one. */
@@ -205,7 +206,7 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .db:active{transform:scale(.95)}
 .db.ok{background:var(--tint-green-2);color:var(--brand-green);border-color:transparent;box-shadow:var(--shadow-sm)}
 .de-row-wrap{position:relative;margin-bottom:8px;border-radius:var(--radius);overflow:hidden}
-.de-grp{margin-bottom:3px;border-left:3px solid var(--accent)}
+.de-grp{margin-bottom:4px;border-left:3px solid var(--accent)}
 .de-grp-last{margin-bottom:8px}
 .de-row-actions{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:13px;font-weight:600;pointer-events:none}
 .de-act-swap{color:var(--brand-green);opacity:0}
@@ -219,42 +220,40 @@ h2,label,.bdg,.streak-hero-lbl,.streak-hero-cta{font-family:inherit;letter-spaci
 .de-detail-field input{width:100%;padding:6px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;background:var(--bg);color:var(--txt);text-align:center}
 .tc{width:150px;height:150px;border-radius:50%;padding:6px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:var(--shadow-md);background:conic-gradient(var(--ring-color,var(--brand-amber)) var(--ring-pct,100%),var(--bg2) 0);transition:background .3s}
 .tc-inner{width:100%;height:100%;border-radius:50%;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center}
-.tn{font-size:42px;font-weight:700;color:var(--txt);letter-spacing:-2px;font-variant-numeric:tabular-nums}
-.fb{background:var(--tint-amber-1);border-left:3px solid var(--brand-amber);border-radius:0 4px 4px 0;padding:14px;margin:10px 0;font-size:13px;color:var(--txt);line-height:1.7;min-height:54px}
+.tn{font-size:42px;font-weight:600;color:var(--txt);letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.fb{background:var(--tint-amber-1);border-left:3px solid var(--brand-amber);border-radius:0 4px 4px 0;padding:16px;margin:10px 0;font-size:13px;color:var(--txt);line-height:1.7;min-height:54px}
 .pbw{height:4px;background:var(--bg2);border-radius:8px;margin-bottom:16px;overflow:hidden}
 .pb{height:4px;background:var(--accent);border-radius:8px;transition:width .3s}
 .bdg{display:inline-block;font-size:11px;padding:4px 8px;border-radius:10px;font-weight:600}
 .bi{background:var(--tint-green-1);color:var(--brand-green);border:1px solid var(--tint-green-2)}
-.sc{background:var(--bg2);border-radius:10px;padding:14px;text-align:center;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
-.sc::before{content:'';position:absolute;inset:0;opacity:.6;background:linear-gradient(160deg,var(--tint-green-1),transparent)}
-.sc.c2::before{background:linear-gradient(160deg,var(--tint-amber-1),transparent)}
-.sc.c3::before{background:linear-gradient(160deg,#E7EEFB,transparent)}
-.sc.c4::before{background:linear-gradient(160deg,#F0E9FA,transparent)}
-html[data-theme="dark"] .sc.c3::before{background:linear-gradient(160deg,#16233a,transparent)}
-html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35,transparent)}
-.sv{font-size:24px;font-weight:700;color:var(--txt);position:relative;font-variant-numeric:tabular-nums}.sl{font-size:13px;color:var(--txt2);margin-top:3px;position:relative}
-.bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%) translateZ(0);width:100%;max-width:480px;display:flex;background:var(--bg);border-top:1px solid var(--bdr);padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:50}
-.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border:none;background:transparent;color:var(--txt2);cursor:pointer;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;transition:color .15s}
-.bn-item i{font-size:26px}
+.sc{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:16px;text-align:center;position:relative;overflow:hidden}
+.sv{font-size:24px;font-weight:600;color:var(--txt);position:relative;font-variant-numeric:tabular-nums}.sl{font-size:13px;color:var(--txt2);margin-top:4px;position:relative}
+.bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%) translateZ(0);width:100%;max-width:480px;display:flex;background:var(--bg);border-top:1px solid var(--bdr);padding:0 4px env(safe-area-inset-bottom);z-index:50}
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){.bottom-nav{background:color-mix(in srgb,var(--bg) 85%,transparent);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}}
+.bn-item{flex:1;height:49px;min-width:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px;border:none;border-radius:8px;background:transparent;color:var(--txt2);cursor:pointer;font-size:10px;font-weight:500;line-height:1.2;transition:color .15s,opacity .15s}
+.bn-item i{font-size:24px;line-height:1}
+.bn-item:active{opacity:.6}
+.bn-item:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .bn-item.on{color:var(--accent)}
 /* Must match .bottom-nav's own reserved height, safe-area inset included —
    .bottom-nav's bottom padding already adds env(safe-area-inset-bottom), so a
    bare 86px under-reserves by that inset on any notch/Dynamic-Island iPhone,
    letting the nav's own safe-area padding cover the last ~34px of content
    (e.g. the rest screen's "Next set" card) instead of sitting past it. */
-.app.has-nav .screen.active{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+.app.has-nav .screen.active{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
 @keyframes penline{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.streak-hero{background:var(--accent);color:var(--accent-ink);border:none;border-radius:20px;padding:14px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.streak-hero{background:var(--accent);color:var(--accent-ink);border:none;border-radius:20px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .streak-hero-l{display:flex;flex-direction:column;gap:1px;min-width:0}
-.streak-hero-num{font-family:var(--font-display);font-size:44px;font-weight:900;letter-spacing:-.04em;line-height:.82;color:var(--accent-ink)}
-.streak-hero-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--accent-ink);opacity:.72}
-.streak-hero-r{display:flex;flex-direction:column;align-items:flex-end;gap:7px;text-align:right;white-space:nowrap}
+.streak-hero-num{font-family:var(--font-display);font-size:44px;font-weight:800;letter-spacing:-.04em;line-height:.82;color:var(--accent-ink)}
+.streak-hero-lbl{font-size:11px;font-weight:600;color:var(--accent-ink);opacity:.72}
+.streak-hero-r{display:flex;flex-direction:column;align-items:flex-end;gap:8px;text-align:right;white-space:nowrap}
 .streak-hero-cta{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--accent-ink)}
-.streak-hero-week{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--accent-ink);opacity:.82}
-.streak-hero.compact{background:var(--bg);color:var(--txt);border:1px solid var(--bdr);border-radius:12px;padding:8px 14px;margin-bottom:12px}
+.streak-hero-week{font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--accent-ink);opacity:.82}
+.streak-hero.compact{background:var(--bg);color:var(--txt);border:1px solid var(--bdr);border-radius:12px;padding:8px 16px;margin-bottom:12px}
 .streak-hero.compact .streak-hero-l{display:none}
 .streak-hero.compact .streak-hero-r{flex-direction:row;align-items:center;gap:12px;width:100%;justify-content:space-between}
 .streak-hero.compact .streak-hero-cta,.streak-hero.compact .streak-hero-week{color:var(--txt2);opacity:1}
+.streak-hero.compact .streak-hero-cta{font-weight:600;text-transform:none;letter-spacing:0}
 .streak-hero.compact .streak-hero-cta i{color:var(--accent)}
 /* ═══ BADGES ═══ One drawing per badge, two states. Earned fills the hexagon
    with the accent and knocks the glyph out in --accent-ink; .lock empties the
@@ -265,23 +264,23 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .bdg .gf{fill:var(--ink)}
 .bdg .cut{fill:var(--fg)}
 .bdg .gs{fill:none;stroke:var(--ink);stroke-linecap:round;stroke-linejoin:round}
-.bdg text{font-family:var(--font-mono);font-weight:700;fill:var(--ink);letter-spacing:-.5px}
+.bdg text{font-family:var(--font-mono);font-weight:600;fill:var(--ink);letter-spacing:-.5px}
 .bdg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 8px;margin-bottom:6px}
 .bdg-cell{background:none;border:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px}
 .bdg-cell .bdg-wrap{width:100%;max-width:64px}
-.bdg-cell .bdg-nm{font-size:9.5px;line-height:1.25;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--txt2);text-align:center}
+.bdg-cell .bdg-nm{font-size:11px;line-height:1.25;font-weight:500;color:var(--txt2);text-align:center}
 .bdg-cell.locked .bdg-nm{color:var(--lock-fg)}
 .bdg-cell:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:8px}
-.bdg-unlock{display:flex;align-items:center;gap:12px;border:1.5px solid var(--accent);border-radius:14px;padding:12px 14px;margin-bottom:8px;background:var(--tint-green-1);animation:pr-stamp .18s ease-out}
+.bdg-unlock{display:flex;align-items:center;gap:12px;border:1.5px solid var(--accent);border-radius:14px;padding:12px 16px;margin-bottom:8px;background:var(--tint-green-1);animation:pr-stamp .18s ease-out}
 .bdg-unlock .bdg-wrap{width:42px;flex-shrink:0}
-.bdg-unlock .u-l{font-family:var(--font-mono);font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--forge-text)}
+.bdg-unlock .u-l{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--forge-text)}
 .bdg-unlock .u-n{font-family:var(--font-display);font-size:14px;font-weight:800;text-transform:uppercase;color:var(--txt);margin-top:2px}
 .hero-pill{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px}
 .hero-pill-green{background:var(--tint-green-1);border:1px solid var(--tint-green-2)}
 .ail{display:flex;align-items:center;gap:6px;color:var(--txt2);font-size:13px}
 .da span{animation:bl 1.2s infinite}.da span:nth-child(2){animation-delay:.2s}.da span:nth-child(3){animation-delay:.4s}
 @keyframes bl{0%,80%,100%{opacity:0}40%{opacity:1}}
-.save-alert{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:9999;display:none;align-items:center;gap:10px;background:var(--alert-bg);border:1px solid var(--alert-bdr);color:var(--alert-txt);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.45;max-width:520px;margin:0 auto}
+.save-alert{position:fixed;left:12px;right:12px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:9999;display:none;align-items:center;gap:10px;background:var(--alert-bg);border:1px solid var(--alert-bdr);color:var(--alert-txt);border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.45;max-width:520px;margin:0 auto}
 .ph-note{margin-top:10px;font-size:12.5px;line-height:1.5;color:var(--txt2);background:var(--bg2);border-radius:10px;padding:10px 12px}
 .ph-note .ti{color:var(--accent)}
 .ph-msg{margin-top:10px;font-size:13px;line-height:1.45;color:var(--txt)}
@@ -289,7 +288,7 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .ph-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
 .ph-tile{position:relative;aspect-ratio:3/4;padding:0;border:0;border-radius:8px;overflow:hidden;background:var(--bg2);cursor:pointer}
 .ph-tile img{width:100%;height:100%;object-fit:cover;display:block}
-.ph-tile span{position:absolute;left:4px;bottom:4px;font-size:10px;font-family:'Space Mono',monospace;background:rgba(0,0,0,.6);color:#fff;padding:1px 5px;border-radius:4px}
+.ph-tile span{position:absolute;left:4px;bottom:4px;font-size:10px;font-family:'Space Mono',monospace;background:rgba(0,0,0,.6);color:#fff;padding:1px 4px;border-radius:4px}
 .ph-view{position:fixed;inset:0;z-index:950;background:rgba(5,9,7,.96);flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)}
 .ph-view-top{display:flex;justify-content:space-between;align-items:center;color:var(--txt);font-family:'Space Mono',monospace;font-size:14px}
 .ph-view img{flex:1;min-height:0;width:100%;object-fit:contain;margin:10px 0}
@@ -297,16 +296,18 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .prt.prt-alert{background:var(--alert-bg);border:1px solid var(--alert-bdr);color:var(--alert-txt);display:block}
 .prt{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--txt);font-weight:500;margin-bottom:10px;animation:si .3s ease}
 @keyframes si{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-.feel-btn{width:100%;padding:12px 16px;border:1px solid var(--bdr);border-radius:var(--radius);background:var(--bg);font-size:15px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;margin-bottom:10px;transition:all .15s;box-shadow:var(--shadow-sm)}
-.feel-btn:hover{border-color:var(--accent);background:var(--tint-green-1);transform:translateY(-1px);box-shadow:var(--shadow-md)}
-.feel-icon{font-size:24px;width:36px;text-align:center;flex-shrink:0}
+.feel-btn{width:100%;padding:12px 16px;border:1px solid var(--bdr);border-radius:var(--radius);background:var(--bg);font-size:15px;font-weight:600;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;margin-bottom:10px;transition:background-color .15s,border-color .15s,color .15s,opacity .15s;box-shadow:var(--shadow-sm)}
+.feel-btn:hover{border-color:var(--accent);background:var(--tint-green-1)}
+.feel-icon{width:36px;display:flex;justify-content:center;flex-shrink:0}
+.feel-dot{display:inline-block;width:12px;height:12px;border-radius:50%}
+.feel-dot.sm{width:8px;height:8px;margin-right:4px}
 .ob-step{display:none}.ob-step.active{display:block}
 .inp{width:100%;padding:12px 16px;border:1px solid var(--bdr);border-radius:10px;font-size:15px;background:var(--bg);color:var(--txt);margin-bottom:12px;outline:none}
 .inp:focus{border-color:var(--accent)}
-.opt-btn{padding:12px 8px;border:1px solid var(--bdr);border-radius:10px;background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;text-align:center;color:var(--txt);transition:all .15s;width:100%}
+.opt-btn{padding:12px 8px;border:1px solid var(--bdr);border-radius:10px;background:var(--bg);font-size:13px;font-weight:500;cursor:pointer;text-align:center;color:var(--txt);transition:background-color .15s,border-color .15s,color .15s,opacity .15s;width:100%}
 .opt-btn:hover{border-color:var(--accent)}
 .opt-btn.on{border-color:transparent;background:var(--accent);color:var(--accent-ink);box-shadow:var(--shadow-sm)}
-.chip-tog{padding:8px 4px;border:1px solid var(--bdr);border-radius:10px;background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;text-align:center;color:var(--txt);transition:all .15s}
+.chip-tog{padding:8px 4px;border:1px solid var(--bdr);border-radius:10px;background:var(--bg);font-size:13px;font-weight:600;cursor:pointer;text-align:center;color:var(--txt);transition:background-color .15s,border-color .15s,color .15s,opacity .15s}
 .chip-tog:hover{border-color:var(--accent)}
 .chip-tog.on{border-color:transparent;background:var(--accent);color:var(--accent-ink);box-shadow:var(--shadow-sm)}
 /* Plate calculator — loaded-barbell visual */
@@ -316,23 +317,23 @@ html[data-theme="dark"] .sc.c4::before{background:linear-gradient(160deg,#241a35
 .pc-grip{height:14px;width:52px;flex:none;border-radius:2px;background:repeating-linear-gradient(90deg,#8a9080,#8a9080 2px,#a7ad9c 2px,#a7ad9c 4px)}
 .pc-collar{height:22px;width:8px;flex:none;margin:0 2px;background:#6b7160;border-radius:2px}
 .pc-disc{flex:none;margin:0 1.5px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:800;line-height:1;box-shadow:0 2px 4px rgba(0,0,0,.22)}
-.pc-msg{font-size:13px;color:var(--txt2);text-align:center;padding:14px 0}
+.pc-msg{font-size:13px;color:var(--txt2);text-align:center;padding:16px 0}
 .pc-sum{text-align:center;margin-top:16px}
-.pc-sum-lbl{font-family:var(--font-display);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--txt2)}
-.pc-sum-val{font-family:var(--font-mono);font-size:22px;font-weight:700;color:var(--txt);margin-top:6px;letter-spacing:.02em}
-.pc-sum-sub{font-size:12px;color:var(--txt3);margin-top:5px}
+.pc-sum-lbl{font-family:var(--font-display);font-size:12px;font-weight:600;color:var(--txt2)}
+.pc-sum-val{font-family:var(--font-mono);font-size:22px;font-weight:600;color:var(--txt);margin-top:6px;letter-spacing:.02em}
+.pc-sum-sub{font-size:12px;color:var(--txt3);margin-top:4px}
 .chip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px}
-label{font-size:13px;font-weight:700;color:var(--txt2);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
-h2{font-size:11px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+label{font-size:13px;font-weight:600;color:var(--txt2);display:block;margin-bottom:8px}
+h2{font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:12px}
 .ob-progress{display:flex;gap:4px;margin-bottom:24px}
 .ob-dot{height:4px;border-radius:8px;background:var(--bdr);flex:1;transition:background .3s}
 .ob-dot.on{background:var(--accent)}
 .tut-ss-wrap{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--bdr);box-shadow:0 8px 24px rgba(36,59,54,.18);width:min(100%,calc(54vh * 390 / 844));width:min(100%,calc(54dvh * 390 / 844));aspect-ratio:390/844;margin:0 auto}
 .tut-ss-wrap img{width:100%;height:100%;display:block;object-fit:cover}
-.tut-tooltip{position:absolute;background:var(--bg);border-radius:10px;padding:12px 14px;box-shadow:0 8px 20px rgba(0,0,0,.3);max-width:82%}
-.tut-tooltip-title{font-family:var(--font-display);font-weight:700;font-size:14px;margin-bottom:3px;color:var(--txt)}
+.tut-tooltip{position:absolute;background:var(--bg);border-radius:10px;padding:12px 16px;box-shadow:0 8px 20px rgba(0,0,0,.3);max-width:82%}
+.tut-tooltip-title{font-family:var(--font-display);font-weight:600;font-size:14px;margin-bottom:4px;color:var(--txt)}
 .tut-tooltip-body{font-size:12px;color:var(--txt2);line-height:1.45}
-.tut-step-badge{position:absolute;top:-10px;left:-10px;width:24px;height:24px;border-radius:50%;background:var(--brand-forge);color:var(--accent-ink);font-family:var(--font-display);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+.tut-step-badge{position:absolute;top:-10px;left:-10px;width:24px;height:24px;border-radius:50%;background:var(--brand-forge);color:var(--accent-ink);font-family:var(--font-display);font-weight:600;font-size:12px;display:flex;align-items:center;justify-content:center}
 select,textarea{font-size:13px;width:100%;padding:12px 16px;border:1px solid var(--bdr);border-radius:10px;background:var(--bg);color:var(--txt);margin-bottom:12px;outline:none;appearance:none;-webkit-appearance:none}
 select:focus,textarea:focus{border-color:var(--accent)}
 textarea{resize:vertical;min-height:100px}
@@ -343,7 +344,7 @@ textarea{resize:vertical;min-height:100px}
 .toggle::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .toggle.on::after{left:21px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.rng{display:flex;gap:6px;margin-bottom:10px}.rng-b{flex:1;padding:7px 4px;border:1px solid var(--bdr);border-radius:999px;background:var(--bg);color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer}.rng-b.on{background:var(--accent);border-color:transparent;color:var(--accent-ink)}
+.rng{display:flex;gap:6px;margin-bottom:10px}.rng-b{flex:1;padding:8px 4px;border:1px solid var(--bdr);border-radius:999px;background:var(--bg);color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer}.rng-b.on{background:var(--accent);border-color:transparent;color:var(--accent-ink)}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
 .mw-inp{display:inline-block;background:var(--tint-amber-1);color:var(--tint-amber-text);border-radius:8px;padding:4px 8px;font-size:13px;font-weight:600}
 .sug-chip{background:var(--tint-amber-1);border:1px solid var(--tint-amber-2);border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:13px;color:var(--tint-amber-text);display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.5}
@@ -358,7 +359,7 @@ textarea{resize:vertical;min-height:100px}
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
     <img src="images/branding/logo.png" alt="GainPath logo" data-i18n-alt="alt_logo" width="48" height="48" style="width:48px;height:48px;flex-shrink:0">
     <div>
-      <div class="tt" style="font-size:28px;font-weight:700;color:var(--brand-green)">GainPath</div>
+      <div class="tt" style="font-size:28px;font-weight:600;color:var(--brand-green)">GainPath</div>
       <div style="font-size:15px;color:var(--txt2);margin-top:4px" data-i18n="app_tagline">Workout tracker</div>
     </div>
   </div>
@@ -371,32 +372,32 @@ textarea{resize:vertical;min-height:100px}
       <button class="opt-btn" id="lang-ja" onclick="setLang('ja')">日本語</button>
       <button class="opt-btn" id="lang-ko" onclick="setLang('ko')">한국어</button>
     </div>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob1_title">Let's get started</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob1_title">Let's get started</div>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob1_sub">Tell us about yourself</div>
     <label data-i18n="ph_first_name">First name</label>
     <input class="inp" id="ob-fname" type="text" placeholder="First name" autocomplete="given-name" data-i18n-ph="ph_first_name">
     <label data-i18n="ob_sex_label">Sex</label>
     <div class="g2">
-      <button class="opt-btn" id="sex-m" onclick="setSex('male')" data-i18n="ob_sex_male">♂ Male</button>
-      <button class="opt-btn" id="sex-f" onclick="setSex('female')" data-i18n="ob_sex_female">♀ Female</button>
+      <button class="opt-btn" id="sex-m" onclick="setSex('male')" data-i18n="ob_sex_male">Male</button>
+      <button class="opt-btn" id="sex-f" onclick="setSex('female')" data-i18n="ob_sex_female">Female</button>
     </div>
     <button class="bp" style="width:100%;margin-top:8px;justify-content:center" onclick="obNext(1)" data-i18n="btn_continue">Continue</button>
-    <div style="text-align:center;margin-top:14px;font-size:13px;color:var(--txt2)"><span data-i18n="ob_already_used">Already used GainPath before?</span> <a href="#" style="color:var(--brand-green);font-weight:600;text-decoration:none" onclick="gid('ob-import-file').click();return false;" data-i18n="btn_restore_backup">Restore from backup</a></div>
+    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--txt2)"><span data-i18n="ob_already_used">Already used GainPath before?</span> <a href="#" style="color:var(--brand-green);font-weight:600;text-decoration:none" onclick="gid('ob-import-file').click();return false;" data-i18n="btn_restore_backup">Restore from backup</a></div>
     <input type="file" id="ob-import-file" accept=".json" style="display:none" onchange="importData(this)">
   </div>
 
   <div class="ob-step" id="ob-2">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob2_title">About you</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob2_title">About you</div>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob2_sub">Used to estimate your starting weights. You can change any weight during a workout.</div>
     <label data-i18n="ob2_unit_label">Weight unit</label>
     <div class="g2"><button class="opt-btn on" id="unit-kg" onclick="setUnit('kg')">kg</button><button class="opt-btn" id="unit-lbs" onclick="setUnit('lbs')">lbs</button></div>
     <label data-i18n="ob2_bw_label">Body weight (<span id="unit-lbl1">kg</span>)</label>
     <input class="inp" id="ob-bw" type="number" placeholder="e.g. 75" min="30" max="400" data-i18n-ph="ph_bw_example">
     <label data-i18n="ob4_exp_label">Experience level</label>
-    <div class="g3" style="margin-bottom:14px">
-      <button class="opt-btn" id="exp-beginner" onclick="setExp('beginner')">🌱<br><span data-i18n="exp_beginner">Beginner</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_beginner_yrs">0–1 yr</span></button>
-      <button class="opt-btn" id="exp-intermediate" onclick="setExp('intermediate')">💪<br><span data-i18n="exp_intermediate">Intermediate</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_intermediate_yrs">1–3 yrs</span></button>
-      <button class="opt-btn" id="exp-advanced" onclick="setExp('advanced')">🏆<br><span data-i18n="exp_advanced">Advanced</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_advanced_yrs">3+ yrs</span></button>
+    <div class="g3" style="margin-bottom:16px">
+      <button class="opt-btn" id="exp-beginner" onclick="setExp('beginner')"><span data-i18n="exp_beginner">Beginner</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_beginner_yrs">0–1 yr</span></button>
+      <button class="opt-btn" id="exp-intermediate" onclick="setExp('intermediate')"><span data-i18n="exp_intermediate">Intermediate</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_intermediate_yrs">1–3 yrs</span></button>
+      <button class="opt-btn" id="exp-advanced" onclick="setExp('advanced')"><span data-i18n="exp_advanced">Advanced</span><br><span style="font-size:11px;font-weight:400;color:var(--txt2)" data-i18n="exp_advanced_yrs">3+ yrs</span></button>
     </div>
     <button class="bg" id="ob-lifts-btn" style="width:100%;margin-bottom:12px" onclick="obToggleLifts()" data-i18n="ob_lifts_toggle">+ Know your current lifts? (optional)</button>
     <div id="ob-lifts" style="display:none">
@@ -427,7 +428,7 @@ textarea{resize:vertical;min-height:100px}
   </div>
 
   <div class="ob-step" id="ob-3">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob_plan_title">Your plan</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt);margin-bottom:4px" data-i18n="ob_plan_title">Your plan</div>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:20px" data-i18n="ob5_sub">How many days per week do you plan to train?</div>
     <div class="g3" style="margin-bottom:8px">
       <button class="opt-btn" id="freq-2" onclick="setFreq(2)">2 <span data-i18n="unit_days">days</span></button>
@@ -445,7 +446,7 @@ textarea{resize:vertical;min-height:100px}
       <div id="split-opts" style="margin-bottom:8px"></div>
       <div style="font-size:13px;color:var(--txt2);margin-bottom:4px" data-i18n="ob_later_hint">Sets, reps, rest, warm-ups and your gym's plates and dumbbells are in Settings whenever you want them.</div>
     </div>
-    <button class="bp" style="width:100%;margin-top:14px;justify-content:center" onclick="obFinish()" data-i18n="btn_start_training">Start training 🚀</button>
+    <button class="bp" style="width:100%;margin-top:16px;justify-content:center" onclick="obFinish()" data-i18n="btn_start_training">Start training</button>
     <button class="bg" style="width:100%;margin-top:8px" onclick="obBack(3)" data-i18n="btn_back">Back</button>
   </div>
 </div>
@@ -453,12 +454,12 @@ textarea{resize:vertical;min-height:100px}
 <!-- HOME -->
 <div id="s-home" class="screen">
   <div id="prt-h"></div>
-  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
     <div style="display:flex;align-items:center;gap:10px">
       <img src="images/branding/logo.png" alt="GainPath logo" data-i18n-alt="alt_logo" width="36" height="36" style="width:36px;height:36px;flex-shrink:0">
       <div>
         <div class="tt" style="font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--brand-green)">GainPath</div>
-        <div style="font-size:13px;color:var(--txt2);margin-top:3px" id="h-gr"></div>
+        <div style="font-size:13px;color:var(--txt2);margin-top:4px" id="h-gr"></div>
       </div>
     </div>
     <button class="bg" style="padding:8px 8px" onclick="openSettings()" aria-label="Settings" data-i18n-aria="aria_settings"><i class="ti ti-settings" style="font-size:20px" aria-hidden="true"></i></button>
@@ -475,23 +476,23 @@ textarea{resize:vertical;min-height:100px}
   </div>
   <div id="p-wk">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" id="h-sg"></div>
-    <a href="#" id="h-tour" style="display:none;font-size:13px;font-weight:600;color:var(--brand-green);text-decoration:none;margin:-4px 0 14px" onclick="showTutorial(true);return false;" data-i18n="home_tour_link">New here? See how it works →</a>
+    <a href="#" id="h-tour" style="display:none;font-size:13px;font-weight:600;color:var(--brand-green);text-decoration:none;margin:-4px 0 16px" onclick="showTutorial(true);return false;" data-i18n="home_tour_link">New here? See how it works →</a>
     <button class="bp" id="h-start-btn" style="width:100%;justify-content:center;margin-bottom:10px" onclick="startSuggested()"></button>
-    <button class="bs" id="h-repeat-btn" style="width:100%;justify-content:center;gap:8px;margin-bottom:14px;display:none" onclick="repeatLastWorkout()"></button>
+    <button class="bs" id="h-repeat-btn" style="width:100%;justify-content:center;gap:8px;margin-bottom:16px;display:none" onclick="repeatLastWorkout()"></button>
     <div id="dbtn-list"></div>
   </div>
   <div id="p-cal" style="display:none">
     <h2 data-i18n="cal_title">Workout calendar</h2>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:8px" data-i18n="cal_hint">Tap a colored day to see and edit its sessions — browse any month with the arrows.</div>
     <div id="h-cal"></div>
-    <h2 style="margin-top:22px" data-i18n="session_history_title">Session history</h2>
+    <h2 style="margin-top:24px" data-i18n="session_history_title">Session history</h2>
     <div style="font-size:13px;color:var(--txt2);margin-bottom:8px" data-i18n="hist_hint">Pick an exercise to see every session you have logged for it.</div>
     <select id="ch-hist-sel" aria-label="Exercise" data-i18n-aria="aria_exercise" onchange="pickExHistory(this.value)"></select>
     <div id="ch-hist"></div>
   </div>
   <div id="p-ch" style="display:none">
     <h2 data-i18n="progress_title">Progress</h2>
-    <div class="g3" style="margin-bottom:14px">
+    <div class="g3" style="margin-bottom:16px">
       <button class="opt-btn" id="chseg-strength" onclick="chSeg('strength')" data-i18n="ch_seg_strength">Strength</button>
       <button class="opt-btn" id="chseg-balance" onclick="chSeg('balance')" data-i18n="ch_seg_balance">Balance</button>
       <button class="opt-btn" id="chseg-body" onclick="chSeg('body')" data-i18n="ch_seg_body">Body</button>
@@ -512,7 +513,7 @@ textarea{resize:vertical;min-height:100px}
       <option value="v" data-i18n="metric_volume">Session volume</option>
     </select>
     <div class="rng" id="ch-rng" style="display:none"></div>
-    <div style="background:var(--bg2);border-radius:10px;padding:14px;box-shadow:var(--shadow-sm)">
+    <div style="background:var(--bg2);border-radius:10px;padding:16px;box-shadow:var(--shadow-sm)">
       <canvas id="ch-cv" height="180"></canvas>
       <div id="ch-one" style="text-align:center;padding:1.5rem 1rem;display:none"></div>
     </div>
@@ -529,17 +530,17 @@ textarea{resize:vertical;min-height:100px}
     <div id="ch-seg-body" style="display:none">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div><div style="font-size:13px;color:var(--txt2)" data-i18n="latest_label">Latest</div><div style="font-size:20px;font-weight:700;color:var(--txt)" id="bw-latest">—</div></div>
+        <div><div style="font-size:13px;color:var(--txt2)" data-i18n="latest_label">Latest</div><div style="font-size:20px;font-weight:600;color:var(--txt)" id="bw-latest">—</div></div>
         <button class="bp" onclick="openLogBW()"><i class="ti ti-plus" aria-hidden="true"></i> <span data-i18n="log_weight_btn">Log weight</span></button>
       </div>
       <div class="rng" id="bw-rng" style="display:none"></div>
-      <div style="background:var(--bg2);border-radius:10px;padding:14px;box-shadow:var(--shadow-sm)">
+      <div style="background:var(--bg2);border-radius:10px;padding:16px;box-shadow:var(--shadow-sm)">
         <canvas id="bw-cv" height="140"></canvas>
         <div id="bw-empty" style="text-align:center;padding:1.5rem 1rem;font-size:13px;color:var(--txt2);display:none" data-i18n="bw_empty">No weigh-ins logged yet</div>
         <div id="bw-one" style="text-align:center;padding:1.5rem 1rem;font-size:13px;color:var(--txt2);display:none"></div>
       </div>
       <div id="bw-list" style="margin-top:10px"></div>
-      <div id="bw-log-form" style="display:none;margin-top:14px;border-top:1px solid var(--bdr);padding-top:14px">
+      <div id="bw-log-form" style="display:none;margin-top:16px;border-top:1px solid var(--bdr);padding-top:16px">
         <label data-i18n="date_label">Date</label><input class="inp" type="date" id="bw-date">
         <label data-i18n="weight_label">Weight (<span id="bw-unit">kg</span>)</label><input class="inp" type="number" step="0.1" min="0" id="bw-w-inp">
         <label data-i18n="waist_label">Waist (cm) <span style="font-weight:400;color:var(--txt3)" data-i18n="optional_paren">(optional)</span></label><input class="inp" type="number" step="0.5" min="0" id="bw-waist-inp">
@@ -552,7 +553,7 @@ textarea{resize:vertical;min-height:100px}
     </div>
     <div class="card" id="ph-card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-        <div style="font-size:15px;font-weight:700;color:var(--txt)" data-i18n="ph_title">Progress photos</div>
+        <div style="font-size:15px;font-weight:600;color:var(--txt)" data-i18n="ph_title">Progress photos</div>
         <label class="bp" style="cursor:pointer"><i class="ti ti-plus" aria-hidden="true"></i> <span data-i18n="ph_add">Add photo</span><input type="file" accept="image/*" multiple style="display:none" onchange="phAdd(this)"></label>
       </div>
       <div class="ph-note"><i class="ti ti-alert-triangle" aria-hidden="true"></i> <span data-i18n="ph_notice">Photos stay only on this phone. They aren't in your backup file, so if you lose this phone or clear this browser's data, they're gone. Save the ones you want to keep to your photo library.</span></div>
@@ -567,11 +568,11 @@ textarea{resize:vertical;min-height:100px}
   <div id="p-pr" style="display:none">
     <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px">
       <h2 style="margin-bottom:0" data-i18n="badges_title">Badges</h2>
-      <span id="bdg-count" style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--txt2)"></span>
+      <span id="bdg-count" style="font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--txt2)"></span>
     </div>
     <div id="bdg-intro" style="display:none;font-size:12px;color:var(--txt2);margin-bottom:10px"></div>
     <div id="bdg-grid" class="bdg-grid"></div>
-    <h2 style="margin-top:22px" data-i18n="pr_alltime_title">All-time personal records</h2>
+    <h2 style="margin-top:24px" data-i18n="pr_alltime_title">All-time personal records</h2>
     <div id="pr-list"></div>
   </div>
 </div>
@@ -580,11 +581,11 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-dayedit" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
     <button class="bg" id="de-back-btn" onclick="deBack()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" id="de-back-icon" style="font-size:20px" aria-hidden="true"></i></button>
-    <div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" id="de-tit"></div>
+    <div style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" id="de-tit"></div>
   </div>
   <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" id="de-hint-wrap"><i class="ti ti-hand-grab" aria-hidden="true"></i> <span id="de-hint">Drag to reorder &middot; tap to edit sets/reps/weight &middot; swipe right to swap &middot; swipe left to delete</span></div>
   <div id="de-list"></div>
-  <div style="display:flex;gap:8px;margin-bottom:14px">
+  <div style="display:flex;gap:8px;margin-bottom:16px">
     <button class="bg" style="flex:1" onclick="openAddEx()"><i class="ti ti-plus" aria-hidden="true"></i> <span data-i18n="btn_add_exercise">Add exercise</span></button>
     <button class="bg" id="de-reset-btn" style="flex:1" onclick="resetDayEdit()"><i class="ti ti-arrow-back-up" aria-hidden="true"></i> <span data-i18n="btn_reset_default">Reset to default</span></button>
   </div>
@@ -594,9 +595,9 @@ textarea{resize:vertical;min-height:100px}
 <!-- CANCEL WORKOUT CONFIRMATION -->
 <div id="cancelwo-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeCancelWorkoutSheet()"></div>
 <div id="cancelwo-sheet" role="alertdialog" aria-modal="true" aria-labelledby="cancelwo-title" aria-describedby="cancelwo-body" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
-  <div style="text-align:center;margin-bottom:18px">
+  <div style="text-align:center;margin-bottom:16px">
     <i class="ti ti-alert-triangle" style="font-size:32px;color:#E24B4A" aria-hidden="true"></i>
-    <div id="cancelwo-title" class="tt" style="font-size:19px;font-weight:800;margin-top:10px;color:var(--txt)" data-i18n="wo_cancel_title">Cancel this workout?</div>
+    <div id="cancelwo-title" class="tt" style="font-size:19px;font-weight:600;margin-top:10px;color:var(--txt)" data-i18n="wo_cancel_title">Cancel this workout?</div>
     <div id="cancelwo-body" style="font-size:13px;color:var(--txt2);margin-top:8px;line-height:1.5" data-i18n="wo_cancel_body">All progress from this session — every set you've logged — will be lost. This can't be undone.</div>
   </div>
   <button class="bp" style="width:100%;justify-content:center;background:#E24B4A;color:#fff" onclick="doCancelWorkout()" data-i18n="wo_cancel_confirm_btn">Cancel workout</button>
@@ -606,9 +607,9 @@ textarea{resize:vertical;min-height:100px}
 <!-- DO EXERCISE NOW -->
 <div id="exnow-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeExNowSheet()"></div>
 <div id="exnow-sheet" role="dialog" aria-modal="true" aria-labelledby="exnow-title" aria-describedby="exnow-name" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
-  <div style="text-align:center;margin-bottom:18px">
+  <div style="text-align:center;margin-bottom:16px">
     <i class="ti ti-barbell" style="font-size:32px;color:var(--accent)" aria-hidden="true"></i>
-    <div id="exnow-name" style="font-size:17px;font-weight:700;margin-top:10px;color:var(--txt)"></div>
+    <div id="exnow-name" style="font-size:17px;font-weight:600;margin-top:10px;color:var(--txt)"></div>
     <div id="exnow-title" style="font-size:13px;color:var(--txt2);margin-top:6px" data-i18n="wo_jump_title">Jump to this exercise now?</div>
   </div>
   <button class="bp" style="width:100%;justify-content:center" onclick="doExNow()" data-i18n="wo_jump_do_btn">Do it now</button>
@@ -619,12 +620,12 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-prog" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
     <button class="bg" onclick="cancelProgram()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="custom_program_title">Custom program</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="custom_program_title">Custom program</div>
   </div>
-  <div style="font-size:13px;color:var(--txt2);margin-bottom:14px" data-i18n="custom_program_hint">Build your own training days from scratch. Name each day, then tap the list icon to add exercises (supersets, sets, reps and weights all work the same as any day).</div>
+  <div style="font-size:13px;color:var(--txt2);margin-bottom:16px" data-i18n="custom_program_hint">Build your own training days from scratch. Name each day, then tap the list icon to add exercises (supersets, sets, reps and weights all work the same as any day).</div>
   <label style="font-size:13px;font-weight:600;color:var(--txt2)" data-i18n="program_name_label">Program name</label>
-  <input class="inp" id="prog-name" type="text" placeholder="My program" data-i18n-ph="ph_my_program" style="margin-bottom:14px" onchange="if(ST.progDraft)ST.progDraft.name=this.value.trim()||ST.progDraft.name">
-  <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px" data-i18n="training_days_title">Training days</div>
+  <input class="inp" id="prog-name" type="text" placeholder="My program" data-i18n-ph="ph_my_program" style="margin-bottom:16px" onchange="if(ST.progDraft)ST.progDraft.name=this.value.trim()||ST.progDraft.name">
+  <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:8px" data-i18n="training_days_title">Training days</div>
   <div id="prog-days"></div>
   <button class="bg" style="width:100%;justify-content:center;margin:6px 0 16px" onclick="addProgDay()"><i class="ti ti-plus" aria-hidden="true"></i> <span data-i18n="btn_add_day">Add day</span></button>
   <button class="bp" style="width:100%;justify-content:center;margin-bottom:8px" onclick="saveProgram()"><span data-i18n="btn_save_use_program">Save &amp; use program</span> <i class="ti ti-check" aria-hidden="true"></i></button>
@@ -635,7 +636,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-swap" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
     <button class="bg" onclick="closeSwap()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" id="sw-tit" data-i18n="swap_exercise_title">Swap exercise</div>
+    <div style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" id="sw-tit" data-i18n="swap_exercise_title">Swap exercise</div>
   </div>
   <input class="inp" id="sw-search" type="text" placeholder="Search exercises…" data-i18n-ph="ph_search_exercises" oninput="ST.swapSearch=this.value;renderSwapParts()" style="margin-bottom:12px">
   <div id="sw-parts"></div>
@@ -645,9 +646,9 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-customex" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
     <button class="bg" onclick="closeCustomEx()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="add_custom_ex_title">Add custom exercise</div>
+    <div style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="add_custom_ex_title">Add custom exercise</div>
   </div>
-  <div style="font-size:13px;color:var(--txt2);margin-bottom:14px" data-i18n="custom_ex_hint">For a machine or movement your gym has that isn't in the built-in list. No bundled image — it'll link out to a YouTube search instead.</div>
+  <div style="font-size:13px;color:var(--txt2);margin-bottom:16px" data-i18n="custom_ex_hint">For a machine or movement your gym has that isn't in the built-in list. No bundled image — it'll link out to a YouTube search instead.</div>
   <div class="card">
     <label data-i18n="exercise_name_label">Exercise name</label>
     <input class="inp" id="cex-name" type="text" placeholder="e.g. Nautilus chest press" data-i18n-ph="ph_ex_name_example">
@@ -675,26 +676,26 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-settings" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="ss('home')" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="settings_title">Settings</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="settings_title">Settings</div>
   </div>
   <label data-i18n="lang_label">Language</label>
-  <div class="g3" style="margin-bottom:14px">
+  <div class="g3" style="margin-bottom:16px">
     <button class="opt-btn" id="setlang-en" onclick="setLang('en')">English</button>
     <button class="opt-btn" id="setlang-ja" onclick="setLang('ja')">日本語</button>
     <button class="opt-btn" id="setlang-ko" onclick="setLang('ko')">한국어</button>
   </div>
-  <button class="day-btn" onclick="ss('setprofile')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-user" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_profile">Profile</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_profile_sub">Name, body weight, height, body fat</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="day-btn" onclick="ss('setprefs')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-adjustments" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_prefs">Preferences</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_prefs_sub">Units, reps, rest, split, warm-ups, dark mode</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="day-btn" onclick="ss('setequip')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-barbell" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_gym">My gym</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_gym_sub">Plates and dumbbells you actually have</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="day-btn" onclick="ss('setmachines')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-barbell" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_machines">Machine base weights</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_machines_sub">Frame weight for each machine you've used</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="day-btn" onclick="ss('setrestplan')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-calendar-off" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_restplan">Planned rest</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_restplan_sub">Mark sick days or deload weeks</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="day-btn" onclick="openDataSettings()"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-download" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_data">Reports &amp; backup</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_data_sub">Monthly PDF report, export and import your data</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="day-btn" onclick="ss('setwatch')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-heart-rate-monitor" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_watch">Apple Watch sync</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_watch_sub">Auto-start/end a Watch workout via Shortcuts</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="day-btn" onclick="ss('setnotify')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-mail" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_notify">Native app updates</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_notify_sub">Optional — get an email when the iOS/Android app ships</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="day-btn" onclick="showTutorial(false)"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-map-2" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_tutorial">How to use</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_tutorial_sub">Revisit the quick walkthrough</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="day-btn" onclick="openPrivacySettings()"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-shield-check" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_privacy">Privacy</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_privacy_sub">What stays on your device and what's sent</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="day-btn" onclick="ss('setabout')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:-.01em;color:var(--txt)"><i class="ti ti-list-details" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_about">About</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_about_sub">Version and what's new</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
-  <button class="bs" style="width:100%;margin-top:14px" onclick="ss('feedback')" data-i18n="btn_send_feedback">Send feedback</button>
+  <button class="day-btn" onclick="ss('setprofile')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-user" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_profile">Profile</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_profile_sub">Name, body weight, height, body fat</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setprefs')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-adjustments" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_prefs">Preferences</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_prefs_sub">Units, reps, rest, split, warm-ups, dark mode</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setequip')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-barbell" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_gym">My gym</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_gym_sub">Plates and dumbbells you actually have</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setmachines')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-barbell" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_machines">Machine base weights</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_machines_sub">Frame weight for each machine you've used</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setrestplan')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-calendar-off" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_restplan">Planned rest</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_restplan_sub">Mark sick days or deload weeks</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="openDataSettings()"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-download" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_data">Reports &amp; backup</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_data_sub">Monthly PDF report, export and import your data</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setwatch')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-heart-rate-monitor" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_watch">Apple Watch sync</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_watch_sub">Auto-start/end a Watch workout via Shortcuts</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setnotify')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-mail" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_notify">Native app updates</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_notify_sub">Optional — get an email when the iOS/Android app ships</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="showTutorial(false)"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-map-2" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_tutorial">How to use</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_tutorial_sub">Revisit the quick walkthrough</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="openPrivacySettings()"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-shield-check" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_privacy">Privacy</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_privacy_sub">What stays on your device and what's sent</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="day-btn" onclick="ss('setabout')"><div><div class="tt" style="font-size:15px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-list-details" style="margin-right:8px;color:var(--accent);font-size:16px" aria-hidden="true"></i><span data-i18n="menu_about">About</span></div><div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="menu_about_sub">Version and what's new</div></div><i class="ti ti-chevron-right" style="color:var(--txt3);font-size:16px" aria-hidden="true"></i></button>
+  <button class="bs" style="width:100%;margin-top:16px" onclick="ss('feedback')" data-i18n="btn_send_feedback">Send feedback</button>
   <button class="bs" style="width:100%;margin-top:10px;color:#E24B4A;border-color:#E24B4A" onclick="resetApp()" data-i18n="btn_reset_app">Reset app</button>
   <div id="reset-st" role="status" style="margin-top:8px;font-size:13px;color:var(--alert-txt);text-align:center"></div>
 </div>
@@ -703,7 +704,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-setprofile" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_profile">Profile</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="menu_profile">Profile</div>
   </div>
   <div class="card">
     <label data-i18n="set_name_label">Name</label>
@@ -721,7 +722,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-setprefs" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_prefs">Preferences</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="menu_prefs">Preferences</div>
   </div>
   <div class="card">
     <label data-i18n="ob2_unit_label">Weight unit</label>
@@ -772,12 +773,12 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-setequip" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_gym">My gym</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="menu_gym">My gym</div>
   </div>
   <div class="card">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:10px" data-i18n="gym_hint">Tap what you actually have — the plate calculator and weight suggestions will only use combinations you can really load. Leave everything off to skip this (unrestricted, standard-gym assumption).</div>
     <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:8px" data-i18n="plates_owned_label">Plates owned (<span id="set-gym-unit1">kg</span>, per pair)</div>
-    <div id="set-plate-inv" class="chip-grid" style="margin-bottom:14px"></div>
+    <div id="set-plate-inv" class="chip-grid" style="margin-bottom:16px"></div>
     <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:8px" data-i18n="dumbbells_owned_label">Dumbbells owned (<span id="set-gym-unit2">kg</span>, per hand)</div>
     <div id="set-db-inv" class="chip-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:0"></div>
   </div>
@@ -792,7 +793,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-setmachines" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_machines">Machine base weights</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="menu_machines">Machine base weights</div>
   </div>
   <div class="card">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:10px" data-i18n="machines_hint">The weight of each machine's frame, added to the plates you load to get the total. You're asked once, the first time you use a machine — fix it here if you got it wrong.</div>
@@ -804,7 +805,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-setrestplan" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_restplan">Planned rest</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="menu_restplan">Planned rest</div>
   </div>
   <div class="card">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:10px" data-i18n="restplan_hint">Sick, traveling, or taking a deload week? Mark it so your streak pauses instead of resetting to zero.</div>
@@ -820,7 +821,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-setwatch" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_watch">Apple Watch sync</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="menu_watch">Apple Watch sync</div>
   </div>
   <div class="card">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:10px" data-i18n="watch_intro">GainPath is a web app and can't write to Health directly — but it can trigger a Shortcut you build once, which starts/ends a "Traditional Strength Training" workout on your Watch automatically, so you never touch the Watch by hand. Calories still come from the Watch's own sensors.</div>
@@ -837,20 +838,20 @@ textarea{resize:vertical;min-height:100px}
     </div>
     <button type="button" class="bg" style="padding:4px 8px;font-size:13px" onclick="toggleHSSteps()" data-i18n="btn_how_to_setup">How to set this up</button>
     <div id="hs-steps" style="display:none;font-size:13px;color:var(--txt2);margin-top:10px;line-height:1.7">
-      <div style="font-weight:700;color:var(--txt)">1. Open the Shortcuts app</div>
+      <div style="font-weight:600;color:var(--txt)">1. Open the Shortcuts app</div>
       It's a pre-installed Apple app — a white icon with a colorful looping ribbon. If it's not on a Home Screen, swipe down and search Spotlight for "Shortcuts".
-      <div style="font-weight:700;color:var(--txt);margin-top:10px">2. Build the start shortcut</div>
+      <div style="font-weight:600;color:var(--txt);margin-top:10px">2. Build the start shortcut</div>
       • On the <strong>My Shortcuts</strong> tab, tap the <strong>+</strong> in the top-right corner.<br>
       • Tap the shortcut's name at the top (shows "New Shortcut") and rename it to <strong>exactly</strong> match the "Start-workout Shortcut name" field above — capitalization and spacing must match, since that's how GainPath finds it.<br>
       • Tap <strong>Add Action</strong> (or the <strong>+</strong> inside the editor), type <strong>Start Workout</strong> into the search bar, and tap the "Start Workout" action to add it.<br>
       • The action now shows a workout-type field (defaults to something like "Run") — tap it, scroll or search, and pick <strong>Traditional Strength Training</strong>.<br>
       • Tap <strong>Done</strong> in the top-right to save the shortcut.
-      <div style="font-weight:700;color:var(--txt);margin-top:10px">3. Build the end shortcut</div>
+      <div style="font-weight:600;color:var(--txt);margin-top:10px">3. Build the end shortcut</div>
       • Go back to <strong>My Shortcuts</strong> and tap <strong>+</strong> again.<br>
       • Rename it to <strong>exactly</strong> match the "End-workout Shortcut name" field above.<br>
       • Tap <strong>Add Action</strong>, type <strong>End Workout</strong> into the search bar, and add it — no further configuration needed for the basic version.<br>
       • Tap <strong>Done</strong> to save.
-      <div style="font-weight:700;color:var(--txt);margin-top:10px">4. Turn the toggle on above and test it</div>
+      <div style="font-weight:600;color:var(--txt);margin-top:10px">4. Turn the toggle on above and test it</div>
       • Turn on <strong>"Sync workouts to Apple Watch"</strong>, confirm the two names above match your shortcuts exactly, then tap the back arrow to save.<br>
       • Start a workout in GainPath — within a couple seconds, your Watch should show a "Traditional Strength Training" workout starting on its own (you may see a one-time iOS permission prompt the very first time; allow it).<br>
       • If nothing happens: open Shortcuts, tap the shortcut, and run it manually once — iOS sometimes needs that first manual run before it'll trust an automated one.
@@ -862,7 +863,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-setabout" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_about">About</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="menu_about">About</div>
   </div>
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center">
@@ -881,7 +882,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-setprivacy" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_privacy">Privacy</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="menu_privacy">Privacy</div>
   </div>
   <div class="card">
     <div style="font-size:15px;font-weight:600;color:var(--txt)" data-i18n="priv_local_t">Your workouts stay on this device</div>
@@ -910,7 +911,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-setnotify" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="closeSettingsSection()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_notify">Native app updates</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="menu_notify">Native app updates</div>
   </div>
   <div class="card">
     <div style="font-size:13px;color:var(--txt2);margin-bottom:10px" data-i18n="notify_hint">Want to hear when the native iOS/Android app ships? Leave your email below — completely optional, GainPath works fully without it, and no account is ever required to use the app.</div>
@@ -934,7 +935,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-setdata" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="ss('settings')" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="menu_data">Reports &amp; backup</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="menu_data">Reports &amp; backup</div>
   </div>
     <div>
       <h2 data-i18n="backup_restore_title">Backup &amp; restore</h2>
@@ -955,8 +956,8 @@ textarea{resize:vertical;min-height:100px}
     </div>
     <div style="margin-top:16px;border-top:1px solid var(--bdr);padding-top:16px">
     <h2 data-i18n="pdf_report_title">Monthly PDF report</h2>
-    <div style="font-size:13px;color:var(--txt2);margin-bottom:14px" data-i18n="pdf_report_sub">Graphical summary — sessions, streak, strength gains, new PRs</div>
-    <div style="display:flex;gap:8px;margin-bottom:14px">
+    <div style="font-size:13px;color:var(--txt2);margin-bottom:16px" data-i18n="pdf_report_sub">Graphical summary — sessions, streak, strength gains, new PRs</div>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
       <select id="ex-mo" aria-label="Month" data-i18n-aria="aria_month" style="margin-bottom:0;flex:1"></select>
       <select id="ex-yr" aria-label="Year" data-i18n-aria="aria_year" style="margin-bottom:0;width:90px"></select>
     </div>
@@ -967,7 +968,7 @@ textarea{resize:vertical;min-height:100px}
 
 <!-- TUTORIAL -->
 <div id="s-tutorial" class="screen" ontouchstart="tutTouchStart(event)" ontouchend="tutTouchEnd(event)">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
     <div class="tt" style="font-size:19px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="tut_title">How GainPath works</div>
     <button type="button" class="bg" onclick="tutSkip()" style="font-size:13px" data-i18n="btn_skip">Skip</button>
   </div>
@@ -1117,7 +1118,7 @@ textarea{resize:vertical;min-height:100px}
     </div>
   </div>
 
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px">
     <button type="button" class="bg" id="tut-back-btn" onclick="tutBack()" style="visibility:hidden" data-i18n="btn_back">Back</button>
     <button class="bp" id="tut-next-btn" onclick="tutNext()">Next →</button>
   </div>
@@ -1127,7 +1128,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-session" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
     <button class="bg" onclick="closeSession()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div style="flex:1"><div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" id="se-tit"></div><div style="font-size:13px;color:var(--txt2)" id="se-sub"></div></div>
+    <div style="flex:1"><div style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" id="se-tit"></div><div style="font-size:13px;color:var(--txt2)" id="se-sub"></div></div>
   </div>
   <div style="font-size:13px;color:var(--txt2);margin-bottom:12px" data-i18n="session_edit_hint">Fix a mis-logged weight or reps, or delete the session. PRs recalculate automatically.</div>
   <div id="se-list"></div>
@@ -1139,13 +1140,13 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-feedback" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
     <button class="bg" onclick="ss('settings')" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="btn_send_feedback">Send feedback</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="btn_send_feedback">Send feedback</div>
   </div>
   <label data-i18n="feedback_type_label">Feedback type</label>
-  <div class="g3" style="margin-bottom:14px">
-    <button class="opt-btn" id="fb-bug" onclick="setFBType('Bug report')">🐛 <span data-i18n="fb_bug">Bug</span></button>
-    <button class="opt-btn" id="fb-feat" onclick="setFBType('Feature request')">💡 <span data-i18n="fb_feature">Feature</span></button>
-    <button class="opt-btn" id="fb-gen" onclick="setFBType('General feedback')">💬 <span data-i18n="fb_general">General</span></button>
+  <div class="g3" style="margin-bottom:16px">
+    <button class="opt-btn" id="fb-bug" onclick="setFBType('Bug report')"><i class="ti ti-bug" aria-hidden="true"></i> <span data-i18n="fb_bug">Bug</span></button>
+    <button class="opt-btn" id="fb-feat" onclick="setFBType('Feature request')"><i class="ti ti-bulb" aria-hidden="true"></i> <span data-i18n="fb_feature">Feature</span></button>
+    <button class="opt-btn" id="fb-gen" onclick="setFBType('General feedback')"><i class="ti ti-message-circle" aria-hidden="true"></i> <span data-i18n="fb_general">General</span></button>
   </div>
   <label data-i18n="subject_label">Subject</label>
   <input class="inp" id="fb-subject" type="text" placeholder="Brief description" data-i18n-ph="ph_brief_description">
@@ -1163,7 +1164,7 @@ textarea{resize:vertical;min-height:100px}
   <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
     <button class="bg" onclick="openMidWorkoutEdit()" aria-label="Manage exercises" data-i18n-aria="aria_manage_ex"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
     <div style="flex:1">
-      <div style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" id="wo-tit"></div>
+      <div style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" id="wo-tit"></div>
       <div style="font-size:13px;color:var(--txt2)" id="wo-pl"></div>
     </div>
     <div style="font-size:13px;color:var(--txt2);background:var(--bg2);padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:8px"><i class="ti ti-clock" aria-hidden="true"></i> <span id="wo-el">0:00</span><button onclick="toggleWoPause()" id="wo-pause-btn" aria-label="Pause workout timer" data-i18n-aria="aria_pause_timer" style="background:none;border:none;padding:8px;margin:-8px;cursor:pointer;color:var(--txt2);display:flex;align-items:center"><i class="ti ti-player-pause" id="wo-pause-icon" aria-hidden="true"></i></button></div>
@@ -1175,9 +1176,9 @@ textarea{resize:vertical;min-height:100px}
 <!-- REST -->
 <div id="s-rest" class="screen">
   <div style="text-align:center;margin-bottom:16px">
-    <div style="font-size:11px;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;font-weight:600" data-i18n="rest_label">Rest</div>
-    <div style="font-size:17px;font-weight:700;color:var(--txt);margin-top:4px" id="r-en"></div>
-    <div style="font-size:13px;color:var(--txt2);margin-top:3px" id="r-sl" aria-live="polite"></div>
+    <div style="font-size:11px;color:var(--txt2);font-weight:500" data-i18n="rest_label">Rest</div>
+    <div style="font-size:17px;font-weight:600;color:var(--txt);margin-top:4px" id="r-en"></div>
+    <div style="font-size:13px;color:var(--txt2);margin-top:4px" id="r-sl" aria-live="polite"></div>
   </div>
   <div class="tc" id="t-cir">
     <div class="tc-inner">
@@ -1190,13 +1191,13 @@ textarea{resize:vertical;min-height:100px}
     <button class="bp" style="justify-content:center" onclick="skip()" data-i18n="btn_skip_rest">Skip rest</button>
     <button class="bs" onclick="adj(15)">+15<span data-i18n="unit_s">s</span></button>
   </div>
-  <div id="r-feel" style="display:none;background:var(--bg2);border-radius:10px;padding:14px;margin-bottom:20px">
-    <div id="r-feel-q" style="font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px"></div>
+  <div id="r-feel" style="display:none;background:var(--bg2);border-radius:10px;padding:16px;margin-bottom:20px">
+    <div id="r-feel-q" style="font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:12px"></div>
     <div class="g2" id="r-feel-btns"></div>
   </div>
   <h2 data-i18n="tip_label">Tip</h2>
   <div class="fb" id="r-fb"></div>
-  <h2 style="margin-top:14px" id="r-nx-h" data-i18n="next_set_label">Next set</h2>
+  <h2 style="margin-top:16px" id="r-nx-h" data-i18n="next_set_label">Next set</h2>
   <div class="card" id="r-nx" style="font-size:13px;color:var(--txt)"></div>
 </div>
 
@@ -1204,7 +1205,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-mw" class="screen">
   <div style="text-align:center;margin:20px 0">
     <i class="ti ti-settings-2" style="font-size:32px;color:var(--accent)" aria-hidden="true"></i>
-    <div style="font-size:17px;font-weight:700;margin-top:10px;color:var(--txt)" id="mw-title" data-i18n="machine_base_weight_title">Machine base weight</div>
+    <div style="font-size:17px;font-weight:600;margin-top:10px;color:var(--txt)" id="mw-title" data-i18n="machine_base_weight_title">Machine base weight</div>
     <div style="font-size:13px;color:var(--txt2);margin-top:6px;line-height:1.6" id="mw-desc"></div>
   </div>
   <div class="card">
@@ -1220,11 +1221,11 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-plate" class="screen">
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
     <button class="bg" onclick="closePlateCalc()" aria-label="Back" data-i18n-aria="aria_back"><i class="ti ti-arrow-left" style="font-size:20px" aria-hidden="true"></i></button>
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)" data-i18n="plate_calc_title">Plate calculator</div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)" data-i18n="plate_calc_title">Plate calculator</div>
   </div>
   <div class="card" style="text-align:center">
     <div style="font-size:13px;color:var(--txt2)" data-i18n="target_weight_label">Target weight</div>
-    <div style="font-size:24px;font-weight:700;color:var(--txt)" id="plate-target"></div>
+    <div style="font-size:24px;font-weight:600;color:var(--txt)" id="plate-target"></div>
   </div>
   <div class="card">
     <label data-i18n="bar_frame_weight_label">Bar / frame weight (<span id="plate-unit">kg</span>)</label>
@@ -1232,7 +1233,7 @@ textarea{resize:vertical;min-height:100px}
     <div style="font-size:13px;color:var(--txt2);margin-top:-6px" data-i18n="plate_bar_hint">Defaults to a standard Olympic bar, or this machine's saved base weight if it has one.</div>
   </div>
   <div class="card">
-    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px" data-i18n="per_side_label">Per side</div>
+    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:12px" data-i18n="per_side_label">Per side</div>
     <div id="plate-result"></div>
   </div>
   <button class="bp" style="width:100%;justify-content:center" onclick="closePlateCalc()" data-i18n="btn_done">Done</button>
@@ -1242,7 +1243,7 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-fsw" class="screen">
   <div style="text-align:center;margin:16px 0">
     <i class="ti ti-barbell" style="font-size:32px;color:var(--accent)" aria-hidden="true"></i>
-    <div class="tt" style="font-size:17px;font-weight:700;margin-top:8px;color:var(--txt)" data-i18n="fsw_title">First time — set your weight</div>
+    <div class="tt" style="font-size:17px;font-weight:600;margin-top:8px;color:var(--txt)" data-i18n="fsw_title">First time — set your weight</div>
     <div style="font-size:13px;color:var(--txt2);margin-top:4px" id="fsw-exname"></div>
   </div>
   <div class="card">
@@ -1257,8 +1258,8 @@ textarea{resize:vertical;min-height:100px}
 <!-- EXERCISE INSTRUCTIONS OVERLAY -->
 <div id="exinfo-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeExInfo()"></div>
 <div id="exinfo-sheet" role="dialog" aria-modal="true" aria-labelledby="exinfo-name" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-    <div style="font-size:17px;font-weight:700;color:var(--txt)" id="exinfo-name"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div style="font-size:17px;font-weight:600;color:var(--txt)" id="exinfo-name"></div>
     <button class="bg" onclick="closeExInfo()" aria-label="Close instructions" data-i18n-aria="aria_close_instructions" style="flex-shrink:0"><i class="ti ti-x" aria-hidden="true"></i></button>
   </div>
   <ol id="exinfo-list" style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px"></ol>
@@ -1276,10 +1277,10 @@ textarea{resize:vertical;min-height:100px}
 <div id="whatsnew-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.45)" onclick="closeWhatsNew()"></div>
 <div id="whatsnew-sheet" role="dialog" aria-modal="true" aria-labelledby="whatsnew-version" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-    <div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)"><i class="ti ti-sparkles" style="color:var(--brand-forge);margin-right:6px" aria-hidden="true"></i><span id="whatsnew-version"></span></div>
+    <div class="tt" style="font-size:17px;font-weight:800;text-transform:uppercase;color:var(--txt)"><i class="ti ti-sparkles" style="color:var(--brand-forge);margin-right:6px" aria-hidden="true"></i><span id="whatsnew-version"></span></div>
     <button class="bg" onclick="closeWhatsNew()" aria-label="Close" data-i18n-aria="aria_close" style="flex-shrink:0"><i class="ti ti-x" aria-hidden="true"></i></button>
   </div>
-  <ul id="whatsnew-list" style="margin:14px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--txt);line-height:1.5"></ul>
+  <ul id="whatsnew-list" style="margin:16px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--txt);line-height:1.5"></ul>
   <button class="bp" style="width:100%;justify-content:center;margin-top:20px" onclick="closeWhatsNew()" data-i18n="btn_got_it">Got it</button>
 </div>
 
@@ -1312,10 +1313,10 @@ textarea{resize:vertical;min-height:100px}
 <div id="bdg-sheet" role="dialog" aria-modal="true" aria-labelledby="bdg-sheet-name" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:901;background:var(--bg);border-radius:16px 16px 0 0;padding:20px 16px 32px;max-height:78vh;overflow-y:auto;box-shadow:0 -4px 24px rgba(0,0,0,.18)">
   <div style="display:flex;justify-content:flex-end"><button class="bg" onclick="closeBadge()" aria-label="Close" data-i18n-aria="aria_close"><i class="ti ti-x" aria-hidden="true"></i></button></div>
   <div style="text-align:center;padding:0 8px 4px">
-    <div id="bdg-sheet-art" style="width:88px;margin:0 auto 14px"></div>
-    <div id="bdg-sheet-name" class="tt" style="font-size:19px;font-weight:900;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)"></div>
+    <div id="bdg-sheet-art" style="width:88px;margin:0 auto 16px"></div>
+    <div id="bdg-sheet-name" class="tt" style="font-size:19px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)"></div>
     <div id="bdg-sheet-cond" style="font-size:13.5px;color:var(--txt2);margin-top:8px;line-height:1.5"></div>
-    <div id="bdg-sheet-meta" style="font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-top:14px"></div>
+    <div id="bdg-sheet-meta" style="font-family:var(--font-mono);font-size:11px;margin-top:16px"></div>
   </div>
   <button class="bp" style="width:100%;justify-content:center;margin-top:20px" onclick="closeBadge()" data-i18n="btn_got_it">Got it</button>
 </div>
@@ -1324,16 +1325,16 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-exfeel" class="screen">
   <div style="text-align:center;margin-bottom:6px;margin-top:8px">
     <i class="ti ti-barbell" style="font-size:32px;color:var(--accent)" aria-hidden="true"></i>
-    <div style="font-size:17px;font-weight:700;margin-top:8px;color:var(--txt)" id="ef-name"></div>
+    <div style="font-size:17px;font-weight:600;margin-top:8px;color:var(--txt)" id="ef-name"></div>
     <div style="font-size:13px;color:var(--txt2);margin-top:4px" id="ef-sets"></div>
   </div>
-  <div style="background:var(--bg2);border-radius:10px;padding:14px;margin:14px 0">
-    <div style="font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px" data-i18n="ef_question">On your last set, how many reps could you still have done?</div>
+  <div style="background:var(--bg2);border-radius:10px;padding:16px;margin:16px 0">
+    <div style="font-size:12px;font-weight:600;color:var(--txt2);margin-bottom:12px" data-i18n="ef_question">On your last set, how many reps could you still have done?</div>
     <div class="g2">
-      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('easy')"><span class="feel-icon">😌</span><div><div style="font-size:13px;font-weight:700;color:#3C8464" data-i18n="rir_5plus">5+ reps left</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_5plus_sub">Way too light</div></div></button>
-      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('good')"><span class="feel-icon">💪</span><div><div style="font-size:13px;font-weight:700;color:#4A6FA5" data-i18n="rir_3_4">3–4 reps left</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_3_4_sub">Room to grow</div></div></button>
-      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('hard')"><span class="feel-icon">🔥</span><div><div style="font-size:13px;font-weight:700;color:#A5822B" data-i18n="rir_1_2">1–2 reps left</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_1_2_sub">Dialed in</div></div></button>
-      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('max')"><span class="feel-icon">😵</span><div><div style="font-size:13px;font-weight:700;color:#C05A3E" data-i18n="rir_0">0 — to failure</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_0_sub">Nothing left</div></div></button>
+      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('easy')"><span class="feel-icon"><i class="feel-dot" style="background:#3C8464" aria-hidden="true"></i></span><div><div style="font-size:13px;font-weight:600;color:#3C8464" data-i18n="rir_5plus">5+ reps left</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_5plus_sub">Way too light</div></div></button>
+      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('good')"><span class="feel-icon"><i class="feel-dot" style="background:#4A6FA5" aria-hidden="true"></i></span><div><div style="font-size:13px;font-weight:600;color:#4A6FA5" data-i18n="rir_3_4">3–4 reps left</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_3_4_sub">Room to grow</div></div></button>
+      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('hard')"><span class="feel-icon"><i class="feel-dot" style="background:#A5822B" aria-hidden="true"></i></span><div><div style="font-size:13px;font-weight:600;color:#A5822B" data-i18n="rir_1_2">1–2 reps left</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_1_2_sub">Dialed in</div></div></button>
+      <button class="feel-btn" style="margin-bottom:0" onclick="submitExFeel('max')"><span class="feel-icon"><i class="feel-dot" style="background:#C05A3E" aria-hidden="true"></i></span><div><div style="font-size:13px;font-weight:600;color:#C05A3E" data-i18n="rir_0">0 — to failure</div><div style="font-size:11px;color:var(--txt2);margin-top:2px" data-i18n="rir_0_sub">Nothing left</div></div></button>
     </div>
   </div>
   <button class="bs" style="width:100%;margin-top:4px;font-size:13px" onclick="submitExFeel(null)" data-i18n="btn_skip">Skip</button>
@@ -1343,13 +1344,13 @@ textarea{resize:vertical;min-height:100px}
 <div id="s-feel" class="screen">
   <div style="text-align:center;margin-bottom:28px;margin-top:8px">
     <i class="ti ti-mood-smile" style="font-size:32px;color:var(--accent)" aria-hidden="true"></i>
-    <div class="tt" style="font-size:20px;font-weight:700;margin-top:10px;color:var(--txt)" data-i18n="feel_overall_question">How did it feel overall?</div>
+    <div class="tt" style="font-size:20px;font-weight:600;margin-top:10px;color:var(--txt)" data-i18n="feel_overall_question">How did it feel overall?</div>
     <div style="font-size:13px;color:var(--txt2);margin-top:4px" data-i18n="feel_overall_sub">Helps track how this session went</div>
   </div>
-  <button class="feel-btn" onclick="submitFeel('easy')"><span class="feel-icon">😌</span><div><div style="font-size:15px;font-weight:700;color:#3C8464" data-i18n="feel_too_easy">Too easy</div><div style="font-size:13px;color:var(--txt2);margin-top:2px" data-i18n="feel_couldve_done_more">Could've done more</div></div></button>
-  <button class="feel-btn" onclick="submitFeel('good')"><span class="feel-icon">💪</span><div><div style="font-size:15px;font-weight:700;color:#4A6FA5" data-i18n="feel_just_right">Just right</div><div style="font-size:13px;color:var(--txt2);margin-top:2px" data-i18n="feel_challenging_controlled">Challenging but controlled</div></div></button>
-  <button class="feel-btn" onclick="submitFeel('hard')"><span class="feel-icon">🔥</span><div><div style="font-size:15px;font-weight:700;color:#A5822B" data-i18n="feel_hard">Hard</div><div style="font-size:13px;color:var(--txt2);margin-top:2px" data-i18n="feel_pushed_to_limit">Pushed to the limit</div></div></button>
-  <button class="feel-btn" onclick="submitFeel('max')"><span class="feel-icon">😵</span><div><div style="font-size:15px;font-weight:700;color:#C05A3E" data-i18n="feel_too_much">Too much</div><div style="font-size:13px;color:var(--txt2);margin-top:2px" data-i18n="feel_overdid_it">Overdid it</div></div></button>
+  <button class="feel-btn" onclick="submitFeel('easy')"><span class="feel-icon"><i class="feel-dot" style="background:#3C8464" aria-hidden="true"></i></span><div><div style="font-size:15px;font-weight:600;color:#3C8464" data-i18n="feel_too_easy">Too easy</div><div style="font-size:13px;color:var(--txt2);margin-top:2px" data-i18n="feel_couldve_done_more">Could've done more</div></div></button>
+  <button class="feel-btn" onclick="submitFeel('good')"><span class="feel-icon"><i class="feel-dot" style="background:#4A6FA5" aria-hidden="true"></i></span><div><div style="font-size:15px;font-weight:600;color:#4A6FA5" data-i18n="feel_just_right">Just right</div><div style="font-size:13px;color:var(--txt2);margin-top:2px" data-i18n="feel_challenging_controlled">Challenging but controlled</div></div></button>
+  <button class="feel-btn" onclick="submitFeel('hard')"><span class="feel-icon"><i class="feel-dot" style="background:#A5822B" aria-hidden="true"></i></span><div><div style="font-size:15px;font-weight:600;color:#A5822B" data-i18n="feel_hard">Hard</div><div style="font-size:13px;color:var(--txt2);margin-top:2px" data-i18n="feel_pushed_to_limit">Pushed to the limit</div></div></button>
+  <button class="feel-btn" onclick="submitFeel('max')"><span class="feel-icon"><i class="feel-dot" style="background:#C05A3E" aria-hidden="true"></i></span><div><div style="font-size:15px;font-weight:600;color:#C05A3E" data-i18n="feel_too_much">Too much</div><div style="font-size:13px;color:var(--txt2);margin-top:2px" data-i18n="feel_overdid_it">Overdid it</div></div></button>
   <label style="margin-top:4px" data-i18n="session_note_label">Session note <span style="font-weight:400;color:var(--txt3)" data-i18n="optional_paren">(optional)</span></label>
   <textarea class="inp" id="feel-note-inp" placeholder="How the session went, anything worth remembering…" data-i18n-ph="ph_session_note" style="min-height:60px"></textarea>
 </div>
@@ -1360,12 +1361,12 @@ textarea{resize:vertical;min-height:100px}
     <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--tint-green-2),var(--tint-green-1));box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;margin:0 auto">
       <i class="ti ti-trophy" style="font-size:32px;color:var(--brand-green)" aria-hidden="true"></i>
     </div>
-    <div class="tt" style="font-size:24px;font-weight:700;margin-top:10px;color:var(--txt)" data-i18n="session_done_title">Session done!</div>
+    <div class="tt" style="font-size:24px;font-weight:600;margin-top:10px;color:var(--txt)" data-i18n="session_done_title">Session done!</div>
     <div style="font-size:13px;color:var(--txt2);margin-top:4px" id="su-lb"></div>
   </div>
-  <div id="su-pr" style="margin-bottom:14px"></div>
-  <div id="su-badges" style="margin-bottom:14px"></div>
-  <div id="su-feel-tag" style="margin-bottom:14px"></div>
+  <div id="su-pr" style="margin-bottom:16px"></div>
+  <div id="su-badges" style="margin-bottom:16px"></div>
+  <div id="su-feel-tag" style="margin-bottom:16px"></div>
   <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px">
     <div class="sc c1"><div class="sv" id="su-du"></div><div class="sl" data-i18n="duration_label">Duration</div></div>
     <div class="sc c2"><div class="sv" id="su-vol"></div><div class="sl" data-i18n="volume_label">Volume</div></div>
@@ -1376,24 +1377,24 @@ textarea{resize:vertical;min-height:100px}
     <button class="bs" style="flex:1;justify-content:center" onclick="shareSessionCard()"><i class="ti ti-share" aria-hidden="true"></i> <span data-i18n="btn_share">Share</span></button>
     <button class="bp" style="flex:1;justify-content:center" onclick="goHome()" data-i18n="btn_back_to_home">Back to home</button>
   </div>
-  <div id="share-preview-wrap" style="display:none;margin-top:14px;text-align:center">
+  <div id="share-preview-wrap" style="display:none;margin-top:16px;text-align:center">
     <img id="share-preview-img" style="max-width:100%;border-radius:8px;box-shadow:var(--shadow-md)" alt="Session summary card">
     <div style="font-size:11px;color:var(--txt2);margin-top:8px" data-i18n="press_hold_save_hint">Press and hold the image to save it</div>
   </div>
-  <div class="card" style="margin-top:18px;display:flex;align-items:center;gap:12px">
+  <div class="card" style="margin-top:16px;display:flex;align-items:center;gap:12px">
     <i class="ti ti-heart" aria-hidden="true" style="font-size:24px;color:var(--accent);flex-shrink:0"></i>
     <div style="flex:1;min-width:0;font-size:13px;color:var(--txt2);line-height:1.45" data-i18n="fb_invite_body">Enjoying GainPath? Like our Facebook page for training tips and app updates.</div>
-    <a class="bs" id="su-fb" href="https://www.facebook.com/profile.php?id=61594331834438" target="_blank" rel="noopener" style="flex-shrink:0;text-decoration:none;white-space:nowrap;padding:9px 14px;font-size:13px" data-i18n="fb_invite_btn">Like page</a>
+    <a class="bs" id="su-fb" href="https://www.facebook.com/profile.php?id=61594331834438" target="_blank" rel="noopener" style="flex-shrink:0;text-decoration:none;white-space:nowrap;padding:8px 16px;font-size:13px" data-i18n="fb_invite_btn">Like page</a>
   </div>
 </div>
 
 <!-- BOTTOM NAV -->
-<div class="bottom-nav" id="bnav">
+<nav class="bottom-nav" id="bnav" data-i18n-aria="nav_label" aria-label="Main">
   <button class="bn-item on" id="bn-wk" onclick="bnav('wk')"><i class="ti ti-barbell" aria-hidden="true"></i><span data-i18n="nav_workouts">Workouts</span></button>
   <button class="bn-item" id="bn-cal" onclick="bnav('cal')"><i class="ti ti-calendar" aria-hidden="true"></i><span data-i18n="nav_calendar">Calendar</span></button>
   <button class="bn-item" id="bn-ch" onclick="bnav('ch')"><i class="ti ti-mountain" aria-hidden="true"></i><span data-i18n="nav_climb">Climb</span></button>
   <button class="bn-item" id="bn-pr" onclick="bnav('pr')"><i class="ti ti-flag" aria-hidden="true"></i><span data-i18n="nav_prs">PRs</span></button>
-</div>
+</nav>
 
 </div>
 <script src="js/boot.js?v=2.15.0"></script>

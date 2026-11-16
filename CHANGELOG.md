@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- Design polish (unslop pass): emoji removed from labels, buttons, chips and the rest notification, with a coloured dot for the rating buttons and existing line icons for the suggestion, break and sync chips; small uppercase tracked labels are now sentence case; body weights drop to 400–600 (display titles and buttons keep Archivo 800); stat cards lose their gradient wash; `transition:all` and the rating-button hover lift are gone; "Feedback sent" drops the check mark and exclamation.
+- Interface strings lose their exclamation marks in en, ja and ko (greetings, saved/restored toasts, "Session done", PR and streak messages); the Home greeting reads "Good morning, Jed · Last: Push day".
+- Padding, margin and gap values that sat between steps (3, 5, 7, 9, 13, 14, 18, 22px) now snap to the 4px scale; white text on the lime accent in the day editor uses `--accent-ink`.
+- The feedback buttons get line icons (`ti-bug`, `ti-bulb`, `ti-message-circle`); the icon subset gains two glyphs and `CACHE_NAME` moves to v58. README and tutorial screenshots are retaken.
+- The bottom tab bar now follows the iOS tab bar: 49px plus the safe-area inset, translucent blurred background, 24px icons with 10px sentence-case labels, `aria-current` on the active tab and a labelled `<nav>`.
+
 ### Fixed
 - Clarified unit conversion rounding and privacy disclosures for shared data.
 - Startup measurements now distinguish DOM readiness from the first usable screen; visual checks capture Home without a sheet and capture What’s New separately.

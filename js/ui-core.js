@@ -179,7 +179,7 @@ function notifyRestDone(missed){
   if(!missed&&!document.hidden)return;
   if(!('Notification' in window)||Notification.permission!=='granted')return;
   if(!navigator.serviceWorker)return;
-  navigator.serviceWorker.ready.then(reg=>reg.showNotification('Rest over — back to work! 💪',{body:'Your rest timer is done.',tag:'gp-rest',icon:'images/branding/apple-touch-icon.png',badge:'images/branding/favicon-32.png',vibrate:[300,120,300,120,600]})).catch(()=>{});
+  navigator.serviceWorker.ready.then(reg=>reg.showNotification('Rest over, back to work',{body:'Your rest timer is done.',tag:'gp-rest',icon:'images/branding/apple-touch-icon.png',badge:'images/branding/favicon-32.png',vibrate:[300,120,300,120,600]})).catch(()=>{});
 }
 document.addEventListener('visibilitychange',()=>{
   if(!document.hidden&&ST.restEnd&&ST.rt){

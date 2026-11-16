@@ -132,7 +132,7 @@ function renderEx(){
   gid('wo-pb').style.width=Math.round((ST.exi/ST.sd.length)*100)+'%';
   gid('wo-pl').textContent=t('exercise_progress_prefix')+(ST.exi+1)+t('exercise_progress_of')+ST.sd.length;
   const ssGrp=woGroup(ST.exi);
-  const ssBanner=ssGrp?'<div style="background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:9px 13px;margin-bottom:10px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;display:flex;align-items:center;gap:6px"><i class="ti ti-link" aria-hidden="true"></i>'+(ssGrp.size>2?'Circuit':'Superset')+' '+String.fromCharCode(64+woGroupLetter(ST.exi))+' — exercise '+ssGrp.pos+' of '+ssGrp.size+' · minimal rest, alternate each set</div>':'';
+  const ssBanner=ssGrp?'<div style="background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:8px 12px;margin-bottom:10px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;display:flex;align-items:center;gap:6px"><i class="ti ti-link" aria-hidden="true"></i>'+(ssGrp.size>2?'Circuit':'Superset')+' '+String.fromCharCode(64+woGroupLetter(ST.exi))+' — exercise '+ssGrp.pos+' of '+ssGrp.size+' · minimal rest, alternate each set</div>':'';
   const isBW=ex.note==='bodyweight';const mwBase=ex.machine&&ST.mw[mwKey(ex.name)]!==undefined?ST.mw[mwKey(ex.name)]:0;
   // Plate calculator only makes sense when you load plates on a bar/frame:
   // barbell lifts and plate-loaded machines (base weight set). Dumbbells,
@@ -157,7 +157,7 @@ function renderEx(){
         '<button type="button" class="sst" onclick="stepWeight('+i+','+stepInc+')" '+A('aria_inc_w')+'>+</button>';
     const rctrl=ex.holdSecs?
       ('<button type="button" class="log" style="background:var(--bg3);color:var(--accent);margin-left:6px" onclick="toggleHold('+i+')" '+A(HOLD_IDX===i?'aria_hold_stop':'aria_hold_start')+(HOLD_IDX!==null&&HOLD_IDX!==i?' disabled':'')+'>'+t(HOLD_IDX===i?'hold_stop_btn':'hold_start_btn')+'</button>'+
-       '<span id="hold-t-'+i+'" class="sr-x" style="min-width:36px;text-align:center;color:var(--txt);font-family:var(--font-mono);font-weight:700">'+(HOLD_IDX===i?fmt(Math.round((Date.now()-HOLD_START)/1000)):fmt(s.r))+'</span>')
+       '<span id="hold-t-'+i+'" class="sr-x" style="min-width:36px;text-align:center;color:var(--txt);font-family:var(--font-mono);font-weight:600">'+(HOLD_IDX===i?fmt(Math.round((Date.now()-HOLD_START)/1000)):fmt(s.r))+'</span>')
       :('<span class="sr-x">×</span><input class="ri" '+A('aria_reps')+' type="number" value="'+s.r+'" min="1" onfocus="this.select()" onchange="updRep('+i+',this.value)">');
     const plateBtn=(showPlate&&!isBW)?'<button type="button" class="bs sr-act plate" onclick="openPlateCalc('+i+')" '+A('aria_plate')+'><i class="ti ti-stack-2" aria-hidden="true"></i> '+esc(t('btn_plate_calc'))+'</button>':'';
     const doneDisabled=ex.holdSecs&&(HOLD_IDX===i||!s.r);
@@ -190,12 +190,12 @@ function renderEx(){
   let sugHtml='';
   if(!item.sugDone&&!sets.some(s=>s.done)&&!isBW&&!ex.holdSecs&&ex.plannedW===undefined){
     const fw=sets.find(s=>s.t!=='w');const brk=fw?breakSuggest(ex,fw.w):null;const sync=fw&&!brk?syncSuggest(ex,fw.w,fw.r):null;const sug=fw&&!brk&&!sync?suggestWeight(ex,fw.w):null;
-    if(brk){const bd=ex.machine&&mwBase>0?(+(brk.newW-mwBase).toFixed(1)):brk.newW;sugHtml='<div class="sug-chip"><span>⏸️ '+t('break_chip').replace('{n}',brk.weeks).replace('{w}','<strong>'+bd+CFG.unit+'</strong>')+'</span><button class="db ok" onclick="applySuggest('+brk.newW+')">'+t('btn_apply')+'</button><button class="bg" style="padding:4px 8px" onclick="dismissSuggest()">'+t('btn_dismiss')+'</button></div>';}
-    if(sync)sugHtml='<div class="sug-chip"><span>🔗 '+t('sync_chip').replace('{src}',esc(exDisplayName(sync.src))).replace('{w}','<strong>'+sync.newW+CFG.unit+'</strong>')+'</span><button class="db ok" onclick="applySuggest('+sync.newW+')">'+t('btn_apply')+'</button><button class="bg" style="padding:4px 8px" onclick="dismissSync('+sync.newW+')">'+t('btn_dismiss')+'</button></div>';
+    if(brk){const bd=ex.machine&&mwBase>0?(+(brk.newW-mwBase).toFixed(1)):brk.newW;sugHtml='<div class="sug-chip"><span><i class="ti ti-player-pause" aria-hidden="true"></i> '+t('break_chip').replace('{n}',brk.weeks).replace('{w}','<strong>'+bd+CFG.unit+'</strong>')+'</span><button class="db ok" onclick="applySuggest('+brk.newW+')">'+t('btn_apply')+'</button><button class="bg" style="padding:4px 8px" onclick="dismissSuggest()">'+t('btn_dismiss')+'</button></div>';}
+    if(sync)sugHtml='<div class="sug-chip"><span><i class="ti ti-link" aria-hidden="true"></i> '+t('sync_chip').replace('{src}',esc(exDisplayName(sync.src))).replace('{w}','<strong>'+sync.newW+CFG.unit+'</strong>')+'</span><button class="db ok" onclick="applySuggest('+sync.newW+')">'+t('btn_apply')+'</button><button class="bg" style="padding:4px 8px" onclick="dismissSync('+sync.newW+')">'+t('btn_dismiss')+'</button></div>';
     if(sug){const disp=ex.machine&&mwBase>0?(+(sug.newW-mwBase).toFixed(1)):sug.newW;const verb=t({easy:'wk_v_easy',good:'wk_v_good',max:'wk_v_max'}[sug.feel]||'wk_v_adjust');
-      sugHtml='<div class="sug-chip"><span>'+t('wk_sug_chip').replace('{verb}',verb).replace('{w}',disp+CFG.unit).replace('{d}',(sug.delta>0?'+':'')+sug.delta)+'</span><button class="db ok" onclick="applySuggest('+sug.newW+')">'+t('btn_apply')+'</button><button class="bg" style="padding:4px 8px" onclick="dismissSuggest()">'+t('btn_dismiss')+'</button></div>';}
+      sugHtml='<div class="sug-chip"><span><i class="ti ti-bulb" aria-hidden="true"></i> '+t('wk_sug_chip').replace('{verb}',verb).replace('{w}',disp+CFG.unit).replace('{d}',(sug.delta>0?'+':'')+sug.delta)+'</span><button class="db ok" onclick="applySuggest('+sug.newW+')">'+t('btn_apply')+'</button><button class="bg" style="padding:4px 8px" onclick="dismissSuggest()">'+t('btn_dismiss')+'</button></div>';}
   }
-  gid('ex-area').innerHTML=ssBanner+'<div class="card">'+exImg+'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">'+esc(exDisplayName(ex.name))+'</div><button type="button" onclick="showExInstructions('+jsArg(ex.name)+')" aria-label="'+t('aria_ex_instructions')+'" style="flex-shrink:0;width:34px;height:34px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);color:var(--accent);font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1">?</button></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+esc(ex.note)+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">'+t('bodyweight_badge')+'</span>':'')+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+t('unit_sets_suffix')+'</span></div>'+tipHtml+noteHtml+sugHtml+sh+addSetHtml+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+dropBtnBottom+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?t('btn_finish_workout')+' <i class="ti ti-trophy" aria-hidden="true"></i>':t('btn_next_exercise')+' <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
+  gid('ex-area').innerHTML=ssBanner+'<div class="card">'+exImg+'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px"><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><div class="tt" style="font-size:17px;font-weight:800;letter-spacing:-.01em;text-transform:uppercase;color:var(--txt)">'+esc(exDisplayName(ex.name))+'</div><button type="button" onclick="showExInstructions('+jsArg(ex.name)+')" aria-label="'+t('aria_ex_instructions')+'" style="flex-shrink:0;width:34px;height:34px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);color:var(--accent);font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1">?</button></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+(ex.note&&ex.note!=='bodyweight'?'<span class="bdg bi">'+esc(ex.note)+'</span>':'')+(isBW?'<span class="bdg" style="background:var(--bg2);color:var(--txt2)">'+t('bodyweight_badge')+'</span>':'')+mwNote+'</div></div><span style="font-size:11px;color:var(--txt2);margin-left:8px;white-space:nowrap">'+sets.length+t('unit_sets_suffix')+'</span></div>'+tipHtml+noteHtml+sugHtml+sh+addSetHtml+'</div><div style="display:flex;gap:8px;margin-top:6px">'+(ST.exi>0?'<button class="bs" onclick="prevEx()" aria-label="Previous exercise"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>':'')+dropBtnBottom+'<button class="bp" style="flex:1;justify-content:center" onclick="askExFeel()">'+(isLast?t('btn_finish_workout')+' <i class="ti ti-trophy" aria-hidden="true"></i>':t('btn_next_exercise')+' <i class="ti ti-arrow-right" aria-hidden="true"></i>')+'</button></div>';
   if(item.firstTime&&CFG.startingWeights==='manual'&&!item.wSet&&ex.plannedW===undefined)showFSW(ex);
   saveInProgress();
 }
@@ -204,7 +204,7 @@ function exNoteHtml(item,ex){
   const noteOpen=ST.noteEditIdx===ST.exi;
   const lastNote=noteVal?null:lastNoteForExercise(ex.name);
   let html='';
-  if(lastNote)html+='<div style="font-size:11px;color:var(--txt3);margin-bottom:6px;display:flex;gap:5px;align-items:flex-start"><i class="ti ti-notes" aria-hidden="true" style="flex-shrink:0;margin-top:1px"></i><span>'+t('wk_last_note').replace('{note}',esc(lastNote))+'</span></div>';
+  if(lastNote)html+='<div style="font-size:11px;color:var(--txt3);margin-bottom:6px;display:flex;gap:4px;align-items:flex-start"><i class="ti ti-notes" aria-hidden="true" style="flex-shrink:0;margin-top:1px"></i><span>'+t('wk_last_note').replace('{note}',esc(lastNote))+'</span></div>';
   if(noteOpen){
     html+='<textarea class="inp" id="ex-note-inp" style="min-height:56px;margin-bottom:6px;font-size:13px" placeholder="'+esc(t('wk_note_ph'))+'" oninput="ST.sd['+ST.exi+'].userNote=this.value">'+esc(noteVal)+'</textarea>'+
       '<button class="bg" style="padding:4px 8px;font-size:13px;margin-bottom:12px" onclick="closeExNote()">'+t('btn_done')+'</button>';
@@ -355,10 +355,10 @@ function delSet(i){
 }
 // Labels are read through t() each time (getters), so a language change applies.
 const FEEL_OPTS=[
-  {k:'easy',icon:'😌',get label(){return t('rir_5plus');},color:'#3C8464',get sub(){return t('rir_5plus_sub');}},
-  {k:'good',icon:'💪',get label(){return t('rir_3_4');},color:'#4A6FA5',get sub(){return t('rir_3_4_sub');}},
-  {k:'hard',icon:'🔥',get label(){return t('rir_1_2');},color:'#A5822B',get sub(){return t('rir_1_2_sub');}},
-  {k:'max',icon:'😵',get label(){return t('rir_0');},color:'#C05A3E',get sub(){return t('rir_0_sub');}}
+  {k:'easy',icon:'<i class="feel-dot" style="background:#3C8464" aria-hidden="true"></i>',get label(){return t('rir_5plus');},color:'#3C8464',get sub(){return t('rir_5plus_sub');}},
+  {k:'good',icon:'<i class="feel-dot" style="background:#4A6FA5" aria-hidden="true"></i>',get label(){return t('rir_3_4');},color:'#4A6FA5',get sub(){return t('rir_3_4_sub');}},
+  {k:'hard',icon:'<i class="feel-dot" style="background:#A5822B" aria-hidden="true"></i>',get label(){return t('rir_1_2');},color:'#A5822B',get sub(){return t('rir_1_2_sub');}},
+  {k:'max',icon:'<i class="feel-dot" style="background:#C05A3E" aria-hidden="true"></i>',get label(){return t('rir_0');},color:'#C05A3E',get sub(){return t('rir_0_sub');}}
 ];
 function plateLabel(w,base){return t('wk_plates_machine').replace('{w}',w+CFG.unit).replace('{b}',base+CFG.unit);}
 function repsLabel(ex,r){return ex.holdSecs?t('hold_start_btn'):t('wk_reps').replace('{n}',r);}
@@ -378,7 +378,7 @@ function setPrepLabel(ex,s){
 function renderRestFeel(P){
   const item=ST.sd[P];if(!item)return;const sel=item.exFeel;
   gid('r-feel-q').textContent=sel!=null?t('wk_rated'):t('wk_last_set_q').replace('{name}',item.ex.name);
-  gid('r-feel-btns').innerHTML=FEEL_OPTS.map(o=>'<button class="feel-btn" style="margin-bottom:0'+(sel===o.k?';border-color:var(--accent);background:var(--tint-green-1)':'')+'" onclick="restRate(\''+o.k+'\')"><span class="feel-icon">'+o.icon+'</span><div><div style="font-size:13px;font-weight:700;color:'+o.color+'">'+o.label+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+o.sub+'</div></div></button>').join('');
+  gid('r-feel-btns').innerHTML=FEEL_OPTS.map(o=>'<button class="feel-btn" style="margin-bottom:0'+(sel===o.k?';border-color:var(--accent);background:var(--tint-green-1)':'')+'" onclick="restRate(\''+o.k+'\')"><span class="feel-icon">'+o.icon+'</span><div><div style="font-size:13px;font-weight:600;color:'+o.color+'">'+o.label+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+o.sub+'</div></div></button>').join('');
 }
 function restRate(feel){const P=ST.exi;if(!ST.sd[P])return;ST.sd[P].exFeel=feel;ST.restRated=true;renderRestFeel(P);saveInProgress();}
 // The "next" card and tip on the rest screen, from the saved rest state. Also

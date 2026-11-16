@@ -7,8 +7,8 @@ function dismissSync(w){CFG.syncDismiss=CFG.syncDismiss||{};CFG.syncDismiss[ST.s
 // stored keys (easy/good/hard/max) and colors, different labels — kept as two
 // maps so relabeling the per-exercise rating never touches the session one.
 // Labels are getters over t(), so they follow the language without the stored keys changing.
-const FEEL_META={easy:{get l(){return t('feel_too_easy');},c:'#3C8464',e:'😌'},good:{get l(){return t('feel_just_right');},c:'#4A6FA5',e:'💪'},hard:{get l(){return t('feel_hard');},c:'#A5822B',e:'🔥'},max:{get l(){return t('feel_too_much');},c:'#C05A3E',e:'😵'}};
-const RIR_META={easy:{get l(){return t('rir_5plus');},c:'#3C8464',e:'😌'},good:{get l(){return t('rir_3_4');},c:'#4A6FA5',e:'💪'},hard:{get l(){return t('rir_1_2');},c:'#A5822B',e:'🔥'},max:{get l(){return t('rir_0');},c:'#C05A3E',e:'😵'}};
+const FEEL_META={easy:{get l(){return t('feel_too_easy');},c:'#3C8464',e:'<i class="feel-dot sm" style="background:#3C8464" aria-hidden="true"></i>'},good:{get l(){return t('feel_just_right');},c:'#4A6FA5',e:'<i class="feel-dot sm" style="background:#4A6FA5" aria-hidden="true"></i>'},hard:{get l(){return t('feel_hard');},c:'#A5822B',e:'<i class="feel-dot sm" style="background:#A5822B" aria-hidden="true"></i>'},max:{get l(){return t('feel_too_much');},c:'#C05A3E',e:'<i class="feel-dot sm" style="background:#C05A3E" aria-hidden="true"></i>'}};
+const RIR_META={easy:{get l(){return t('rir_5plus');},c:'#3C8464',e:'<i class="feel-dot sm" style="background:#3C8464" aria-hidden="true"></i>'},good:{get l(){return t('rir_3_4');},c:'#4A6FA5',e:'<i class="feel-dot sm" style="background:#4A6FA5" aria-hidden="true"></i>'},hard:{get l(){return t('rir_1_2');},c:'#A5822B',e:'<i class="feel-dot sm" style="background:#A5822B" aria-hidden="true"></i>'},max:{get l(){return t('rir_0');},c:'#C05A3E',e:'<i class="feel-dot sm" style="background:#C05A3E" aria-hidden="true"></i>'}};
 function feelChip(feel){const m=RIR_META[feel];return m?'<span class="bdg" style="background:var(--bg2);color:'+m.c+'">'+m.e+' '+m.l+'</span>':'';}
 function stepWeight(i,delta){
   const item=ST.sd[ST.exi];const ex=item.ex;const sets=item.sets;
@@ -55,11 +55,11 @@ function renderExHistory(name){
     const setStr=s.sets.map(st=>isHold?t('wk_held').replace('{t}',fmt(st.r)):isBW?bwWeightLabel(st.w)+(st.r?' × '+st.r:''):st.w+CFG.unit+'×'+st.r).join(' · ');
     const vol=isBW||isHold?0:s.sets.reduce((a,st)=>a+(st.w>0?st.w*st.r:0),0);
     const best=isBW||isHold?0:Math.max(0,...s.sets.map(st=>e1rm(st.w,st.r)));
-    return '<div class="card" role="button" tabindex="0" onclick="openSession('+s.idx+')" style="cursor:pointer;padding:12px 16px;margin-bottom:7px">'+
+    return '<div class="card" role="button" tabindex="0" onclick="openSession('+s.idx+')" style="cursor:pointer;padding:12px 16px;margin-bottom:8px">'+
       '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(showDate(s.dk,s.date))+'</div>'+(s.exFeel?feelChip(s.exFeel):'')+'</div>'+
       '<div style="font-size:13px;color:var(--txt2);margin-top:4px">'+setStr+'</div>'+
-      (vol>0?'<div style="font-size:11px;color:var(--txt3);margin-top:3px">Volume '+fmtVol(vol,CFG.unit)+' · Est. 1RM '+best+CFG.unit+'</div>':'')+
-      (s.note?'<div style="font-size:11px;color:var(--txt3);margin-top:3px;display:flex;gap:4px;align-items:flex-start"><i class="ti ti-notes" aria-hidden="true" style="flex-shrink:0;margin-top:1px"></i>'+esc(s.note)+'</div>':'')+
+      (vol>0?'<div style="font-size:11px;color:var(--txt3);margin-top:4px">Volume '+fmtVol(vol,CFG.unit)+' · Est. 1RM '+best+CFG.unit+'</div>':'')+
+      (s.note?'<div style="font-size:11px;color:var(--txt3);margin-top:4px;display:flex;gap:4px;align-items:flex-start"><i class="ti ti-notes" aria-hidden="true" style="flex-shrink:0;margin-top:1px"></i>'+esc(s.note)+'</div>':'')+
     '</div>';
   }).join('')+moreBtn(ordered.length,CAP,ST.histAll,'toggleHistAll()');
 }
@@ -83,7 +83,7 @@ function renderSessionEdit(){
         '<input class="wi" type="number" min="0" step="0.5" value="'+s.w+'" onfocus="this.select()" onchange="updSessionSet('+ei+','+si+',\'w\',this.value)"><span style="font-size:11px;color:var(--txt2)">'+CFG.unit+'×</span>'+
         '<input class="ri" type="number" min="0" value="'+s.r+'" onfocus="this.select()" onchange="updSessionSet('+ei+','+si+',\'r\',this.value)"><span style="font-size:11px;color:var(--txt2)">'+repUnit+'</span></div>';
     }).join('');
-    return '<div class="card"><div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:6px">'+esc(ex.name)+'</div>'+rows+
+    return '<div class="card"><div style="font-size:15px;font-weight:600;color:var(--txt);margin-bottom:6px">'+esc(ex.name)+'</div>'+rows+
       '<label style="margin:8px 0 4px">'+t('hs_note')+'</label><textarea class="inp" style="min-height:44px;margin-bottom:0;font-size:13px" oninput="ST.editSessionData.exercises['+ei+'].note=this.value" placeholder="'+esc(t('hs_optional'))+'">'+esc(ex.note||'')+'</textarea></div>';
   }).join('');
 }
@@ -129,7 +129,7 @@ function renderCal(){
       return '<button class="cal-sess" onclick="openSession('+i+')"><div style="text-align:left"><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(h.dayName)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+esc(h.dur)+(vol>0?' · '+fmtVol(vol,CFG.unit):'')+' · '+h.sets+t('unit_sets_suffix')+(h.feel&&FEEL_META[h.feel]?' · '+FEEL_META[h.feel].e+' '+FEEL_META[h.feel].l:'')+'</div></div><i class="ti ti-chevron-right" style="color:var(--txt3)" aria-hidden="true"></i></button>';
     }).join('');
     const selRec=ST.history[byDay[ST.calSel][0]],selDate=showDate(selRec.dk,selRec.date);
-    dayPanel='<div class="cal-day-panel"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:700;color:var(--txt)">'+esc(selDate)+'</span><button class="bg" style="padding:4px 8px" onclick="selCalDay('+jsArg(ST.calSel)+')" aria-label="Close day view"><i class="ti ti-x" aria-hidden="true"></i></button></div>'+rows+'<div style="font-size:11px;color:var(--txt2);margin-top:4px">Tap a session to view, fix, or delete it.</div></div>';
+    dayPanel='<div class="cal-day-panel"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><span style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(selDate)+'</span><button class="bg" style="padding:4px 8px" onclick="selCalDay('+jsArg(ST.calSel)+')" aria-label="Close day view"><i class="ti ti-x" aria-hidden="true"></i></button></div>'+rows+'<div style="font-size:11px;color:var(--txt2);margin-top:4px">Tap a session to view, fix, or delete it.</div></div>';
   }
   const monthSessions=Object.values(byDay).flat().map(i=>ST.history[i]);
   const vol=monthSessions.reduce((a,h)=>a+sessionVolume(h),0);
@@ -234,7 +234,7 @@ function stab(t){
   const home=t==='wk';
   const hs=gid('hm-streak');if(hs)hs.style.display=home?'flex':'none';
   const bn=gid('prt-h');if(bn)bn.style.display=home?'':'none';
-  ['wk','cal','ch','pr'].forEach(x=>{gid('p-'+x).style.display=x===t?'block':'none';gid('bn-'+x).classList.toggle('on',x===t);});
+  ['wk','cal','ch','pr'].forEach(x=>{gid('p-'+x).style.display=x===t?'block':'none';{const b=gid('bn-'+x);b.classList.toggle('on',x===t);if(x===t)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');}});
   if(t==='cal'){renderCal();initExHistory();}if(t==='ch')initChart();if(t==='pr'){renderBadges();renderPRs();}
 }
 function bnav(t){if(t==='wk'&&ST.day){ss(ST.restEnd?'rest':'wo');return;}ss('home');stab(t);}

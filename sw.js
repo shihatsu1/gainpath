@@ -1,7 +1,7 @@
 // GainPath service worker — app-shell caching only. Bump CACHE_NAME whenever
 // SHELL_URLS/LIB_URLS or the caching logic below changes; activate() deletes
 // the app's own older caches (see ownsCache) and nothing else.
-const CACHE_NAME = 'gainpath-v57';
+const CACHE_NAME = 'gainpath-v58';
 // Exercise images (all .webp) are fetched the first time they are shown and kept
 // here. This cache is not tied to CACHE_NAME, so a release never makes phones
 // download them again, and install stays small (the shell, libraries and

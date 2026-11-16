@@ -146,7 +146,7 @@ function renderDayEdit(){
         (ex.holdSecs?'':isPyramidEx(ex)?'<div class="de-detail-field"><label>'+t('de_reps_pyr')+'</label><div id="de-pyr-'+i+'" style="padding:8px 0;font-size:13px;color:var(--txt2)">'+pyramidReps(p.sets).join(' → ')+'</div></div>':'<div class="de-detail-field"><label>'+t('de_reps')+'</label><input type="number" min="1" value="'+p.r+'" onfocus="this.select()" onchange="updPlannedEx('+i+',\'r\',this.value)"></div>')+
         weightField+
       '</div>':'';
-    const grpTag=grp?'<span class="bdg" style="background:var(--accent);color:#fff;margin-right:6px">'+String.fromCharCode(64+groupLetter(i))+(grp.pos)+'</span>':'';
+    const grpTag=grp?'<span class="bdg" style="background:var(--accent);color:var(--accent-ink);margin-right:6px">'+String.fromCharCode(64+groupLetter(i))+(grp.pos)+'</span>':'';
     return grpLabel+'<div class="de-row-wrap'+(grp?' de-grp'+(grp.isFirst?' de-grp-first':'')+(grp.isLast?' de-grp-last':''):'')+'">'+
       '<div class="de-row-actions"><span class="de-act-swap"><i class="ti ti-replace" aria-hidden="true"></i> '+t('de_swap')+'</span><span class="de-act-del"><i class="ti ti-trash" aria-hidden="true"></i> '+t('de_delete')+'</span></div>'+
       '<div class="de-row" onpointerdown="rowSwipeStart(event,'+i+')">'+
@@ -324,13 +324,13 @@ function renderSwapParts(){
   const addCexBtn='<button class="bg" style="width:100%;justify-content:center;border:1px dashed var(--bdr);border-radius:var(--radius);padding:11px" onclick="openCustomEx()"><i class="ti ti-plus" aria-hidden="true"></i> Can\'t find it? Add a custom exercise</button>';
   if(q){
     const matches=Object.values(EXPOOL).filter(ex=>ex.name.toLowerCase().includes(q)).sort(equipSort);
-    gid('sw-parts').innerHTML=(matches.length?matches.map(swapExBtn).join(''):'<div style="font-size:13px;color:var(--txt2);text-align:center;padding:14px 0">'+t('de_no_match')+'</div>')+addCexBtn;
+    gid('sw-parts').innerHTML=(matches.length?matches.map(swapExBtn).join(''):'<div style="font-size:13px;color:var(--txt2);text-align:center;padding:16px 0">'+t('de_no_match')+'</div>')+addCexBtn;
     return;
   }
   gid('sw-parts').innerHTML='<div style="font-size:13px;color:var(--txt2);margin-bottom:8px">'+t('de_choose_part')+'</div>'+
     Object.keys(EXPOOL_BY_MG).sort().map(mg=>{
       const open=ST.swapPart===mg;
-      const exList=open?'<div style="margin:8px 0 14px">'+
+      const exList=open?'<div style="margin:8px 0 16px">'+
         EXPOOL_BY_MG[mg].map(swapExBtn).join('')+
       '</div>':'';
       return '<button class="opt-btn'+(open?' on':'')+'" style="margin-bottom:8px" onclick="pickSwapPart('+jsArg(mg)+')">'+esc(humanizeMG(mg))+'</button>'+exList;
@@ -393,5 +393,5 @@ function renderCustomExList(){
   const el=gid('cex-list');if(!el)return;
   const list=CFG.customExercises||[];
   if(!list.length){el.innerHTML='<div style="font-size:13px;color:var(--txt2);text-align:center;padding:10px 0">'+t('cx_none')+'</div>';return;}
-  el.innerHTML=list.map(ex=>'<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;margin-bottom:7px"><div><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(ex.name)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+humanizeMG(ex.mg)+' · '+EQUIP_LABELS[equipRank(ex)]+(ex.holdSecs?t('cx_timed_hold'):'')+'</div></div><button class="bg" onclick="deleteCustomExercise('+jsArg(ex.name)+')" aria-label="'+esc(t('aria_delete_cex'))+'"><i class="ti ti-trash" aria-hidden="true"></i></button></div>').join('');
+  el.innerHTML=list.map(ex=>'<div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;margin-bottom:8px"><div><div style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(ex.name)+'</div><div style="font-size:11px;color:var(--txt2);margin-top:2px">'+humanizeMG(ex.mg)+' · '+EQUIP_LABELS[equipRank(ex)]+(ex.holdSecs?t('cx_timed_hold'):'')+'</div></div><button class="bg" onclick="deleteCustomExercise('+jsArg(ex.name)+')" aria-label="'+esc(t('aria_delete_cex'))+'"><i class="ti ti-trash" aria-hidden="true"></i></button></div>').join('');
 }

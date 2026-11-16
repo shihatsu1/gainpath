@@ -196,7 +196,7 @@ function renderProgramBuilder(){
   else list.innerHTML=d.days.map((day,i)=>{
     const cnt=(CFG.customDays[day.id]||[]).length;
     return '<div class="de-row" style="margin-bottom:8px">'+
-      '<div style="display:flex;flex-direction:column;gap:3px">'+
+      '<div style="display:flex;flex-direction:column;gap:4px">'+
         '<button class="bg" style="padding:4px 4px"'+(i===0?' disabled style="opacity:.3;padding:4px 4px"':'')+' onclick="moveProgDay('+i+',-1)" aria-label="'+esc(t('aria_move_up'))+'"><i class="ti ti-chevron-up" aria-hidden="true"></i></button>'+
         '<button class="bg" style="padding:4px 4px"'+(i===d.days.length-1?' disabled style="opacity:.3;padding:4px 4px"':'')+' onclick="moveProgDay('+i+',1)" aria-label="'+esc(t('aria_move_down'))+'"><i class="ti ti-chevron-down" aria-hidden="true"></i></button>'+
       '</div>'+

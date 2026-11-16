@@ -56,7 +56,7 @@ function renderSplitOpts(containerId,selectedId,onSelect){
     const btn=document.createElement('button');
     btn.className='opt-btn'+(selectedId===sp.id?' on':'');
     btn.style.textAlign='left';btn.style.padding='12px 14px';btn.style.marginBottom='8px';
-    btn.innerHTML='<div style="font-size:15px;font-weight:600">'+t('split_'+sp.id+'_name')+'</div><div style="font-size:11px;font-weight:400;color:'+(selectedId===sp.id?'var(--accent-ink)':'var(--txt2)')+';margin-top:3px">'+t('split_'+sp.id+'_desc')+'</div>';
+    btn.innerHTML='<div style="font-size:15px;font-weight:600">'+t('split_'+sp.id+'_name')+'</div><div style="font-size:11px;font-weight:400;color:'+(selectedId===sp.id?'var(--accent-ink)':'var(--txt2)')+';margin-top:4px">'+t('split_'+sp.id+'_desc')+'</div>';
     btn.onclick=()=>{OB.split=sp.id;renderSplitOpts(containerId,sp.id,onSelect);if(onSelect)onSelect(sp.id);};
     el.appendChild(btn);
   });
@@ -65,7 +65,7 @@ function renderSplitOpts(containerId,selectedId,onSelect){
     const btn=document.createElement('button');
     btn.className='opt-btn'+(sel?' on':'');
     btn.style.textAlign='left';btn.style.padding='12px 14px';btn.style.marginBottom='8px';
-    btn.innerHTML='<div style="font-size:15px;font-weight:600">'+esc(CFG.customProgram.name)+' <span class="bdg" style="background:'+(sel?'var(--accent-ink)':'var(--accent)')+';color:'+(sel?'var(--accent)':'var(--accent-ink)')+'">'+esc(t('ob_custom_badge'))+'</span></div><div style="font-size:11px;font-weight:400;color:'+(sel?'var(--accent-ink)':'var(--txt2)')+';margin-top:3px">'+(CFG.customProgram.days.length===1?t('ob_custom_day'):t('ob_custom_days').replace('{n}',CFG.customProgram.days.length))+'</div>';
+    btn.innerHTML='<div style="font-size:15px;font-weight:600">'+esc(CFG.customProgram.name)+' <span class="bdg" style="background:'+(sel?'var(--accent-ink)':'var(--accent)')+';color:'+(sel?'var(--accent)':'var(--accent-ink)')+'">'+esc(t('ob_custom_badge'))+'</span></div><div style="font-size:11px;font-weight:400;color:'+(sel?'var(--accent-ink)':'var(--txt2)')+';margin-top:4px">'+(CFG.customProgram.days.length===1?t('ob_custom_day'):t('ob_custom_days').replace('{n}',CFG.customProgram.days.length))+'</div>';
     btn.onclick=()=>{renderSplitOpts(containerId,'custom',onSelect);if(onSelect)onSelect('custom');};
     el.appendChild(btn);
   }
